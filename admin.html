@@ -126,6 +126,12 @@
         .account-card strong {
             color: #ff4dff;
         }
+
+        .mini {
+            color: #d9c5ff;
+            font-size: 13px;
+            line-height: 1.5;
+        }
     </style>
 </head>
 
@@ -146,7 +152,7 @@
 
     <div class="box hidden" id="adminBox">
         <h1>DemiSke Admin</h1>
-        <p class="status">Upload account picture and details. It will appear automatically on the website.</p>
+        <p class="status">Upload account picture and details. When you approve payment in Telegram, the bot will send the account username/password to the customer.</p>
 
         <label>Account Picture</label>
         <input type="file" id="accountImage" accept="image/*" onchange="previewImage(event)">
@@ -168,7 +174,13 @@
         <input type="text" id="accountRegion" placeholder="Example: TH">
 
         <label>Nickname</label>
-        <input type="text" id="accountNickname" placeholder="Example: KhunICE<3">
+        <input type="text" id="accountNickname" placeholder="Example: KhunICE">
+
+        <label>Account Username</label>
+        <input type="text" id="accountUsername" placeholder="Actual account username">
+
+        <label>Account Password</label>
+        <input type="text" id="accountPassword" placeholder="Actual account password">
 
         <label>Category</label>
         <select id="accountCategory">
@@ -261,13 +273,15 @@
             const uid = document.getElementById("accountUid").value.trim();
             const region = document.getElementById("accountRegion").value.trim();
             const nickname = document.getElementById("accountNickname").value.trim();
+            const accountUsername = document.getElementById("accountUsername").value.trim();
+            const accountPassword = document.getElementById("accountPassword").value.trim();
             const category = document.getElementById("accountCategory").value;
             const details = document.getElementById("accountDetails").value.trim();
 
             const status = document.getElementById("saveStatus");
 
-            if (!imageFile || !name || !level || !price || !category) {
-                status.innerText = "Please complete picture, name, level, price, and category.";
+            if (!imageFile || !name || !level || !price || !category || !accountUsername || !accountPassword) {
+                status.innerText = "Please complete picture, name, level, price, account username, account password, and category.";
                 return;
             }
 
@@ -305,7 +319,9 @@
                     nickname: nickname,
                     category: category,
                     image_url: imageUrl,
-                    details: details
+                    details: details,
+                    account_username: accountUsername,
+                    account_password: accountPassword
                 });
 
             if (insertError) {
@@ -323,6 +339,8 @@
             document.getElementById("accountUid").value = "";
             document.getElementById("accountRegion").value = "";
             document.getElementById("accountNickname").value = "";
+            document.getElementById("accountUsername").value = "";
+            document.getElementById("accountPassword").value = "";
             document.getElementById("accountDetails").value = "";
 
             loadAdminAccounts();
@@ -353,12 +371,14 @@
                 div.className = "account-card";
                 div.innerHTML = `
                     <img src="${account.image_url || ""}" alt="Account image">
-                    <p><strong>${account.name}</strong></p>
-                    <p>${account.level} • ₱${account.price}</p>
+                    <p><strong>${account.name || "Unnamed Account"}</strong></p>
+                    <p>${account.level || "No level"} • ₱${account.price || "0"}</p>
                     <p>Nickname: ${account.nickname || "N/A"}</p>
                     <p>Region: ${account.region || "N/A"}</p>
                     <p>UID: ${account.uid || "N/A"}</p>
-                    <p>Category: ${account.category}</p>
+                    <p>Category: ${account.category || "N/A"}</p>
+                    <p class="mini">Account Username: ${account.account_username || "Not set"}</p>
+                    <p class="mini">Account Password: ${account.account_password || "Not set"}</p>
                     <button class="danger" onclick="deleteAccount('${account.id}')">Delete Account</button>
                 `;
                 container.appendChild(div);
