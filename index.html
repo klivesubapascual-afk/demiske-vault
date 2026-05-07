@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DemiSke Vault</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background:
+                radial-gradient(circle at top, rgba(200, 0, 255, 0.25), transparent 35%),
+                linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.92)),
+                url("bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .container {
+            min-height: 100vh;
+            padding: 40px 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 42px;
+            margin-bottom: 8px;
+            color: #ffffff;
+            text-shadow:
+                0 0 8px #ff00ff,
+                0 0 18px #a600ff,
+                0 0 35px #6a00ff;
+        }
+
+        .subtitle {
+            color: #e6d7ff;
+            margin-bottom: 10px;
+            font-size: 15px;
+            text-shadow: 0 0 10px rgba(180, 0, 255, 0.8);
+        }
+
+        .telegram {
+            color: #ff4dff;
+            font-weight: bold;
+            margin-bottom: 28px;
+            text-shadow: 0 0 12px #c000ff;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 380px;
+            background: rgba(10, 10, 18, 0.78);
+            border: 1px solid rgba(213, 0, 255, 0.55);
+            border-radius: 20px;
+            padding: 22px;
+            margin: 14px auto;
+            box-shadow:
+                0 0 18px rgba(180, 0, 255, 0.35),
+                inset 0 0 18px rgba(120, 0, 255, 0.16);
+            backdrop-filter: blur(8px);
+        }
+
+        .card h2 {
+            margin: 0 0 8px;
+            font-size: 24px;
+        }
+
+        .card p {
+            margin: 0 0 18px;
+            color: #d9c5ff;
+            font-size: 17px;
+        }
+
+        .price {
+            color: #ff4dff;
+            font-weight: bold;
+            text-shadow: 0 0 12px #c000ff;
+        }
+
+        button, .telegram-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            border: none;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            background: linear-gradient(135deg, #ff00e6, #7b00ff);
+            box-shadow:
+                0 0 15px rgba(255, 0, 230, 0.65),
+                0 0 28px rgba(123, 0, 255, 0.45);
+            cursor: pointer;
+        }
+
+        button:active, .telegram-btn:active {
+            transform: scale(0.97);
+        }
+
+        .note {
+            width: 100%;
+            max-width: 380px;
+            margin-top: 20px;
+            padding: 14px;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 0, 255, 0.25);
+            font-size: 13px;
+            color: #cccccc;
+        }
+
+        .popup-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.78);
+            justify-content: center;
+            align-items: center;
+            padding: 18px;
+            z-index: 999;
+        }
+
+        .popup {
+            width: 100%;
+            max-width: 390px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: rgba(15, 10, 25, 0.96);
+            border: 1px solid rgba(255, 0, 255, 0.55);
+            border-radius: 22px;
+            padding: 24px;
+            box-shadow:
+                0 0 25px rgba(255, 0, 255, 0.45),
+                inset 0 0 18px rgba(120, 0, 255, 0.18);
+            animation: pop 0.2s ease;
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(0.92);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .popup h2 {
+            margin-top: 0;
+            color: #ffffff;
+            text-shadow: 0 0 12px #c000ff;
+        }
+
+        .popup p {
+            color: #d9c5ff;
+            line-height: 1.5;
+        }
+
+        .account-img {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 0, 255, 0.35);
+            margin: 12px 0;
+        }
+
+        .info-box, .gcash-box {
+            background: rgba(0, 0, 0, 0.38);
+            border: 1px solid rgba(255, 0, 255, 0.35);
+            border-radius: 16px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .info-box strong, .gcash-box strong {
+            color: #ff4dff;
+        }
+
+        .choice-btn {
+            margin: 12px 0;
+        }
+
+        .close-btn {
+            margin-top: 12px;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: none;
+        }
+
+        .back-btn {
+            margin-top: 12px;
+            background: rgba(123, 0, 255, 0.45);
+            box-shadow: none;
+        }
+
+        form {
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin: 12px 0 6px;
+            color: #ffb8ff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 0, 255, 0.35);
+            background: rgba(0, 0, 0, 0.45);
+            color: white;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>DemiSke Vault</h1>
+        <p class="subtitle">Premium Accounts • Fast Transaction • Trusted Seller</p>
+        <p class="telegram">Telegram: @Demixyloadmin</p>
+
+        <div class="card">
+            <h2>Level 1-50</h2>
+            <p>Price: <span class="price">₱150</span></p>
+            <button onclick="openAccountInfo('Level 1-50 Account', 'Level 1-50', '150', 'acc1.jpg', 'Starter account. Good for beginners and ready to use.')">
+                View Account
+            </button>
+        </div>
+
+        <div class="card">
+            <h2>Level 50-100</h2>
+            <p>Price: <span class="price">₱300</span></p>
+            <button onclick="openAccountInfo('Level 50-100 Account', 'Level 50-100', '300', 'acc2.jpg', 'Mid-level account with better progress and value.')">
+                View Account
+            </button>
+        </div>
+
+        <div class="card">
+            <h2>Level 100-150</h2>
+            <p>Price: <span class="price">₱400</span></p>
+            <button onclick="openAccountInfo('Level 100-150 Account', 'Level 100-150', '400', 'acc3.jpg', 'High-level account with strong progress. Recommended pick.')">
+                View Account
+            </button>
+        </div>
+
+        <div class="note">
+            Pick an account, click continue, choose Demi or SKE, then submit your GCash proof.
+        </div>
+    </div>
+
+    <!-- Account Info Popup -->
+    <div class="popup-bg" id="accountPopup">
+        <div class="popup">
+            <h2>Account Details</h2>
+
+            <img id="accountImage" class="account-img" src="" alt="Account Picture">
+
+            <div class="info-box">
+                <p><strong>Account:</strong> <span id="infoAccount"></span></p>
+                <p><strong>Level:</strong> <span id="infoLevel"></span></p>
+                <p><strong>Price:</strong> ₱<span id="infoPrice"></span></p>
+                <p><strong>Details:</strong> <span id="infoDetails"></span></p>
+            </div>
+
+            <button onclick="openSellerPopup()">Continue</button>
+            <button class="close-btn" onclick="closePopups()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Seller Choice Popup -->
+    <div class="popup-bg" id="sellerPopup">
+        <div class="popup">
+            <h2>Choose Seller</h2>
+            <p>Choose where you want to buy this account.</p>
+
+            <button class="choice-btn" onclick="openGcash('Demi')">Demi</button>
+            <button class="choice-btn" onclick="openGcash('SKE')">SKE</button>
+
+            <button class="back-btn" onclick="backToAccount()">Back to Account</button>
+            <button class="close-btn" onclick="closePopups()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- GCash Popup -->
+    <div class="popup-bg" id="gcashPopup">
+        <div class="popup">
+            <h2>GCash Payment</h2>
+
+            <div class="gcash-box">
+                <p><strong>Selected Account:</strong> <span id="gcashAccount"></span></p>
+                <p><strong>Seller:</strong> <span id="gcashSeller"></span></p>
+                <p><strong>GCash Name:</strong> YOUR GCASH NAME</p>
+                <p><strong>GCash Number:</strong> 09XXXXXXXXX</p>
+                <p><strong>Amount:</strong> ₱<span id="paymentAmount"></span></p>
+            </div>
+
+            <p>After payment, submit your proof below. I will review it and approve or deny manually.</p>
+
+            <form name="payment-proof" method="POST" data-netlify="true" enctype="multipart/form-data">
+                <input type="hidden" name="form-name" value="payment-proof">
+
+                <input type="hidden" name="account" id="formAccount">
+                <input type="hidden" name="level" id="formLevel">
+                <input type="hidden" name="seller" id="formSeller">
+                <input type="hidden" name="amount" id="formAmount">
+
+                <label>Telegram Username</label>
+                <input type="text" name="telegram" placeholder="@username" required>
+
+                <label>GCash Reference Number</label>
+                <input type="text" name="reference" placeholder="GCash reference number" required>
+
+                <label>Upload GCash Screenshot</label>
+                <input type="file" name="proof" accept="image/*" required>
+
+                <button type="submit" style="margin-top: 15px;">Submit Proof</button>
+            </form>
+
+            <a class="telegram-btn" href="https://t.me/Demixyloadmin">Message Admin on Telegram</a>
+
+            <button class="back-btn" onclick="backToSeller()">Back to Seller Choice</button>
+            <button class="close-btn" onclick="closePopups()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedAccount = "";
+        let selectedLevel = "";
+        let selectedPrice = "";
+        let selectedSeller = "";
+
+        function openAccountInfo(account, level, price, image, details) {
+            selectedAccount = account;
+            selectedLevel = level;
+            selectedPrice = price;
+
+            document.getElementById("accountImage").src = image;
+            document.getElementById("infoAccount").innerText = account;
+            document.getElementById("infoLevel").innerText = level;
+            document.getElementById("infoPrice").innerText = price;
+            document.getElementById("infoDetails").innerText = details;
+
+            document.getElementById("accountPopup").style.display = "flex";
+        }
+
+        function openSellerPopup() {
+            document.getElementById("accountPopup").style.display = "none";
+            document.getElementById("sellerPopup").style.display = "flex";
+        }
+
+        function openGcash(seller) {
+            selectedSeller = seller;
+
+            document.getElementById("sellerPopup").style.display = "none";
+            document.getElementById("gcashPopup").style.display = "flex";
+
+            document.getElementById("gcashAccount").innerText = selectedAccount + " - " + selectedLevel;
+            document.getElementById("gcashSeller").innerText = selectedSeller;
+            document.getElementById("paymentAmount").innerText = selectedPrice;
+
+            document.getElementById("formAccount").value = selectedAccount;
+            document.getElementById("formLevel").value = selectedLevel;
+            document.getElementById("formSeller").value = selectedSeller;
+            document.getElementById("formAmount").value = "₱" + selectedPrice;
+        }
+
+        function backToAccount() {
+            document.getElementById("sellerPopup").style.display = "none";
+            document.getElementById("accountPopup").style.display = "flex";
+        }
+
+        function backToSeller() {
+            document.getElementById("gcashPopup").style.display = "none";
+            document.getElementById("sellerPopup").style.display = "flex";
+        }
+
+        function closePopups() {
+            document.getElementById("accountPopup").style.display = "none";
+            document.getElementById("sellerPopup").style.display = "none";
+            document.getElementById("gcashPopup").style.display = "none";
+        }
+    </script>
+</body>
+</html>
