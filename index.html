@@ -414,30 +414,6 @@
             box-shadow: none;
         }
 
-        form {
-            margin-top: 15px;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            margin: 12px 0 6px;
-            color: #ffb8ff;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 0, 255, 0.35);
-            background: rgba(0, 0, 0, 0.42);
-            color: white;
-            outline: none;
-            font-size: 15px;
-        }
-
         @media (max-width: 480px) {
             h1 {
                 font-size: 31px;
@@ -572,33 +548,15 @@
                 <p><strong>Amount:</strong> ₱<span id="paymentAmount"></span></p>
             </div>
 
-            <p>After payment, submit proof below.</p>
+            <div class="info-box">
+                <p><strong>Step 1:</strong> Send the exact amount to the GCash shown above.</p>
+                <p><strong>Step 2:</strong> Take a screenshot of your payment.</p>
+                <p><strong>Step 3:</strong> Tap the Telegram button below and send your payment proof.</p>
+            </div>
 
-            <form name="payment-proof" method="POST" action="/success.html" data-netlify="true" data-netlify-honeypot="bot-field" enctype="multipart/form-data">
-                <input type="hidden" name="form-name" value="payment-proof">
-
-                <p style="display:none;">
-                    <label>Don’t fill this out: <input name="bot-field"></label>
-                </p>
-
-                <input type="hidden" name="account" id="formAccount">
-                <input type="hidden" name="level" id="formLevel">
-                <input type="hidden" name="seller" id="formSeller">
-                <input type="hidden" name="amount" id="formAmount">
-
-                <label>Telegram Username</label>
-                <input type="text" name="telegram" id="proofTelegram" placeholder="@username" required>
-
-                <label>GCash Reference Number</label>
-                <input type="text" name="reference" placeholder="GCash reference number" required>
-
-                <label>Upload GCash Screenshot</label>
-                <input type="file" name="proof" accept="image/*" required>
-
-                <button type="submit">Submit Payment Proof</button>
-            </form>
-
-            <a class="telegram-btn" href="https://t.me/Demixyloadmin">Message Admin on Telegram</a>
+            <a class="telegram-btn" id="telegramProofBtn" href="https://t.me/Demixyloadmin" target="_blank">
+                Send Payment Proof on Telegram
+            </a>
 
             <button class="back-btn" onclick="backToSeller()">Back to Seller Choice</button>
             <button class="close-btn" onclick="closePopups()">Close</button>
@@ -685,11 +643,6 @@
                 localStorage.setItem("currentCustomer", username);
                 document.getElementById("customerLoginScreen").style.display = "none";
                 document.getElementById("currentCustomerName").innerText = username;
-
-                const proofTelegram = document.getElementById("proofTelegram");
-                if (proofTelegram) {
-                    proofTelegram.value = username;
-                }
             } else {
                 showCustomerError("Wrong username or password.");
             }
@@ -717,11 +670,6 @@
             if (loggedIn) {
                 document.getElementById("customerLoginScreen").style.display = "none";
                 document.getElementById("currentCustomerName").innerText = currentCustomer || "Customer";
-
-                const proofTelegram = document.getElementById("proofTelegram");
-                if (proofTelegram && currentCustomer) {
-                    proofTelegram.value = currentCustomer;
-                }
             }
         });
 
@@ -808,7 +756,7 @@
 
             const gcashInfo = {
                 Demi: {
-                    name: "Ka*a an****n p. ",
+                    name: "Ka*a an****n p.",
                     number: "09296357078"
                 },
                 SKE: {
@@ -829,17 +777,19 @@
             document.getElementById("gcashName").innerText = gcashInfo[seller].name;
             document.getElementById("gcashNumber").innerText = gcashInfo[seller].number;
 
-            document.getElementById("formAccount").value = selectedAccount.name;
-            document.getElementById("formLevel").value = selectedAccount.level;
-            document.getElementById("formSeller").value = selectedSeller;
-            document.getElementById("formAmount").value = "₱" + selectedAccount.price;
+            const currentCustomer = localStorage.getItem("currentCustomer") || "Customer";
 
-            const currentCustomer = localStorage.getItem("currentCustomer");
-            const proofTelegram = document.getElementById("proofTelegram");
+            const telegramMessage =
+                "PAYMENT PROOF%0A%0A" +
+                "Customer: " + encodeURIComponent(currentCustomer) + "%0A" +
+                "Account: " + encodeURIComponent(selectedAccount.name || "N/A") + "%0A" +
+                "Level: " + encodeURIComponent(selectedAccount.level || "N/A") + "%0A" +
+                "Seller: " + encodeURIComponent(selectedSeller) + "%0A" +
+                "Amount: ₱" + encodeURIComponent(selectedAccount.price || "0") + "%0A%0A" +
+                "I will send my GCash screenshot here.";
 
-            if (proofTelegram && currentCustomer) {
-                proofTelegram.value = currentCustomer;
-            }
+            document.getElementById("telegramProofBtn").href =
+                "https://t.me/Demixyloadmin?text=" + telegramMessage;
         }
 
         function backToAccount() {
