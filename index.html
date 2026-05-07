@@ -80,7 +80,9 @@
             margin: 0 0 8px;
             font-size: 32px;
             color: white;
-            text-shadow: 0 0 8px #ff00ff, 0 0 18px #a600ff;
+            text-shadow:
+                0 0 8px #ff00ff,
+                0 0 18px #a600ff;
         }
 
         .customer-login-card p {
@@ -177,7 +179,10 @@
             margin: 0 0 8px;
             font-size: 36px;
             color: #ffffff;
-            text-shadow: 0 0 8px #ff00ff, 0 0 18px #a600ff, 0 0 35px #6a00ff;
+            text-shadow:
+                0 0 8px #ff00ff,
+                0 0 18px #a600ff,
+                0 0 35px #6a00ff;
         }
 
         .subtitle {
@@ -358,6 +363,10 @@
             line-height: 1.5;
         }
 
+        .image-slider {
+            width: 100%;
+        }
+
         .account-img {
             width: 100%;
             border-radius: 18px;
@@ -368,7 +377,18 @@
             object-fit: cover;
         }
 
-        .info-box, .gcash-box, .approved-box {
+        .slider-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .slider-controls button {
+            width: 50%;
+            font-size: 13px;
+            padding: 11px;
+        }
+
+        .info-box, .gcash-box {
             background: rgba(0, 0, 0, 0.38);
             border: 1px solid rgba(255, 0, 255, 0.35);
             border-radius: 18px;
@@ -377,7 +397,7 @@
             text-align: left;
         }
 
-        .info-box strong, .gcash-box strong, .approved-box strong {
+        .info-box strong, .gcash-box strong {
             color: var(--pink);
         }
 
@@ -414,6 +434,7 @@
             color: #d9c5ff;
             font-size: 14px;
             line-height: 1.5;
+            text-align: center;
         }
 
         @media (max-width: 480px) {
@@ -508,7 +529,16 @@
         <div class="popup">
             <h2>Account Details</h2>
 
-            <img id="accountImage" class="account-img" src="" alt="Account Picture">
+            <div class="image-slider">
+                <img id="accountImage" class="account-img" src="" alt="Account Picture">
+
+                <div class="slider-controls">
+                    <button type="button" onclick="prevAccountImage()">← Previous</button>
+                    <button type="button" onclick="nextAccountImage()">Next →</button>
+                </div>
+
+                <p id="imageCounter" class="status-text"></p>
+            </div>
 
             <div class="info-box">
                 <p><strong>Account:</strong> <span id="infoAccount"></span></p>
@@ -552,24 +582,13 @@
 
             <div class="info-box">
                 <p><strong>Step 1:</strong> Send the exact amount to the GCash shown above.</p>
-                <p><strong>Step 2:</strong> Upload your GCash screenshot below.</p>
-                <p><strong>Step 3:</strong> Wait for admin approval.</p>
-                <p><strong>Step 4:</strong> Once approved, account username/password will appear directly here on the website.</p>
+                <p><strong>Step 2:</strong> Take a screenshot of your payment.</p>
+                <p><strong>Step 3:</strong> Tap the button below and send your payment proof directly to the seller.</p>
             </div>
 
-            <label>Your Website Username</label>
-            <input type="text" id="customerWebsiteUsername" placeholder="Example: buyer123">
-
-            <label>GCash Reference Number</label>
-            <input type="text" id="paymentReference" placeholder="Enter GCash reference number">
-
-            <label>Upload GCash Screenshot</label>
-            <input type="file" id="proofImage" accept="image/*">
-
-            <button onclick="submitProof()">Submit Proof for Approval</button>
-            <button onclick="checkOrderStatus()">Check Approval Status</button>
-
-            <p class="status-text" id="proofStatus"></p>
+            <a class="telegram-btn" id="sellerDmBtn" href="#" target="_blank">
+                Message Seller on Telegram
+            </a>
 
             <button class="back-btn" onclick="backToSeller()">Back to Seller Choice</button>
             <button class="close-btn" onclick="closePopups()">Close</button>
@@ -585,6 +604,9 @@
         let selectedAccount = null;
         let selectedSeller = "";
         let customerMode = "login";
+
+        let accountImages = [];
+        let currentImageIndex = 0;
 
         function setCustomerMode(mode) {
             customerMode = mode;
@@ -747,7 +769,17 @@
         function openAccount(account) {
             selectedAccount = account;
 
-            document.getElementById("accountImage").src = account.image_url || "";
+            accountImages = [];
+
+            if (Array.isArray(account.image_urls) && account.image_urls.length > 0) {
+                accountImages = account.image_urls;
+            } else if (account.image_url) {
+                accountImages = [account.image_url];
+            }
+
+            currentImageIndex = 0;
+            showAccountImage();
+
             document.getElementById("infoAccount").innerText = account.name || "N/A";
             document.getElementById("infoLevel").innerText = account.level || "N/A";
             document.getElementById("infoPrice").innerText = account.price || "0";
@@ -759,6 +791,32 @@
             document.getElementById("accountPopup").style.display = "flex";
         }
 
+        function showAccountImage() {
+            const img = document.getElementById("accountImage");
+            const counter = document.getElementById("imageCounter");
+
+            if (!accountImages || accountImages.length === 0) {
+                img.src = "";
+                counter.innerText = "No image available";
+                return;
+            }
+
+            img.src = accountImages[currentImageIndex];
+            counter.innerText = (currentImageIndex + 1) + " / " + accountImages.length;
+        }
+
+        function nextAccountImage() {
+            if (!accountImages || accountImages.length === 0) return;
+            currentImageIndex = (currentImageIndex + 1) % accountImages.length;
+            showAccountImage();
+        }
+
+        function prevAccountImage() {
+            if (!accountImages || accountImages.length === 0) return;
+            currentImageIndex = (currentImageIndex - 1 + accountImages.length) % accountImages.length;
+            showAccountImage();
+        }
+
         function openSellerPopup() {
             document.getElementById("accountPopup").style.display = "none";
             document.getElementById("sellerPopup").style.display = "flex";
@@ -767,16 +825,20 @@
         function openGcash(seller) {
             selectedSeller = seller;
 
-            const gcashInfo = {
+            const sellerInfo = {
                 Demi: {
-                    name: "Ka*a an****n p.",
-                    number: "09296357078"
+                    gcashName: "Ka*a an****n p.",
+                    gcashNumber: "09296357078",
+                    telegram: "Demixyloadmin"
                 },
                 SKE: {
-                    name: "ZE....A N.",
-                    number: "09751955891"
+                    gcashName: "ZE....A N.",
+                    gcashNumber: "09751955891",
+                    telegram: "kaizxns"
                 }
             };
+
+            const selectedSellerInfo = sellerInfo[seller];
 
             document.getElementById("sellerPopup").style.display = "none";
             document.getElementById("gcashPopup").style.display = "flex";
@@ -787,152 +849,19 @@
             document.getElementById("gcashSeller").innerText = selectedSeller;
             document.getElementById("paymentAmount").innerText = selectedAccount.price;
 
-            document.getElementById("gcashName").innerText = gcashInfo[seller].name;
-            document.getElementById("gcashNumber").innerText = gcashInfo[seller].number;
+            document.getElementById("gcashName").innerText = selectedSellerInfo.gcashName;
+            document.getElementById("gcashNumber").innerText = selectedSellerInfo.gcashNumber;
 
-            const currentCustomer = localStorage.getItem("currentCustomer");
-            if (currentCustomer) {
-                document.getElementById("customerWebsiteUsername").value = currentCustomer;
-            }
+            const message =
+                "Hello, I want to buy this account.%0A%0A" +
+                "Account: " + encodeURIComponent(selectedAccount.name || "N/A") + "%0A" +
+                "Level: " + encodeURIComponent(selectedAccount.level || "N/A") + "%0A" +
+                "Price: ₱" + encodeURIComponent(selectedAccount.price || "0") + "%0A" +
+                "Seller: " + encodeURIComponent(selectedSeller) + "%0A%0A" +
+                "I will send my payment proof here.";
 
-            document.getElementById("proofStatus").innerText = "";
-        }
-
-        function fileToBase64(file) {
-            return new Promise(function(resolve, reject) {
-                const reader = new FileReader();
-
-                reader.onload = function() {
-                    resolve(reader.result);
-                };
-
-                reader.onerror = function() {
-                    reject(new Error("Failed to read image file."));
-                };
-
-                reader.readAsDataURL(file);
-            });
-        }
-
-        async function submitProof() {
-            const status = document.getElementById("proofStatus");
-            const usernameInput = document.getElementById("customerWebsiteUsername").value.trim();
-            const customerUsername = localStorage.getItem("currentCustomer") || usernameInput;
-            const reference = document.getElementById("paymentReference").value.trim();
-            const file = document.getElementById("proofImage").files[0];
-
-            if (!selectedAccount) {
-                status.innerText = "Please select an account first.";
-                return;
-            }
-
-            if (!selectedSeller) {
-                status.innerText = "Please select a seller first.";
-                return;
-            }
-
-            if (!customerUsername || !reference || !file) {
-                status.innerText = "Please complete username, reference number, and proof screenshot.";
-                return;
-            }
-
-            status.innerText = "Submitting proof to admin bot...";
-
-            try {
-                const base64 = await fileToBase64(file);
-
-                const response = await fetch("/.netlify/functions/submit-proof", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        account_id: selectedAccount.id,
-                        seller: selectedSeller,
-                        customer_username: customerUsername,
-                        payment_reference: reference,
-                        proof_image_base64: base64,
-                        proof_image_type: file.type
-                    })
-                });
-
-                const result = await response.json();
-
-                if (!response.ok || !result.success) {
-                    status.innerText = "Error: " + (result.error || result.details || "Submit failed.");
-                    return;
-                }
-
-                localStorage.setItem("lastOrderId", result.order_id);
-                localStorage.setItem("lastOrderUsername", customerUsername);
-
-                status.innerHTML =
-                    "Proof submitted. Please wait for admin approval.<br><br>" +
-                    "<button onclick='checkOrderStatus()'>Check Approval Status</button>";
-
-                document.getElementById("paymentReference").value = "";
-                document.getElementById("proofImage").value = "";
-            } catch (error) {
-                status.innerText = "Error: " + error.message;
-            }
-        }
-
-        async function checkOrderStatus() {
-            const status = document.getElementById("proofStatus");
-
-            const orderId = localStorage.getItem("lastOrderId");
-            const customerUsername =
-                localStorage.getItem("lastOrderUsername") ||
-                localStorage.getItem("currentCustomer");
-
-            if (!orderId || !customerUsername) {
-                status.innerText = "No order found on this device. Submit proof first.";
-                return;
-            }
-
-            status.innerText = "Checking approval status...";
-
-            try {
-                const response = await fetch(
-                    "/.netlify/functions/check-order?order_id=" +
-                    encodeURIComponent(orderId) +
-                    "&customer_username=" +
-                    encodeURIComponent(customerUsername)
-                );
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    status.innerText = "Error: " + (result.error || "Could not check order.");
-                    return;
-                }
-
-                if (result.status === "pending") {
-                    status.innerText = "Still pending. Please wait for admin approval.";
-                    return;
-                }
-
-                if (result.status === "denied") {
-                    status.innerText = "Payment denied. Please contact admin.";
-                    return;
-                }
-
-                if (result.status === "approved") {
-                    status.innerHTML =
-                        "<div class='approved-box'>" +
-                        "✅ <strong>Payment approved!</strong><br><br>" +
-                        "<strong>Account:</strong> " + (result.account.name || "N/A") + "<br>" +
-                        "<strong>Level:</strong> " + (result.account.level || "N/A") + "<br>" +
-                        "<strong>Nickname:</strong> " + (result.account.nickname || "N/A") + "<br>" +
-                        "<strong>Region:</strong> " + (result.account.region || "N/A") + "<br>" +
-                        "<strong>UID:</strong> " + (result.account.uid || "N/A") + "<br><br>" +
-                        "<strong>Account Username:</strong> " + (result.account.account_username || "Not set") + "<br>" +
-                        "<strong>Account Password:</strong> " + (result.account.account_password || "Not set") +
-                        "</div>";
-                }
-            } catch (error) {
-                status.innerText = "Error: " + error.message;
-            }
+            document.getElementById("sellerDmBtn").href =
+                "https://t.me/" + selectedSellerInfo.telegram + "?text=" + message;
         }
 
         function backToAccount() {
