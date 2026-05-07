@@ -10,14 +10,11 @@
         }
 
         :root {
-            --bg-dark: rgba(5, 8, 18, 0.94);
-            --card: rgba(15, 20, 38, 0.82);
-            --card-strong: rgba(17, 24, 45, 0.96);
-            --border: rgba(255, 0, 255, 0.38);
             --pink: #ff35f5;
             --purple: #7b00ff;
             --soft: #d9c5ff;
-            --white: #ffffff;
+            --card: rgba(17, 26, 45, 0.78);
+            --card2: rgba(33, 45, 75, 0.92);
         }
 
         body {
@@ -27,9 +24,8 @@
             font-family: Arial, sans-serif;
             text-align: center;
             background:
-                radial-gradient(circle at top, rgba(255, 0, 230, 0.22), transparent 33%),
-                radial-gradient(circle at bottom, rgba(123, 0, 255, 0.22), transparent 35%),
-                linear-gradient(rgba(8, 12, 27, 0.85), rgba(3, 5, 13, 0.96)),
+                radial-gradient(circle at top, rgba(255, 0, 230, 0.20), transparent 35%),
+                linear-gradient(rgba(8, 12, 27, 0.84), rgba(3, 5, 13, 0.96)),
                 url("bg.jpg");
             background-size: cover;
             background-position: center;
@@ -42,20 +38,19 @@
             inset: 0;
             pointer-events: none;
             background:
-                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+                linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
             background-size: 38px 38px;
-            mask-image: linear-gradient(to bottom, black, transparent 85%);
+            opacity: 0.55;
         }
 
-        /* LOGIN / REGISTER */
         .login-screen {
             position: fixed;
             inset: 0;
             z-index: 9999;
             background:
-                radial-gradient(circle at top, rgba(255, 0, 230, 0.24), transparent 35%),
-                linear-gradient(rgba(5, 8, 18, 0.88), rgba(5, 8, 18, 0.98)),
+                radial-gradient(circle at top, rgba(255, 0, 230, 0.25), transparent 35%),
+                linear-gradient(rgba(5, 8, 18, 0.90), rgba(5, 8, 18, 0.98)),
                 url("bg.jpg");
             background-size: cover;
             background-position: center;
@@ -68,7 +63,7 @@
         .login-box {
             width: 100%;
             max-width: 390px;
-            background: rgba(13, 18, 36, 0.90);
+            background: rgba(13, 18, 36, 0.92);
             border: 1px solid rgba(255, 0, 255, 0.42);
             border-radius: 28px;
             padding: 28px 22px;
@@ -77,20 +72,6 @@
                 inset 0 0 22px rgba(123, 0, 255, 0.12);
             text-align: center;
             backdrop-filter: blur(14px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-box::before {
-            content: "";
-            position: absolute;
-            top: -80px;
-            right: -80px;
-            width: 170px;
-            height: 170px;
-            background: rgba(255, 0, 230, 0.18);
-            filter: blur(10px);
-            border-radius: 50%;
         }
 
         .brand-badge {
@@ -110,10 +91,7 @@
         .login-box h2 {
             margin: 0 0 8px;
             font-size: 34px;
-            letter-spacing: 0.5px;
-            text-shadow:
-                0 0 8px #ff00ff,
-                0 0 18px #a600ff;
+            text-shadow: 0 0 8px #ff00ff, 0 0 18px #a600ff;
         }
 
         .login-box p {
@@ -134,7 +112,6 @@
             font-weight: bold;
         }
 
-        .login-box input,
         input {
             width: 100%;
             padding: 14px;
@@ -146,14 +123,23 @@
             font-size: 15px;
         }
 
-        .login-box input {
-            text-align: center;
-        }
-
-        .login-box input:focus,
         input:focus {
             border-color: rgba(255, 77, 255, 0.9);
             box-shadow: 0 0 14px rgba(255, 0, 230, 0.35);
+        }
+
+        .remember-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 12px 0;
+            color: #d9c5ff;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .remember-row input {
+            width: auto;
         }
 
         .auth-row {
@@ -177,13 +163,14 @@
             margin-top: 13px;
         }
 
-        /* MAIN */
         .container {
             min-height: 100vh;
             padding: 28px 18px 42px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            z-index: 1;
         }
 
         .top-box {
@@ -194,9 +181,7 @@
             border-radius: 26px;
             background: rgba(17, 26, 45, 0.72);
             border: 1px solid rgba(160, 120, 255, 0.30);
-            box-shadow:
-                0 0 28px rgba(123, 0, 255, 0.25),
-                inset 0 0 18px rgba(255, 255, 255, 0.035);
+            box-shadow: 0 0 28px rgba(123, 0, 255, 0.25);
             backdrop-filter: blur(10px);
         }
 
@@ -204,10 +189,7 @@
             margin: 0 0 8px;
             font-size: 36px;
             color: #ffffff;
-            text-shadow:
-                0 0 8px #ff00ff,
-                0 0 18px #a600ff,
-                0 0 35px #6a00ff;
+            text-shadow: 0 0 8px #ff00ff, 0 0 18px #a600ff, 0 0 35px #6a00ff;
         }
 
         .subtitle {
@@ -243,19 +225,15 @@
             width: 100%;
             margin: 10px 0;
             padding: 20px 15px;
-            border-radius: 17px;
+            border-radius: 22px;
             border: 1px solid rgba(255, 255, 255, 0.07);
-            background:
-                linear-gradient(135deg, rgba(60, 75, 110, 0.96), rgba(33, 42, 68, 0.96));
+            background: linear-gradient(135deg, rgba(60, 75, 110, 0.96), rgba(33, 42, 68, 0.96));
             color: #ffffff;
             font-size: 22px;
             font-weight: 900;
             text-align: center;
             cursor: pointer;
-            box-shadow:
-                0 10px 22px rgba(0, 0, 0, 0.35),
-                inset 0 0 14px rgba(255, 255, 255, 0.035);
-            transition: 0.15s ease;
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
         }
 
         .level-btn span {
@@ -268,8 +246,51 @@
 
         .level-btn:active {
             transform: scale(0.98);
-            background:
-                linear-gradient(135deg, rgba(80, 95, 130, 0.98), rgba(45, 55, 88, 0.98));
+        }
+
+        .account-list {
+            display: none;
+            width: 100%;
+            max-width: 450px;
+            margin-top: 16px;
+            padding: 18px;
+            border-radius: 24px;
+            background: rgba(12, 18, 35, 0.88);
+            border: 1px solid rgba(255, 0, 255, 0.32);
+            box-shadow: 0 0 24px rgba(255, 0, 255, 0.18);
+            backdrop-filter: blur(10px);
+        }
+
+        .account-list h2 {
+            margin: 0 0 12px;
+            font-size: 24px;
+            text-shadow: 0 0 12px #c000ff;
+        }
+
+        .account-item {
+            width: 100%;
+            margin: 9px 0;
+            padding: 15px;
+            border-radius: 16px;
+            background: rgba(48, 62, 88, 0.94);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+        }
+
+        .account-item strong {
+            display: block;
+            font-size: 17px;
+            color: white;
+        }
+
+        .account-item span {
+            display: block;
+            margin-top: 4px;
+            color: #d9c5ff;
+            font-size: 13px;
         }
 
         .note {
@@ -285,7 +306,6 @@
             line-height: 1.5;
         }
 
-        /* POPUPS */
         .popup-bg {
             display: none;
             position: fixed;
@@ -306,9 +326,7 @@
             border: 1px solid rgba(255, 0, 255, 0.48);
             border-radius: 26px;
             padding: 23px;
-            box-shadow:
-                0 0 30px rgba(255, 0, 255, 0.35),
-                inset 0 0 18px rgba(120, 0, 255, 0.15);
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.35);
             animation: pop 0.2s ease;
             backdrop-filter: blur(12px);
         }
@@ -369,9 +387,7 @@
             font-weight: bold;
             font-size: 15px;
             background: linear-gradient(135deg, #ff00e6, #7b00ff);
-            box-shadow:
-                0 0 15px rgba(255, 0, 230, 0.55),
-                0 0 28px rgba(123, 0, 255, 0.35);
+            box-shadow: 0 0 15px rgba(255, 0, 230, 0.55), 0 0 28px rgba(123, 0, 255, 0.35);
             cursor: pointer;
             margin-top: 10px;
         }
@@ -439,7 +455,7 @@
         <div class="login-box">
             <div class="brand-badge">DS</div>
             <h2>DemiSke Vault</h2>
-            <p id="authTitle">Login or register to continue</p>
+            <p>Login or register to continue</p>
 
             <div class="input-group">
                 <label>Username</label>
@@ -449,6 +465,16 @@
             <div class="input-group">
                 <label>Password</label>
                 <input type="password" id="passwordInput" placeholder="Enter password">
+            </div>
+
+            <div class="input-group" id="confirmGroup">
+                <label>Confirm Password</label>
+                <input type="password" id="confirmPasswordInput" placeholder="Confirm password">
+            </div>
+
+            <div class="remember-row">
+                <input type="checkbox" id="rememberMe">
+                <span>Remember me</span>
             </div>
 
             <div class="auth-row">
@@ -478,49 +504,54 @@
         </div>
 
         <div class="menu">
-            <button class="level-btn" onclick="openAccountInfo('Level 1-50 Account', 'Level 1-50', '150', 'acc1.jpg', 'Starter account. Good for beginners and ready to use.')">
+            <button class="level-btn" onclick="showAccounts('level_1_50')">
                 Level 1-50
                 <span>Starting price: ₱150</span>
             </button>
 
-            <button class="level-btn" onclick="openAccountInfo('Level 50-100 Account', 'Level 50-100', '300', 'acc2.jpg', 'Mid-level account with better progress and value.')">
+            <button class="level-btn" onclick="showAccounts('level_50_100')">
                 Level 50-100
                 <span>Starting price: ₱300</span>
             </button>
 
-            <button class="level-btn" onclick="openAccountInfo('Level 100-150 Account', 'Level 100-150', '400', 'acc3.jpg', 'High-level account with strong progress. Recommended pick.')">
+            <button class="level-btn" onclick="showAccounts('level_100_150')">
                 Level 100-150
                 <span>Starting price: ₱400</span>
             </button>
 
-            <button class="level-btn" onclick="openAccountInfo('KhunICE Account', 'Level 184', '550', 'acc4.jpg', 'Nickname: KhunICE&lt;3 | Region: TH | UID: 361673204 | Includes weapon and soldier collections shown in the picture.')">
+            <button class="level-btn" onclick="showAccounts('level_150_200')">
                 Level 150-200
                 <span>KhunICE • Level 184 • ₱550</span>
             </button>
 
-            <button class="level-btn" onclick="openAccountInfo('Level 200-250 Account', 'Level 200-250', '700', 'acc5.jpg', 'Premium account with higher level progress.')">
+            <button class="level-btn" onclick="showAccounts('level_200_250')">
                 Level 200-250
                 <span>Starting price: ₱700</span>
             </button>
 
-            <button class="level-btn" onclick="openAccountInfo('Level 250-300 Account', 'Level 250-300', '850', 'acc6.jpg', 'High-tier account. Good value for serious buyers.')">
+            <button class="level-btn" onclick="showAccounts('level_250_300')">
                 Level 250-300
                 <span>Starting price: ₱850</span>
             </button>
 
-            <button class="level-btn" onclick="openAccountInfo('Level 300-400 Account', 'Level 300-400', '1000', 'acc7.jpg', 'Elite account with strong progress.')">
+            <button class="level-btn" onclick="showAccounts('level_300_400')">
                 Level 300-400
                 <span>Starting price: ₱1000</span>
             </button>
 
-            <button class="level-btn" onclick="openAccountInfo('Level 400-500 Account', 'Level 400-500', '1800', 'acc8.jpg', 'Top-tier account. Best for premium buyers.')">
+            <button class="level-btn" onclick="showAccounts('level_400_500')">
                 Level 400-500
                 <span>Starting price: ₱1800</span>
             </button>
         </div>
 
+        <div class="account-list" id="accountList">
+            <h2 id="accountListTitle">Available Accounts</h2>
+            <div id="accountItems"></div>
+        </div>
+
         <div class="note">
-            Pick an account level, check the info, click continue, choose Demi or SKE, then submit your GCash proof.
+            Pick a level, choose an account from the bottom list, check the info, continue, choose Demi or SKE, then submit your GCash proof.
         </div>
     </div>
 
@@ -605,14 +636,138 @@
         let selectedPrice = "";
         let selectedSeller = "";
 
+        const accounts = {
+            level_1_50: {
+                title: "Level 1-50 Accounts",
+                list: [
+                    {
+                        name: "Starter Account #1",
+                        level: "Level 35",
+                        price: "150",
+                        image: "acc1.jpg",
+                        details: "Starter account. Good for beginners and ready to use."
+                    },
+                    {
+                        name: "Starter Account #2",
+                        level: "Level 48",
+                        price: "150",
+                        image: "acc2.jpg",
+                        details: "Higher starter account with better progress."
+                    }
+                ]
+            },
+
+            level_50_100: {
+                title: "Level 50-100 Accounts",
+                list: [
+                    {
+                        name: "Mid Account #1",
+                        level: "Level 75",
+                        price: "300",
+                        image: "acc3.jpg",
+                        details: "Mid-level account with good progress and value."
+                    },
+                    {
+                        name: "Mid Account #2",
+                        level: "Level 98",
+                        price: "300",
+                        image: "acc4.jpg",
+                        details: "Near Level 100 account. Recommended pick."
+                    }
+                ]
+            },
+
+            level_100_150: {
+                title: "Level 100-150 Accounts",
+                list: [
+                    {
+                        name: "High Account #1",
+                        level: "Level 120",
+                        price: "400",
+                        image: "acc5.jpg",
+                        details: "High-level account with strong progress."
+                    }
+                ]
+            },
+
+            level_150_200: {
+                title: "Level 150-200 Accounts",
+                list: [
+                    {
+                        name: "KhunICE Account",
+                        level: "Level 184",
+                        price: "550",
+                        image: "acc4.jpg",
+                        details: "Nickname: KhunICE<3 | Region: TH | UID: 361673204 | Includes weapon and soldier collections shown in the picture."
+                    }
+                ]
+            },
+
+            level_200_250: {
+                title: "Level 200-250 Accounts",
+                list: [
+                    {
+                        name: "Premium Account #1",
+                        level: "Level 220",
+                        price: "700",
+                        image: "acc6.jpg",
+                        details: "Premium account with higher level progress."
+                    }
+                ]
+            },
+
+            level_250_300: {
+                title: "Level 250-300 Accounts",
+                list: [
+                    {
+                        name: "High-Tier Account #1",
+                        level: "Level 275",
+                        price: "850",
+                        image: "acc7.jpg",
+                        details: "High-tier account. Good value for serious buyers."
+                    }
+                ]
+            },
+
+            level_300_400: {
+                title: "Level 300-400 Accounts",
+                list: [
+                    {
+                        name: "Elite Account #1",
+                        level: "Level 350",
+                        price: "1000",
+                        image: "acc8.jpg",
+                        details: "Elite account with strong progress."
+                    }
+                ]
+            },
+
+            level_400_500: {
+                title: "Level 400-500 Accounts",
+                list: [
+                    {
+                        name: "Top-Tier Account #1",
+                        level: "Level 430",
+                        price: "1800",
+                        image: "acc9.jpg",
+                        details: "Top-tier account. Best for premium buyers."
+                    }
+                ]
+            }
+        };
+
         function registerUser() {
             const username = document.getElementById("usernameInput").value.trim();
             const password = document.getElementById("passwordInput").value.trim();
+            const confirmPassword = document.getElementById("confirmPasswordInput").value.trim();
 
-            if (username === "" || password === "") {
-                document.getElementById("loginError").innerText = "Please enter username and password.";
-                document.getElementById("loginError").style.display = "block";
-                document.getElementById("registerSuccess").style.display = "none";
+            if (username === "" || password === "" || confirmPassword === "") {
+                showLoginError("Please fill username, password, and confirm password.");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showLoginError("Passwords do not match.");
                 return;
             }
 
@@ -626,43 +781,92 @@
         function login() {
             const username = document.getElementById("usernameInput").value.trim();
             const password = document.getElementById("passwordInput").value.trim();
+            const remember = document.getElementById("rememberMe").checked;
 
             const savedUsername = localStorage.getItem("registeredUsername");
             const savedPassword = localStorage.getItem("registeredPassword");
 
             if (username === savedUsername && password === savedPassword) {
-                localStorage.setItem("loggedIn", "yes");
+                if (remember) {
+                    localStorage.setItem("loggedIn", "yes");
+                } else {
+                    sessionStorage.setItem("loggedIn", "yes");
+                }
+
                 localStorage.setItem("currentUsername", username);
 
                 document.getElementById("loginScreen").style.display = "none";
                 document.getElementById("displayUsername").innerText = username;
-                document.getElementById("proofTelegram").value = username;
+
+                if (document.getElementById("proofTelegram")) {
+                    document.getElementById("proofTelegram").value = username;
+                }
             } else {
-                document.getElementById("loginError").innerText = "Wrong username or password.";
-                document.getElementById("loginError").style.display = "block";
-                document.getElementById("registerSuccess").style.display = "none";
+                showLoginError("Wrong username or password.");
             }
+        }
+
+        function showLoginError(message) {
+            document.getElementById("loginError").innerText = message;
+            document.getElementById("loginError").style.display = "block";
+            document.getElementById("registerSuccess").style.display = "none";
         }
 
         function logout() {
             localStorage.removeItem("loggedIn");
+            sessionStorage.removeItem("loggedIn");
             localStorage.removeItem("currentUsername");
             location.reload();
         }
 
         window.onload = function() {
-            const loggedIn = localStorage.getItem("loggedIn");
+            const loggedIn =
+                localStorage.getItem("loggedIn") === "yes" ||
+                sessionStorage.getItem("loggedIn") === "yes";
+
             const currentUsername = localStorage.getItem("currentUsername");
 
-            if (loggedIn === "yes") {
+            if (loggedIn) {
                 document.getElementById("loginScreen").style.display = "none";
-                document.getElementById("displayUsername").innerText = currentUsername;
+                document.getElementById("displayUsername").innerText = currentUsername || "User";
 
                 if (document.getElementById("proofTelegram")) {
-                    document.getElementById("proofTelegram").value = currentUsername;
+                    document.getElementById("proofTelegram").value = currentUsername || "";
                 }
             }
         };
+
+        function showAccounts(levelKey) {
+            const data = accounts[levelKey];
+            const accountList = document.getElementById("accountList");
+            const accountItems = document.getElementById("accountItems");
+
+            document.getElementById("accountListTitle").innerText = data.title;
+            accountItems.innerHTML = "";
+
+            data.list.forEach(function(account) {
+                const item = document.createElement("div");
+                item.className = "account-item";
+                item.innerHTML =
+                    "<strong>" + account.name + "</strong>" +
+                    "<span>" + account.level + " • ₱" + account.price + "</span>";
+
+                item.onclick = function() {
+                    openAccountInfo(
+                        account.name,
+                        account.level,
+                        account.price,
+                        account.image,
+                        account.details
+                    );
+                };
+
+                accountItems.appendChild(item);
+            });
+
+            accountList.style.display = "block";
+            accountList.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
 
         function openAccountInfo(account, level, price, image, details) {
             selectedAccount = account;
