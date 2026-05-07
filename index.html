@@ -107,16 +107,16 @@
                 0 0 25px rgba(123, 0, 255, 0.30);
         }
 
-        .customer-login-card label {
-            text-align: left;
+        label {
             display: block;
             margin: 12px 0 6px;
             color: #ffb8ff;
             font-size: 14px;
             font-weight: bold;
+            text-align: left;
         }
 
-        .customer-login-card input {
+        input {
             width: 100%;
             padding: 14px;
             border-radius: 15px;
@@ -368,7 +368,7 @@
             object-fit: cover;
         }
 
-        .info-box, .gcash-box {
+        .info-box, .gcash-box, .approved-box {
             background: rgba(0, 0, 0, 0.38);
             border: 1px solid rgba(255, 0, 255, 0.35);
             border-radius: 18px;
@@ -377,7 +377,7 @@
             text-align: left;
         }
 
-        .info-box strong, .gcash-box strong {
+        .info-box strong, .gcash-box strong, .approved-box strong {
             color: var(--pink);
         }
 
@@ -407,26 +407,6 @@
         .back-btn {
             background: rgba(123, 0, 255, 0.45);
             box-shadow: none;
-        }
-
-        label {
-            display: block;
-            margin: 12px 0 6px;
-            color: #ffb8ff;
-            font-size: 14px;
-            font-weight: bold;
-            text-align: left;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 0, 255, 0.35);
-            background: rgba(0, 0, 0, 0.42);
-            color: white;
-            outline: none;
-            font-size: 15px;
         }
 
         .status-text {
@@ -572,17 +552,13 @@
 
             <div class="info-box">
                 <p><strong>Step 1:</strong> Send the exact amount to the GCash shown above.</p>
-                <p><strong>Step 2:</strong> Start the Telegram bot and copy your Telegram ID.</p>
-                <p><strong>Step 3:</strong> Upload your GCash screenshot below.</p>
-                <p><strong>Step 4:</strong> Wait for admin approval. If approved, the bot will send the account username/password automatically.</p>
+                <p><strong>Step 2:</strong> Upload your GCash screenshot below.</p>
+                <p><strong>Step 3:</strong> Wait for admin approval.</p>
+                <p><strong>Step 4:</strong> Once approved, account username/password will appear directly here on the website.</p>
             </div>
 
-            <a class="telegram-btn" href="https://t.me/Demixyloadmin" target="_blank">
-                Open Telegram Bot / Admin
-            </a>
-
-            <label>Your Telegram ID</label>
-            <input type="text" id="customerTelegramId" placeholder="Example: 123456789">
+            <label>Your Website Username</label>
+            <input type="text" id="customerWebsiteUsername" placeholder="Example: buyer123">
 
             <label>GCash Reference Number</label>
             <input type="text" id="paymentReference" placeholder="Enter GCash reference number">
@@ -591,6 +567,7 @@
             <input type="file" id="proofImage" accept="image/*">
 
             <button onclick="submitProof()">Submit Proof for Approval</button>
+            <button onclick="checkOrderStatus()">Check Approval Status</button>
 
             <p class="status-text" id="proofStatus"></p>
 
@@ -813,6 +790,11 @@
             document.getElementById("gcashName").innerText = gcashInfo[seller].name;
             document.getElementById("gcashNumber").innerText = gcashInfo[seller].number;
 
+            const currentCustomer = localStorage.getItem("currentCustomer");
+            if (currentCustomer) {
+                document.getElementById("customerWebsiteUsername").value = currentCustomer;
+            }
+
             document.getElementById("proofStatus").innerText = "";
         }
 
@@ -834,7 +816,8 @@
 
         async function submitProof() {
             const status = document.getElementById("proofStatus");
-            const telegramId = document.getElementById("customerTelegramId").value.trim();
+            const usernameInput = document.getElementById("customerWebsiteUsername").value.trim();
+            const customerUsername = localStorage.getItem("currentCustomer") || usernameInput;
             const reference = document.getElementById("paymentReference").value.trim();
             const file = document.getElementById("proofImage").files[0];
 
@@ -848,8 +831,8 @@
                 return;
             }
 
-            if (!telegramId || !reference || !file) {
-                status.innerText = "Please complete Telegram ID, reference number, and proof screenshot.";
+            if (!customerUsername || !reference || !file) {
+                status.innerText = "Please complete username, reference number, and proof screenshot.";
                 return;
             }
 
@@ -866,7 +849,7 @@
                     body: JSON.stringify({
                         account_id: selectedAccount.id,
                         seller: selectedSeller,
-                        customer_telegram_id: telegramId,
+                        customer_username: customerUsername,
                         payment_reference: reference,
                         proof_image_base64: base64,
                         proof_image_type: file.type
@@ -880,10 +863,73 @@
                     return;
                 }
 
-                status.innerText = "Proof submitted. Please wait for admin approval in Telegram.";
+                localStorage.setItem("lastOrderId", result.order_id);
+                localStorage.setItem("lastOrderUsername", customerUsername);
+
+                status.innerHTML =
+                    "Proof submitted. Please wait for admin approval.<br><br>" +
+                    "<button onclick='checkOrderStatus()'>Check Approval Status</button>";
 
                 document.getElementById("paymentReference").value = "";
                 document.getElementById("proofImage").value = "";
+            } catch (error) {
+                status.innerText = "Error: " + error.message;
+            }
+        }
+
+        async function checkOrderStatus() {
+            const status = document.getElementById("proofStatus");
+
+            const orderId = localStorage.getItem("lastOrderId");
+            const customerUsername =
+                localStorage.getItem("lastOrderUsername") ||
+                localStorage.getItem("currentCustomer");
+
+            if (!orderId || !customerUsername) {
+                status.innerText = "No order found on this device. Submit proof first.";
+                return;
+            }
+
+            status.innerText = "Checking approval status...";
+
+            try {
+                const response = await fetch(
+                    "/.netlify/functions/check-order?order_id=" +
+                    encodeURIComponent(orderId) +
+                    "&customer_username=" +
+                    encodeURIComponent(customerUsername)
+                );
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    status.innerText = "Error: " + (result.error || "Could not check order.");
+                    return;
+                }
+
+                if (result.status === "pending") {
+                    status.innerText = "Still pending. Please wait for admin approval.";
+                    return;
+                }
+
+                if (result.status === "denied") {
+                    status.innerText = "Payment denied. Please contact admin.";
+                    return;
+                }
+
+                if (result.status === "approved") {
+                    status.innerHTML =
+                        "<div class='approved-box'>" +
+                        "✅ <strong>Payment approved!</strong><br><br>" +
+                        "<strong>Account:</strong> " + (result.account.name || "N/A") + "<br>" +
+                        "<strong>Level:</strong> " + (result.account.level || "N/A") + "<br>" +
+                        "<strong>Nickname:</strong> " + (result.account.nickname || "N/A") + "<br>" +
+                        "<strong>Region:</strong> " + (result.account.region || "N/A") + "<br>" +
+                        "<strong>UID:</strong> " + (result.account.uid || "N/A") + "<br><br>" +
+                        "<strong>Account Username:</strong> " + (result.account.account_username || "Not set") + "<br>" +
+                        "<strong>Account Password:</strong> " + (result.account.account_password || "Not set") +
+                        "</div>";
+                }
             } catch (error) {
                 status.innerText = "Error: " + error.message;
             }
@@ -907,5 +953,3 @@
     </script>
 </body>
 </html>
- 
- 
