@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>DemiSke Admin</title>
+    <title>DemiSke Vault</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -11,189 +11,373 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --pink: #ff35f5;
+            --purple: #7b00ff;
+            --soft: #d9c5ff;
+        }
+
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: Arial, sans-serif;
             color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
             background:
-                radial-gradient(circle at top, rgba(255, 0, 230, 0.22), transparent 35%),
-                linear-gradient(rgba(5, 8, 18, 0.90), rgba(5, 8, 18, 0.98)),
+                radial-gradient(circle at top, rgba(255, 0, 230, 0.20), transparent 35%),
+                linear-gradient(rgba(8, 12, 27, 0.84), rgba(3, 5, 13, 0.96)),
                 url("bg.jpg");
             background-size: cover;
             background-position: center;
-            padding: 24px 16px;
+            background-attachment: fixed;
         }
 
-        .box {
+        .container {
+            min-height: 100vh;
+            padding: 28px 18px 42px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .top-box {
             width: 100%;
-            max-width: 460px;
-            margin: 0 auto 20px;
-            background: rgba(13, 18, 36, 0.92);
-            border: 1px solid rgba(255, 0, 255, 0.42);
+            max-width: 450px;
+            margin-bottom: 18px;
+            padding: 20px;
+            border-radius: 26px;
+            background: rgba(17, 26, 45, 0.72);
+            border: 1px solid rgba(160, 120, 255, 0.30);
+            box-shadow: 0 0 28px rgba(123, 0, 255, 0.25);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 36px;
+            color: #ffffff;
+            text-shadow: 0 0 8px #ff00ff, 0 0 18px #a600ff, 0 0 35px #6a00ff;
+        }
+
+        .subtitle {
+            color: #d7d7e8;
+            margin: 0 0 8px;
+            font-size: 14px;
+        }
+
+        .telegram {
+            color: var(--pink);
+            font-weight: bold;
+            margin: 6px 0;
+            text-shadow: 0 0 12px #c000ff;
+        }
+
+        .menu, .account-list {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .level-btn {
+            width: 100%;
+            margin: 10px 0;
+            padding: 20px 15px;
+            border-radius: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            background: linear-gradient(135deg, rgba(60, 75, 110, 0.96), rgba(33, 42, 68, 0.96));
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 900;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+        }
+
+        .level-btn span {
+            display: block;
+            margin-top: 5px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #d7c9ff;
+        }
+
+        .account-list {
+            display: none;
+            margin-top: 16px;
+            padding: 18px;
             border-radius: 24px;
-            padding: 22px;
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.25);
+            background: rgba(12, 18, 35, 0.88);
+            border: 1px solid rgba(255, 0, 255, 0.32);
+            box-shadow: 0 0 24px rgba(255, 0, 255, 0.18);
+            backdrop-filter: blur(10px);
+        }
+
+        .account-list h2 {
+            margin: 0 0 12px;
+            font-size: 24px;
+            text-shadow: 0 0 12px #c000ff;
+        }
+
+        .account-item {
+            width: 100%;
+            margin: 9px 0;
+            padding: 15px;
+            border-radius: 16px;
+            background: rgba(48, 62, 88, 0.94);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+        }
+
+        .account-item strong {
+            display: block;
+            font-size: 17px;
+            color: white;
+        }
+
+        .account-item span {
+            display: block;
+            margin-top: 4px;
+            color: #d9c5ff;
+            font-size: 13px;
+        }
+
+        .note {
+            width: 100%;
+            max-width: 450px;
+            margin-top: 18px;
+            padding: 15px;
+            border-radius: 17px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 0, 255, 0.25);
+            font-size: 13px;
+            color: #cccccc;
+            line-height: 1.5;
+        }
+
+        .popup-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.84);
+            justify-content: center;
+            align-items: center;
+            padding: 18px;
+            z-index: 999;
+        }
+
+        .popup {
+            width: 100%;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: rgba(16, 20, 35, 0.98);
+            border: 1px solid rgba(255, 0, 255, 0.48);
+            border-radius: 26px;
+            padding: 23px;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.35);
             backdrop-filter: blur(12px);
         }
 
-        h1, h2 {
-            text-align: center;
-            text-shadow: 0 0 10px #ff00ff, 0 0 22px #7b00ff;
+        .popup h2 {
+            margin-top: 0;
+            color: #ffffff;
+            text-shadow: 0 0 12px #c000ff;
+        }
+
+        .popup p {
+            color: var(--soft);
+            line-height: 1.5;
+        }
+
+        .account-img {
+            width: 100%;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 0, 255, 0.35);
+            margin: 12px 0;
+            background: rgba(0, 0, 0, 0.35);
+            max-height: 300px;
+            object-fit: cover;
+        }
+
+        .info-box, .gcash-box {
+            background: rgba(0, 0, 0, 0.38);
+            border: 1px solid rgba(255, 0, 255, 0.35);
+            border-radius: 18px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .info-box strong, .gcash-box strong {
+            color: var(--pink);
+        }
+
+        button, .telegram-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 15px;
+            border: none;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            background: linear-gradient(135deg, #ff00e6, #7b00ff);
+            box-shadow: 0 0 15px rgba(255, 0, 230, 0.55), 0 0 28px rgba(123, 0, 255, 0.35);
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: none;
+        }
+
+        .back-btn {
+            background: rgba(123, 0, 255, 0.45);
+            box-shadow: none;
+        }
+
+        form {
+            margin-top: 15px;
+            text-align: left;
         }
 
         label {
             display: block;
-            margin-top: 14px;
-            margin-bottom: 6px;
+            margin: 12px 0 6px;
             color: #ffb8ff;
-            font-weight: bold;
             font-size: 14px;
+            font-weight: bold;
         }
 
-        input, select, textarea {
+        input {
             width: 100%;
-            padding: 13px;
-            border-radius: 14px;
+            padding: 14px;
+            border-radius: 15px;
             border: 1px solid rgba(255, 0, 255, 0.35);
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(0, 0, 0, 0.42);
             color: white;
             outline: none;
             font-size: 15px;
         }
 
-        textarea {
-            min-height: 90px;
-            resize: vertical;
-        }
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 31px;
+            }
 
-        button {
-            width: 100%;
-            margin-top: 16px;
-            padding: 14px;
-            border: none;
-            border-radius: 15px;
-            color: white;
-            font-weight: bold;
-            font-size: 15px;
-            background: linear-gradient(135deg, #ff00e6, #7b00ff);
-            box-shadow: 0 0 18px rgba(255, 0, 230, 0.45);
-        }
-
-        .secondary {
-            background: rgba(255,255,255,0.12);
-            box-shadow: none;
-        }
-
-        .danger {
-            background: rgba(255, 60, 90, 0.35);
-            box-shadow: none;
-        }
-
-        .status {
-            text-align: center;
-            margin-top: 14px;
-            color: #d9c5ff;
-            line-height: 1.5;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .preview {
-            width: 100%;
-            border-radius: 16px;
-            margin-top: 14px;
-            border: 1px solid rgba(255,0,255,0.35);
-            display: none;
-        }
-
-        .account-card {
-            background: rgba(0,0,0,0.35);
-            border: 1px solid rgba(255,0,255,0.25);
-            border-radius: 16px;
-            padding: 14px;
-            margin-top: 12px;
-        }
-
-        .account-card img {
-            width: 100%;
-            border-radius: 12px;
-            margin-bottom: 10px;
-        }
-
-        .account-card strong {
-            color: #ff4dff;
+            .level-btn {
+                font-size: 20px;
+                padding: 18px 12px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="box" id="loginBox">
-        <h1>Admin Login</h1>
+    <div class="container">
+        <div class="top-box">
+            <h1>DemiSke Vault</h1>
+            <p class="subtitle">Premium Accounts • Fast Transaction • Trusted Seller</p>
+            <p class="telegram">Telegram: @Demixyloadmin</p>
+        </div>
 
-        <label>Email</label>
-        <input type="email" id="adminEmail" placeholder="Admin email">
+        <div class="menu">
+            <button class="level-btn" onclick="showAccounts('level_1_50')">Level 1-50<span>Tap to view accounts</span></button>
+            <button class="level-btn" onclick="showAccounts('level_50_100')">Level 50-100<span>Tap to view accounts</span></button>
+            <button class="level-btn" onclick="showAccounts('level_100_150')">Level 100-150<span>Tap to view accounts</span></button>
+            <button class="level-btn" onclick="showAccounts('level_150_200')">Level 150-200<span>Tap to view accounts</span></button>
+            <button class="level-btn" onclick="showAccounts('level_200_250')">Level 200-250<span>Tap to view accounts</span></button>
+            <button class="level-btn" onclick="showAccounts('level_250_300')">Level 250-300<span>Tap to view accounts</span></button>
+            <button class="level-btn" onclick="showAccounts('level_300_400')">Level 300-400<span>Tap to view accounts</span></button>
+            <button class="level-btn" onclick="showAccounts('level_400_500')">Level 400-500<span>Tap to view accounts</span></button>
+        </div>
 
-        <label>Password</label>
-        <input type="password" id="adminPassword" placeholder="Admin password">
+        <div class="account-list" id="accountList">
+            <h2 id="accountListTitle">Available Accounts</h2>
+            <div id="accountItems"></div>
+        </div>
 
-        <button onclick="adminLogin()">Login</button>
-
-        <p class="status" id="loginStatus"></p>
+        <div class="note">
+            Accounts are updated by admin. Choose a level, pick an account, then submit payment proof.
+        </div>
     </div>
 
-    <div class="box hidden" id="adminBox">
-        <h1>DemiSke Admin</h1>
-        <p class="status">Upload account picture and details. It will appear automatically on the website.</p>
+    <div class="popup-bg" id="accountPopup">
+        <div class="popup">
+            <h2>Account Details</h2>
 
-        <label>Account Picture</label>
-        <input type="file" id="accountImage" accept="image/*" onchange="previewImage(event)">
-        <img id="imagePreview" class="preview">
+            <img id="accountImage" class="account-img" src="" alt="Account Picture">
 
-        <label>Account Name</label>
-        <input type="text" id="accountName" placeholder="Example: KhunICE Account">
+            <div class="info-box">
+                <p><strong>Account:</strong> <span id="infoAccount"></span></p>
+                <p><strong>Level:</strong> <span id="infoLevel"></span></p>
+                <p><strong>Price:</strong> ₱<span id="infoPrice"></span></p>
+                <p><strong>Nickname:</strong> <span id="infoNickname"></span></p>
+                <p><strong>Region:</strong> <span id="infoRegion"></span></p>
+                <p><strong>UID:</strong> <span id="infoUid"></span></p>
+                <p><strong>Details:</strong> <span id="infoDetails"></span></p>
+            </div>
 
-        <label>Level</label>
-        <input type="text" id="accountLevel" placeholder="Example: Level 184">
-
-        <label>Price</label>
-        <input type="text" id="accountPrice" placeholder="Example: 550">
-
-        <label>UID</label>
-        <input type="text" id="accountUid" placeholder="Example: 361673204">
-
-        <label>Region</label>
-        <input type="text" id="accountRegion" placeholder="Example: TH">
-
-        <label>Nickname</label>
-        <input type="text" id="accountNickname" placeholder="Example: KhunICE<3">
-
-        <label>Category</label>
-        <select id="accountCategory">
-            <option value="level_1_50">Level 1-50</option>
-            <option value="level_50_100">Level 50-100</option>
-            <option value="level_100_150">Level 100-150</option>
-            <option value="level_150_200">Level 150-200</option>
-            <option value="level_200_250">Level 200-250</option>
-            <option value="level_250_300">Level 250-300</option>
-            <option value="level_300_400">Level 300-400</option>
-            <option value="level_400_500">Level 400-500</option>
-        </select>
-
-        <label>Extra Details</label>
-        <textarea id="accountDetails" placeholder="Example: Includes weapon and soldier collections."></textarea>
-
-        <button onclick="saveAccount()">Save Account</button>
-        <button class="secondary" onclick="adminLogout()">Logout</button>
-
-        <p class="status" id="saveStatus"></p>
+            <button onclick="openSellerPopup()">Continue</button>
+            <button class="close-btn" onclick="closePopups()">Cancel</button>
+        </div>
     </div>
 
-    <div class="box hidden" id="accountBox">
-        <h2>Saved Accounts</h2>
-        <div id="adminAccounts"></div>
+    <div class="popup-bg" id="sellerPopup">
+        <div class="popup">
+            <h2>Choose Seller</h2>
+            <p>Choose where you want to buy this account.</p>
+
+            <button onclick="openGcash('Demi')">Demi</button>
+            <button onclick="openGcash('SKE')">SKE</button>
+
+            <button class="back-btn" onclick="backToAccount()">Back to Account</button>
+            <button class="close-btn" onclick="closePopups()">Cancel</button>
+        </div>
+    </div>
+
+    <div class="popup-bg" id="gcashPopup">
+        <div class="popup">
+            <h2>GCash Payment</h2>
+
+            <div class="gcash-box">
+                <p><strong>Selected Account:</strong> <span id="gcashAccount"></span></p>
+                <p><strong>Seller:</strong> <span id="gcashSeller"></span></p>
+                <p><strong>GCash Name:</strong> YOUR GCASH NAME</p>
+                <p><strong>GCash Number:</strong> 09XXXXXXXXX</p>
+                <p><strong>Amount:</strong> ₱<span id="paymentAmount"></span></p>
+            </div>
+
+            <p>After payment, submit proof below.</p>
+
+            <form name="payment-proof" method="POST" data-netlify="true" enctype="multipart/form-data">
+                <input type="hidden" name="form-name" value="payment-proof">
+                <input type="hidden" name="account" id="formAccount">
+                <input type="hidden" name="level" id="formLevel">
+                <input type="hidden" name="seller" id="formSeller">
+                <input type="hidden" name="amount" id="formAmount">
+
+                <label>Telegram Username</label>
+                <input type="text" name="telegram" placeholder="@username" required>
+
+                <label>GCash Reference Number</label>
+                <input type="text" name="reference" placeholder="GCash reference number" required>
+
+                <label>Upload GCash Screenshot</label>
+                <input type="file" name="proof" accept="image/*" required>
+
+                <button type="submit">Submit Proof</button>
+            </form>
+
+            <a class="telegram-btn" href="https://t.me/Demixyloadmin">Message Admin on Telegram</a>
+
+            <button class="back-btn" onclick="backToSeller()">Back to Seller Choice</button>
+            <button class="close-btn" onclick="closePopups()">Close</button>
+        </div>
     </div>
 
     <script>
@@ -202,188 +386,119 @@
 
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        async function checkSession() {
-            const { data } = await db.auth.getSession();
+        let selectedAccount = null;
+        let selectedSeller = "";
 
-            if (data.session) {
-                showAdmin();
-                loadAdminAccounts();
-            }
+        function getCategoryTitle(category) {
+            const titles = {
+                "level_1_50": "Level 1-50 Accounts",
+                "level_50_100": "Level 50-100 Accounts",
+                "level_100_150": "Level 100-150 Accounts",
+                "level_150_200": "Level 150-200 Accounts",
+                "level_200_250": "Level 200-250 Accounts",
+                "level_250_300": "Level 250-300 Accounts",
+                "level_300_400": "Level 300-400 Accounts",
+                "level_400_500": "Level 400-500 Accounts"
+            };
+
+            return titles[category] || "Available Accounts";
         }
 
-        function showAdmin() {
-            document.getElementById("loginBox").classList.add("hidden");
-            document.getElementById("adminBox").classList.remove("hidden");
-            document.getElementById("accountBox").classList.remove("hidden");
-        }
+        async function showAccounts(category) {
+            const listBox = document.getElementById("accountList");
+            const itemBox = document.getElementById("accountItems");
+            const title = document.getElementById("accountListTitle");
 
-        async function adminLogin() {
-            const email = document.getElementById("adminEmail").value.trim();
-            const password = document.getElementById("adminPassword").value.trim();
+            title.innerText = getCategoryTitle(category);
+            itemBox.innerHTML = "<p>Loading accounts...</p>";
+            listBox.style.display = "block";
+            listBox.scrollIntoView({ behavior: "smooth", block: "start" });
 
-            document.getElementById("loginStatus").innerText = "Logging in...";
-
-            const { error } = await db.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
-
-            if (error) {
-                document.getElementById("loginStatus").innerText = error.message;
-                return;
-            }
-
-            document.getElementById("loginStatus").innerText = "Login successful.";
-            showAdmin();
-            loadAdminAccounts();
-        }
-
-        async function adminLogout() {
-            await db.auth.signOut();
-       y
-     location.reload();
-        }
-
-        function previewImage(event) {
-            const file = event.target.files[0];
-            const preview = document.getElementById("imagePreview");
-
-            if (file) {
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = "block";
-            }
-        }
-
-        async function saveAccount() {
-            const imageFile = document.getElementById("accountImage").files[0];
-            const name = document.getElementById("accountName").value.trim();
-            const level = document.getElementById("accountLevel").value.trim();
-            const price = document.getElementById("accountPrice").value.trim();
-            const uid = document.getElementById("accountUid").value.trim();
-            const region = document.getElementById("accountRegion").value.trim();
-            const nickname = document.getElementById("accountNickname").value.trim();
-            const category = document.getElementById("accountCategory").value;
-            const details = document.getElementById("accountDetails").value.trim();
-
-            const status = document.getElementById("saveStatus");
-
-            if (!imageFile || !name || !level || !price || !category) {
-                status.innerText = "Please complete picture, name, level, price, and category.";
-                return;
-            }
-
-            status.innerText = "Uploading image...";
-
-            const fileExt = imageFile.name.split(".").pop();
-            const fileName = Date.now() + "-" + Math.random().toString(36).substring(2) + "." + fileExt;
-            const filePath = "accounts/" + fileName;
-
-            const { error: uploadError } = await db.storage
-                .from("account-images")
-                .upload(filePath, imageFile);
-
-            if (uploadError) {
-                status.innerText = "Image upload failed: " + uploadError.message;
-                return;
-            }
-
-            const { data: publicUrlData } = db.storage
-                .from("account-images")
-                .getPublicUrl(filePath);
-
-            const imageUrl = publicUrlData.publicUrl;
-
-            status.innerText = "Saving account...";
-
-            const { error: insertError } = await db
-                .from("accounts")
-                .insert({
-                    name: name,
-                    level: level,
-                    price: price,
-                    uid: uid,
-                    region: region,
-                    nickname: nickname,
-                    category: category,
-                    image_url: imageUrl,
-                    details: details
-                });
-
-            if (insertError) {
-                status.innerText = "Save failed: " + insertError.message;
-                return;
-            }
-
-            status.innerText = "Account saved successfully.";
-
-            document.getElementById("accountImage").value = "";
-            document.getElementById("imagePreview").style.display = "none";
-            document.getElementById("accountName").value = "";
-            document.getElementById("accountLevel").value = "";
-            document.getElementById("accountPrice").value = "";
-            document.getElementById("accountUid").value = "";
-            document.getElementById("accountRegion").value = "";
-            document.getElementById("accountNickname").value = "";
-            document.getElementById("accountDetails").value = "";
-
-            loadAdminAccounts();
-        }
-
-        async function loadAdminAccounts() {
             const { data, error } = await db
                 .from("accounts")
                 .select("*")
+                .eq("category", category)
                 .order("created_at", { ascending: false });
 
-            const container = document.getElementById("adminAccounts");
-
             if (error) {
-                container.innerHTML = "<p>" + error.message + "</p>";
+                itemBox.innerHTML = "<p>Error: " + error.message + "</p>";
                 return;
             }
 
             if (!data || data.length === 0) {
-                container.innerHTML = "<p>No accounts saved yet.</p>";
+                itemBox.innerHTML = "<p>No accounts available in this category yet.</p>";
                 return;
             }
 
-            container.innerHTML = "";
+            itemBox.innerHTML = "";
 
             data.forEach(account => {
-                const div = document.createElement("div");
-                div.className = "account-card";
-                div.innerHTML = `
-                    <img src="${account.image_url || ""}" alt="Account image">
-                    <p><strong>${account.name}</strong></p>
-                    <p>${account.level} • ₱${account.price}</p>
-                    <p>Nickname: ${account.nickname || "N/A"}</p>
-                    <p>Region: ${account.region || "N/A"}</p>
-                    <p>UID: ${account.uid || "N/A"}</p>
-                    <p>Category: ${account.category}</p>
-                    <button class="danger" onclick="deleteAccount('${account.id}')">Delete Account</button>
+                const item = document.createElement("div");
+                item.className = "account-item";
+                item.innerHTML = `
+                    <strong>${account.name || "Unnamed Account"}</strong>
+                    <span>${account.level || "No level"} • ₱${account.price || "0"} • ${account.region || "No region"}</span>
                 `;
-                container.appendChild(div);
+                item.onclick = function() {
+                    openAccount(account);
+                };
+                itemBox.appendChild(item);
             });
         }
 
-        async function deleteAccount(id) {
-            const confirmDelete = confirm("Delete this account?");
-            if (!confirmDelete) return;
+        function openAccount(account) {
+            selectedAccount = account;
 
-            const { error } = await db
-                .from("accounts")
-                .delete()
-                .eq("id", id);
+            document.getElementById("accountImage").src = account.image_url || "";
+            document.getElementById("infoAccount").innerText = account.name || "N/A";
+            document.getElementById("infoLevel").innerText = account.level || "N/A";
+            document.getElementById("infoPrice").innerText = account.price || "0";
+            document.getElementById("infoNickname").innerText = account.nickname || "N/A";
+            document.getElementById("infoRegion").innerText = account.region || "N/A";
+            document.getElementById("infoUid").innerText = account.uid || "N/A";
+            document.getElementById("infoDetails").innerText = account.details || "No extra details.";
 
-            if (error) {
-                alert(error.message);
-                return;
-            }
-
-            loadAdminAccounts();
+            document.getElementById("accountPopup").style.display = "flex";
         }
 
-        checkSession();
+        function openSellerPopup() {
+            document.getElementById("accountPopup").style.display = "none";
+            document.getElementById("sellerPopup").style.display = "flex";
+        }
+
+        function openGcash(seller) {
+            selectedSeller = seller;
+
+            document.getElementById("sellerPopup").style.display = "none";
+            document.getElementById("gcashPopup").style.display = "flex";
+
+            document.getElementById("gcashAccount").innerText =
+                selectedAccount.name + " - " + selectedAccount.level;
+
+            document.getElementById("gcashSeller").innerText = selectedSeller;
+            document.getElementById("paymentAmount").innerText = selectedAccount.price;
+
+            document.getElementById("formAccount").value = selectedAccount.name;
+            document.getElementById("formLevel").value = selectedAccount.level;
+            document.getElementById("formSeller").value = selectedSeller;
+            document.getElementById("formAmount").value = "₱" + selectedAccount.price;
+        }
+
+        function backToAccount() {
+            document.getElementById("sellerPopup").style.display = "none";
+            document.getElementById("accountPopup").style.display = "flex";
+        }
+
+        function backToSeller() {
+            document.getElementById("gcashPopup").style.display = "none";
+            document.getElementById("sellerPopup").style.display = "flex";
+        }
+
+        function closePopups() {
+            document.getElementById("accountPopup").style.display = "none";
+            document.getElementById("sellerPopup").style.display = "none";
+            document.getElementById("gcashPopup").style.display = "none";
+        }
     </script>
 </body>
 </html>
