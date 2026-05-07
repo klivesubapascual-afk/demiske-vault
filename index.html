@@ -218,6 +218,20 @@
             max-width: 450px;
         }
 
+        .helper-note {
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 12px;
+            padding: 14px;
+            border-radius: 17px;
+            background: rgba(255, 0, 230, 0.12);
+            border: 1px solid rgba(255, 0, 255, 0.28);
+            color: #f4d9ff;
+            font-size: 14px;
+            line-height: 1.5;
+            box-shadow: 0 0 18px rgba(255, 0, 230, 0.15);
+        }
+
         .level-btn {
             width: 100%;
             margin: 10px 0;
@@ -239,6 +253,25 @@
             font-size: 13px;
             font-weight: 600;
             color: #d7c9ff;
+        }
+
+        .cta-text {
+            display: inline-block !important;
+            margin-top: 11px !important;
+            padding: 9px 14px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ff00e6, #7b00ff);
+            color: #ffffff !important;
+            font-size: 13px !important;
+            font-weight: 900 !important;
+            letter-spacing: 0.2px;
+            box-shadow:
+                0 0 12px rgba(255, 0, 230, 0.55),
+                0 0 22px rgba(123, 0, 255, 0.35);
+        }
+
+        .level-btn:active {
+            transform: scale(0.97);
         }
 
         .account-list {
@@ -282,6 +315,17 @@
             margin-top: 4px;
             color: #d9c5ff;
             font-size: 13px;
+        }
+
+        .account-item .pick-cta {
+            display: inline-block;
+            margin-top: 9px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255, 0, 230, 0.22);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 800;
         }
 
         .note {
@@ -475,15 +519,50 @@
             <button onclick="customerLogout()" class="close-btn">Logout</button>
         </div>
 
+        <div class="helper-note">
+            👇 Tap a level below, then choose from the account list that appears.
+        </div>
+
         <div class="menu">
-            <button class="level-btn" onclick="showAccounts('level_1_50')">Level 1-50<span>Tap to view accounts</span></button>
-            <button class="level-btn" onclick="showAccounts('level_50_100')">Level 50-100<span>Tap to view accounts</span></button>
-            <button class="level-btn" onclick="showAccounts('level_100_150')">Level 100-150<span>Tap to view accounts</span></button>
-            <button class="level-btn" onclick="showAccounts('level_150_200')">Level 150-200<span>Tap to view accounts</span></button>
-            <button class="level-btn" onclick="showAccounts('level_200_250')">Level 200-250<span>Tap to view accounts</span></button>
-            <button class="level-btn" onclick="showAccounts('level_250_300')">Level 250-300<span>Tap to view accounts</span></button>
-            <button class="level-btn" onclick="showAccounts('level_300_400')">Level 300-400<span>Tap to view accounts</span></button>
-            <button class="level-btn" onclick="showAccounts('level_400_500')">Level 400-500<span>Tap to view accounts</span></button>
+            <button class="level-btn" onclick="showAccounts('level_1_50')">
+                Level 1-50
+                <span class="cta-text">View Available Accounts →</span>
+            </button>
+
+            <button class="level-btn" onclick="showAccounts('level_50_100')">
+                Level 50-100
+                <span class="cta-text">View Available Accounts →</span>
+            </button>
+
+            <button class="level-btn" onclick="showAccounts('level_100_150')">
+                Level 100-150
+                <span class="cta-text">View Available Accounts →</span>
+            </button>
+
+            <button class="level-btn" onclick="showAccounts('level_150_200')">
+                Level 150-200
+                <span class="cta-text">View Available Accounts →</span>
+            </button>
+
+            <button class="level-btn" onclick="showAccounts('level_200_250')">
+                Level 200-250
+                <span class="cta-text">View Available Accounts →</span>
+            </button>
+
+            <button class="level-btn" onclick="showAccounts('level_250_300')">
+                Level 250-300
+                <span class="cta-text">View Available Accounts →</span>
+            </button>
+
+            <button class="level-btn" onclick="showAccounts('level_300_400')">
+                Level 300-400
+                <span class="cta-text">View Available Accounts →</span>
+            </button>
+
+            <button class="level-btn" onclick="showAccounts('level_400_500')">
+                Level 400-500
+                <span class="cta-text">View Available Accounts →</span>
+            </button>
         </div>
 
         <div class="account-list" id="accountList">
@@ -492,7 +571,7 @@
         </div>
 
         <div class="note">
-            Accounts are updated by admin. Choose a level, pick an account, then submit payment proof.
+            Tap any level button above to view available accounts. After choosing an account, you can see the full details, price, and payment instructions.
         </div>
     </div>
 
@@ -513,7 +592,7 @@
                 <p><strong>Details:</strong> <span id="infoDetails"></span></p>
             </div>
 
-            <button onclick="openSellerPopup()">Continue</button>
+            <button onclick="openSellerPopup()">Continue to Seller Choice</button>
             <button class="close-btn" onclick="closePopups()">Cancel</button>
         </div>
     </div>
@@ -524,8 +603,8 @@
             <h2>Choose Seller</h2>
             <p>Choose where you want to buy this account.</p>
 
-            <button onclick="openGcash('Demi')">Demi</button>
-            <button onclick="openGcash('SKE')">SKE</button>
+            <button onclick="openGcash('Demi')">Buy from Demi</button>
+            <button onclick="openGcash('SKE')">Buy from SKE</button>
 
             <button class="back-btn" onclick="backToAccount()">Back to Account</button>
             <button class="close-btn" onclick="closePopups()">Cancel</button>
@@ -563,7 +642,7 @@
                 <label>Upload GCash Screenshot</label>
                 <input type="file" name="proof" accept="image/*" required>
 
-                <button type="submit">Submit Proof</button>
+                <button type="submit">Submit Payment Proof</button>
             </form>
 
             <a class="telegram-btn" href="https://t.me/Demixyloadmin">Message Admin on Telegram</a>
@@ -744,6 +823,7 @@
                 item.innerHTML = `
                     <strong>${account.name || "Unnamed Account"}</strong>
                     <span>${account.level || "No level"} • ₱${account.price || "0"} • ${account.region || "No region"}</span>
+                    <div class="pick-cta">Click to view account details →</div>
                 `;
                 item.onclick = function() {
                     openAccount(account);
