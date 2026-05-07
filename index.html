@@ -70,13 +70,20 @@
             color: white;
             outline: none;
             text-align: center;
-            margin: 12px 0;
+            margin: 10px 0;
             font-size: 15px;
         }
 
         .login-error {
             display: none;
             color: #ff6bff;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .register-success {
+            display: none;
+            color: #8dffb3;
             font-size: 14px;
             margin-top: 10px;
         }
@@ -120,7 +127,7 @@
         .telegram {
             color: #ff4dff;
             font-weight: bold;
-            margin: 0;
+            margin: 6px 0;
             text-shadow: 0 0 12px #c000ff;
         }
 
@@ -302,17 +309,20 @@
 
 <body>
 
-    <!-- Login Screen -->
+    <!-- Login / Register Screen -->
     <div class="login-screen" id="loginScreen">
         <div class="login-box">
             <h2>DemiSke Vault</h2>
-            <p>Enter password to access the shop.</p>
+            <p id="authTitle">Login or register to continue</p>
 
-            <input type="password" id="passwordInput" placeholder="Enter password">
+            <input type="text" id="usernameInput" placeholder="Username">
+            <input type="password" id="passwordInput" placeholder="Password">
 
             <button onclick="login()">Login</button>
+            <button onclick="registerUser()" class="back-btn">Register</button>
 
-            <p class="login-error" id="loginError">Wrong password. Try again.</p>
+            <p class="login-error" id="loginError">Wrong username or password.</p>
+            <p class="register-success" id="registerSuccess">Registered successfully. You can now login.</p>
         </div>
     </div>
 
@@ -322,6 +332,8 @@
             <h1>DemiSke Vault</h1>
             <p class="subtitle">Premium Accounts • Fast Transaction • Trusted Seller</p>
             <p class="telegram">Telegram: @Demixyloadmin</p>
+            <p class="telegram">Logged in as: <span id="displayUsername">Guest</span></p>
+            <button onclick="logout()" class="close-btn">Logout</button>
         </div>
 
         <div class="menu">
@@ -404,7 +416,7 @@
                 <input type="hidden" name="amount" id="formAmount">
 
                 <label>Telegram Username</label>
-                <input type="text" name="telegram" placeholder="@username" required>
+                <input type="text" name="telegram" id="proofTelegram" placeholder="@username" required>
 
                 <label>GCash Reference Number</label>
                 <input type="text" name="reference" placeholder="GCash reference number" required>
@@ -428,21 +440,62 @@
         let selectedPrice = "";
         let selectedSeller = "";
 
-        function login() {
-            const password = document.getElementById("passwordInput").value;
-            const correctPassword = "demiske123";
+        function registerUser() {
+            const username = document.getElementById("usernameInput").value.trim();
+            const password = document.getElementById("passwordInput").value.trim();
 
-            if (password === correctPassword) {
-                document.getElementById("loginScreen").style.display = "none";
-                localStorage.setItem("loggedIn", "yes");
-            } else {
+            if (username === "" || password === "") {
+                document.getElementById("loginError").innerText = "Please enter username and password.";
                 document.getElementById("loginError").style.display = "block";
+                document.getElementById("registerSuccess").style.display = "none";
+                return;
+            }
+
+            localStorage.setItem("registeredUsername", username);
+            localStorage.setItem("registeredPassword", password);
+
+            document.getElementById("loginError").style.display = "none";
+            document.getElementById("registerSuccess").style.display = "block";
+        }
+
+        function login() {
+            const username = document.getElementById("usernameInput").value.trim();
+            const password = document.getElementById("passwordInput").value.trim();
+
+            const savedUsername = localStorage.getItem("registeredUsername");
+            const savedPassword = localStorage.getItem("registeredPassword");
+
+            if (username === savedUsername && password === savedPassword) {
+                localStorage.setItem("loggedIn", "yes");
+                localStorage.setItem("currentUsername", username);
+
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("displayUsername").innerText = username;
+                document.getElementById("proofTelegram").value = username;
+            } else {
+                document.getElementById("loginError").innerText = "Wrong username or password.";
+                document.getElementById("loginError").style.display = "block";
+                document.getElementById("registerSuccess").style.display = "none";
             }
         }
 
+        function logout() {
+            localStorage.removeItem("loggedIn");
+            localStorage.removeItem("currentUsername");
+            location.reload();
+        }
+
         window.onload = function() {
-            if (localStorage.getItem("loggedIn") === "yes") {
+            const loggedIn = localStorage.getItem("loggedIn");
+            const currentUsername = localStorage.getItem("currentUsername");
+
+            if (loggedIn === "yes") {
                 document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("displayUsername").innerText = currentUsername;
+
+                if (document.getElementById("proofTelegram")) {
+                    document.getElementById("proofTelegram").value = currentUsername;
+                }
             }
         };
 
@@ -479,6 +532,11 @@
             document.getElementById("formLevel").value = selectedLevel;
             document.getElementById("formSeller").value = selectedSeller;
             document.getElementById("formAmount").value = "₱" + selectedPrice;
+
+            const currentUsername = localStorage.getItem("currentUsername");
+            if (currentUsername) {
+                document.getElementById("proofTelegram").value = currentUsername;
+            }
         }
 
         function backToAccount() {
