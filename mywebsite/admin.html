@@ -1,1 +1,775 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DemiSke Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --red: #ff1e1e;
+            --red2: #990000;
+            --orange: #ff6a00;
+            --gold: #ffcc66;
+            --text: #ffffff;
+            --soft: #ffd6d6;
+            --card: rgba(14, 14, 22, 0.94);
+            --line: rgba(255, 60, 60, 0.35);
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top, rgba(255, 0, 0, 0.32), transparent 36%),
+                radial-gradient(circle at bottom right, rgba(255, 106, 0, 0.16), transparent 34%),
+                linear-gradient(rgba(5, 5, 10, 0.90), rgba(0, 0, 0, 0.98)),
+                url("bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 18px;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 34px 34px;
+            z-index: 0;
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+            max-width: 620px;
+            margin: auto;
+        }
+
+        .panel {
+            background:
+                linear-gradient(155deg, rgba(35, 0, 0, 0.92), rgba(8, 8, 16, 0.96)),
+                radial-gradient(circle at top right, rgba(255, 0, 0, 0.18), transparent 44%);
+            border: 1px solid var(--line);
+            border-radius: 30px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow:
+                0 0 30px rgba(255, 0, 0, 0.28),
+                0 0 60px rgba(255, 106, 0, 0.10),
+                inset 0 0 22px rgba(255, 0, 0, 0.08);
+            backdrop-filter: blur(12px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 14px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 1000;
+            font-size: 30px;
+            background: linear-gradient(135deg, var(--red), var(--red2), var(--orange));
+            box-shadow:
+                0 0 22px rgba(255, 0, 0, 0.60),
+                inset 0 0 16px rgba(255,255,255,0.12);
+        }
+
+        h1, h2 {
+            margin: 0 0 8px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow:
+                0 0 8px #ff0000,
+                0 0 20px #ff3b3b,
+                0 0 35px #7a0000;
+        }
+
+        .subtext {
+            color: var(--soft);
+            line-height: 1.5;
+            font-size: 14px;
+            text-align: center;
+            margin: 0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .stat {
+            padding: 12px 8px;
+            border-radius: 18px;
+            background: rgba(0,0,0,0.38);
+            border: 1px solid rgba(255, 70, 70, 0.24);
+            text-align: center;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .stat span {
+            display: block;
+            color: #ffb3b3;
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .section {
+            margin-top: 18px;
+            padding: 12px 14px;
+            border-radius: 18px;
+            background:
+                linear-gradient(135deg, rgba(255, 0, 0, 0.16), rgba(0,0,0,0.44));
+            border: 1px solid rgba(255, 60, 60, 0.25);
+            color: white;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            box-shadow: inset 0 0 14px rgba(255,0,0,0.08);
+        }
+
+        label {
+            display: block;
+            margin-top: 14px;
+            margin-bottom: 6px;
+            color: #ffb3b3;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 60, 60, 0.42);
+            background: rgba(0, 0, 0, 0.48);
+            color: white;
+            outline: none;
+            font-size: 15px;
+            box-shadow: inset 0 0 14px rgba(255, 0, 0, 0.06);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: rgba(255, 120, 80, 0.88);
+            box-shadow:
+                0 0 14px rgba(255, 0, 0, 0.35),
+                inset 0 0 14px rgba(255, 0, 0, 0.08);
+        }
+
+        select option {
+            background: #160606;
+            color: white;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .show-pass-btn {
+            position: absolute;
+            right: 8px;
+            bottom: 8px;
+            width: auto;
+            margin: 0;
+            padding: 8px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            box-shadow: none;
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.16);
+            text-transform: none;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 16px;
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 120, 80, 0.46);
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            background: linear-gradient(135deg, var(--red), var(--red2), var(--orange));
+            box-shadow:
+                0 0 16px rgba(255, 0, 0, 0.50),
+                0 0 32px rgba(255, 106, 0, 0.20);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        .secondary {
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.14);
+            box-shadow: none;
+            text-transform: none;
+        }
+
+        .danger {
+            background: linear-gradient(135deg, #ff2d2d, #760000);
+            box-shadow: 0 0 16px rgba(255, 0, 0, 0.30);
+        }
+
+        .status {
+            color: var(--soft);
+            text-align: center;
+            margin-top: 14px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        #imagePreviewBox {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        #imagePreviewBox img {
+            width: 100%;
+            height: 135px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 60, 60, 0.42);
+            box-shadow: 0 0 14px rgba(255, 0, 0, 0.22);
+        }
+
+        .account-card {
+            background:
+                linear-gradient(145deg, rgba(55, 8, 8, 0.92), rgba(8, 8, 14, 0.94));
+            border: 1px solid rgba(255, 60, 60, 0.30);
+            border-radius: 24px;
+            padding: 15px;
+            margin-top: 14px;
+            box-shadow:
+                0 10px 22px rgba(0, 0, 0, 0.35),
+                inset 0 0 18px rgba(255, 0, 0, 0.08);
+        }
+
+        .account-card img {
+            width: 100%;
+            max-height: 270px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 60, 60, 0.35);
+            margin-bottom: 10px;
+        }
+
+        .account-card strong {
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.70);
+        }
+
+        .account-card p {
+            margin: 8px 0;
+            color: #f5dcdc;
+        }
+
+        .pill {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255, 106, 0, 0.16);
+            border: 1px solid rgba(255, 180, 80, 0.30);
+            color: var(--gold);
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .mini {
+            color: #ffd0d0;
+            font-size: 13px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .modal-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            padding: 18px;
+            justify-content: center;
+            align-items: center;
+            background:
+                radial-gradient(circle at top, rgba(255, 0, 0, 0.25), transparent 35%),
+                radial-gradient(circle at bottom, rgba(255, 106, 0, 0.12), transparent 40%),
+                rgba(0, 0, 0, 0.90);
+            backdrop-filter: blur(7px);
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 420px;
+            border-radius: 30px;
+            padding: 22px;
+            background:
+                linear-gradient(155deg, rgba(28, 0, 0, 0.98), rgba(7, 7, 13, 0.98)),
+                radial-gradient(circle at top, rgba(255, 0, 0, 0.20), transparent 48%);
+            border: 1px solid rgba(255, 55, 55, 0.70);
+            box-shadow:
+                0 0 26px rgba(255, 0, 0, 0.45),
+                0 0 60px rgba(255, 106, 0, 0.18),
+                inset 0 0 22px rgba(255, 0, 0, 0.10);
+            text-align: center;
+        }
+
+        .modal p {
+            color: var(--soft);
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 520px) {
+            body {
+                padding: 14px 10px 30px;
+            }
+
+            .panel {
+                padding: 20px;
+                border-radius: 26px;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 30px;
+            }
+
+            .modal-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="page">
+
+    <div class="panel" id="loginBox">
+        <div class="header">
+            <div class="logo">DS</div>
+            <h1>Admin Login</h1>
+            <p class="subtext">Manage accounts, prices, pictures, and login credentials.</p>
+        </div>
+
+        <label>Email</label>
+        <input type="email" id="adminEmail" placeholder="Admin email">
+
+        <label>Password</label>
+        <input type="password" id="adminPassword" placeholder="Admin password">
+
+        <button onclick="adminLogin()">Login</button>
+        <p class="status" id="loginStatus"></p>
+    </div>
+
+    <div class="panel hidden" id="adminBox">
+        <div class="header">
+            <div class="logo">DS</div>
+            <h1>DemiSke Admin</h1>
+            <p class="subtext">Add account details faster using clean sections below.</p>
+
+            <div class="stats">
+                <div class="stat">
+                    <strong>Multi</strong>
+                    <span>Pictures</span>
+                </div>
+                <div class="stat">
+                    <strong>Easy</strong>
+                    <span>Input</span>
+                </div>
+                <div class="stat">
+                    <strong>Gaming</strong>
+                    <span>Theme</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">1. Account Pictures</div>
+        <label>Upload Pictures</label>
+        <input type="file" id="accountImage" accept="image/*" multiple onchange="previewImages(event)">
+        <div id="imagePreviewBox"></div>
+
+        <div class="section">2. Basic Info</div>
+
+        <label>Account Name</label>
+        <input type="text" id="accountName" placeholder="Example: KhunICE Account">
+
+        <div class="row">
+            <div>
+                <label>Level</label>
+                <input type="text" id="accountLevel" placeholder="Example: Level 184">
+            </div>
+            <div>
+                <label>Price</label>
+                <input type="text" id="accountPrice" placeholder="Example: 550">
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+                <label>UID</label>
+                <input type="text" id="accountUid" placeholder="Example: 361673204">
+            </div>
+            <div>
+                <label>Region</label>
+                <input type="text" id="accountRegion" placeholder="Example: TH">
+            </div>
+        </div>
+
+        <label>Nickname</label>
+        <input type="text" id="accountNickname" placeholder="Example: KhunICE">
+
+        <div class="section">3. Login Details</div>
+
+        <label>Account Username</label>
+        <input type="text" id="accountUsername" placeholder="Actual account username">
+
+        <label>Account Password</label>
+        <div class="password-wrap">
+            <input type="password" id="accountPassword" placeholder="Actual account password">
+            <button type="button" class="show-pass-btn" onclick="togglePassword()">Show</button>
+        </div>
+
+        <div class="section">4. Category & Details</div>
+
+        <label>Category</label>
+        <select id="accountCategory">
+            <option value="level_1_50">Level 1-50</option>
+            <option value="level_50_100">Level 50-100</option>
+            <option value="level_100_150">Level 100-150</option>
+            <option value="level_150_200">Level 150-200</option>
+            <option value="level_200_250">Level 200-250</option>
+            <option value="level_250_300">Level 250-300</option>
+            <option value="level_300_400">Level 300-400</option>
+            <option value="level_400_500">Level 400-500</option>
+        </select>
+
+        <label>Extra Details / Features</label>
+        <textarea id="accountDetails" placeholder="Example: Includes rare skins, weapons, soldiers, bundles, etc."></textarea>
+
+        <button onclick="saveAccount()">Save Account</button>
+        <button class="secondary" onclick="adminLogout()">Logout</button>
+
+        <p class="status" id="saveStatus"></p>
+    </div>
+
+    <div class="panel hidden" id="accountBox">
+        <h2>Saved Accounts</h2>
+        <p class="subtext">Active accounts listed in your customer shop.</p>
+        <div id="adminAccounts"></div>
+    </div>
+
+</div>
+
+<div class="modal-bg" id="deleteModal">
+    <div class="modal">
+        <h2>Delete Account?</h2>
+        <p>This will remove the account from the customer shop. This action cannot be undone.</p>
+
+        <div class="modal-actions">
+            <button class="danger" onclick="confirmDeleteAccount()">Delete</button>
+            <button class="secondary" onclick="closeDeleteModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = "https://ikryvpvjbgplhnkcgtit.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_PVjsZN2CLSI8N_2fgU5ICg_J5Lc0XAr";
+
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let accountToDelete = null;
+
+    async function checkSession() {
+        const { data } = await db.auth.getSession();
+
+        if (data.session) {
+            showAdmin();
+            loadAdminAccounts();
+        }
+    }
+
+    function showAdmin() {
+        document.getElementById("loginBox").classList.add("hidden");
+        document.getElementById("adminBox").classList.remove("hidden");
+        document.getElementById("accountBox").classList.remove("hidden");
+    }
+
+    async function adminLogin() {
+        const email = document.getElementById("adminEmail").value.trim();
+        const password = document.getElementById("adminPassword").value.trim();
+
+        document.getElementById("loginStatus").innerText = "Logging in...";
+
+        const { error } = await db.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+            document.getElementById("loginStatus").innerText = error.message;
+            return;
+        }
+
+        document.getElementById("loginStatus").innerText = "Login successful.";
+        showAdmin();
+        loadAdminAccounts();
+    }
+
+    async function adminLogout() {
+        await db.auth.signOut();
+        location.reload();
+    }
+
+    function togglePassword() {
+        const input = document.getElementById("accountPassword");
+        const btn = document.querySelector(".show-pass-btn");
+
+        if (input.type === "password") {
+            input.type = "text";
+            btn.innerText = "Hide";
+        } else {
+            input.type = "password";
+            btn.innerText = "Show";
+        }
+    }
+
+    function previewImages(event) {
+        const files = Array.from(event.target.files);
+        const previewBox = document.getElementById("imagePreviewBox");
+
+        previewBox.innerHTML = "";
+
+        files.forEach(file => {
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(file);
+            previewBox.appendChild(img);
+        });
+    }
+
+    async function saveAccount() {
+        const imageFiles = Array.from(document.getElementById("accountImage").files);
+        const name = document.getElementById("accountName").value.trim();
+        const level = document.getElementById("accountLevel").value.trim();
+        const price = document.getElementById("accountPrice").value.trim();
+        const uid = document.getElementById("accountUid").value.trim();
+        const region = document.getElementById("accountRegion").value.trim();
+        const nickname = document.getElementById("accountNickname").value.trim();
+        const accountUsername = document.getElementById("accountUsername").value.trim();
+        const accountPassword = document.getElementById("accountPassword").value.trim();
+        const category = document.getElementById("accountCategory").value;
+        const details = document.getElementById("accountDetails").value.trim();
+
+        const status = document.getElementById("saveStatus");
+
+        if (imageFiles.length === 0 || !name || !level || !price || !category || !accountUsername || !accountPassword) {
+            status.innerText = "Please complete pictures, name, level, price, account username, account password, and category.";
+            return;
+        }
+
+        status.innerText = "Uploading images...";
+
+        let imageUrls = [];
+
+        for (const imageFile of imageFiles) {
+            const fileExt = imageFile.name.split(".").pop();
+            const fileName = Date.now() + "-" + Math.random().toString(36).substring(2) + "." + fileExt;
+            const filePath = "accounts/" + fileName;
+
+            const { error: uploadError } = await db.storage
+                .from("account-images")
+                .upload(filePath, imageFile);
+
+            if (uploadError) {
+                status.innerText = "Image upload failed: " + uploadError.message;
+                return;
+            }
+
+            const { data: publicUrlData } = db.storage
+                .from("account-images")
+                .getPublicUrl(filePath);
+
+            imageUrls.push(publicUrlData.publicUrl);
+        }
+
+        const imageUrl = imageUrls[0];
+
+        status.innerText = "Saving account...";
+
+        const { error: insertError } = await db
+            .from("accounts")
+            .insert({
+                name: name,
+                level: level,
+                price: price,
+                uid: uid,
+                region: region,
+                nickname: nickname,
+                category: category,
+                image_url: imageUrl,
+                image_urls: imageUrls,
+                details: details,
+                account_username: accountUsername,
+                account_password: accountPassword
+            });
+
+        if (insertError) {
+            status.innerText = "Save failed: " + insertError.message;
+            return;
+        }
+
+        status.innerText = "Account saved successfully.";
+
+        document.getElementById("accountImage").value = "";
+        document.getElementById("imagePreviewBox").innerHTML = "";
+        document.getElementById("accountName").value = "";
+        document.getElementById("accountLevel").value = "";
+        document.getElementById("accountPrice").value = "";
+        document.getElementById("accountUid").value = "";
+        document.getElementById("accountRegion").value = "";
+        document.getElementById("accountNickname").value = "";
+        document.getElementById("accountUsername").value = "";
+        document.getElementById("accountPassword").value = "";
+        document.getElementById("accountDetails").value = "";
+
+        loadAdminAccounts();
+    }
+
+    async function loadAdminAccounts() {
+        const { data, error } = await db
+            .from("accounts")
+            .select("*")
+            .order("created_at", { ascending: false });
+
+        const container = document.getElementById("adminAccounts");
+
+        if (error) {
+            container.innerHTML = "<p>" + error.message + "</p>";
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            container.innerHTML = "<p class='status'>No accounts saved yet.</p>";
+            return;
+        }
+
+        container.innerHTML = "";
+
+        data.forEach(account => {
+            const imageCount =
+                Array.isArray(account.image_urls) && account.image_urls.length > 0
+                    ? account.image_urls.length
+                    : account.image_url
+                        ? 1
+                        : 0;
+
+            const div = document.createElement("div");
+            div.className = "account-card";
+            div.innerHTML = `
+                <img src="${account.image_url || ""}" alt="Account image">
+                <p><strong>${account.name || "Unnamed Account"}</strong></p>
+                <span class="pill">${imageCount} picture(s)</span>
+                <p>${account.level || "No level"} • ₱${account.price || "0"}</p>
+                <p>Nickname: ${account.nickname || "N/A"}</p>
+                <p>Region: ${account.region || "N/A"}</p>
+                <p>UID: ${account.uid || "N/A"}</p>
+                <p>Category: ${account.category || "N/A"}</p>
+                <p class="mini">Username: ${account.account_username || "Not set"}</p>
+                <p class="mini">Password: ${account.account_password || "Not set"}</p>
+                <button class="danger" onclick="openDeleteModal('${account.id}')">Delete Account</button>
+            `;
+
+            container.appendChild(div);
+        });
+    }
+
+    function openDeleteModal(id) {
+        accountToDelete = id;
+        document.getElementById("deleteModal").style.display = "flex";
+    }
+
+    function closeDeleteModal() {
+        accountToDelete = null;
+        document.getElementById("deleteModal").style.display = "none";
+    }
+
+    async function confirmDeleteAccount() {
+        if (!accountToDelete) return;
+
+        const { error } = await db
+            .from("accounts")
+            .delete()
+            .eq("id", accountToDelete);
+
+        if (error) {
+            alert(error.message);
+            return;
+        }
+
+        closeDeleteModal();
+        loadAdminAccounts();
+    }
+
+    checkSession();
+</script>
+</body>
+  </html>
