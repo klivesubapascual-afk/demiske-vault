@@ -32,7 +32,6 @@
             background-attachment: fixed;
         }
 
-        /* CUSTOMER LOGIN */
         .customer-login-screen {
             position: fixed;
             inset: 0;
@@ -130,11 +129,6 @@
             font-size: 15px;
         }
 
-        .customer-login-card input:focus {
-            border-color: rgba(255, 77, 255, 0.9);
-            box-shadow: 0 0 14px rgba(255, 0, 230, 0.35);
-        }
-
         .remember-line {
             display: flex !important;
             align-items: center;
@@ -161,7 +155,6 @@
             margin-top: 12px;
         }
 
-        /* MAIN WEBSITE */
         .container {
             min-height: 100vh;
             padding: 28px 18px 42px;
@@ -213,11 +206,6 @@
             max-width: 300px;
         }
 
-        .menu, .account-list {
-            width: 100%;
-            max-width: 450px;
-        }
-
         .helper-note {
             width: 100%;
             max-width: 450px;
@@ -230,6 +218,11 @@
             font-size: 14px;
             line-height: 1.5;
             box-shadow: 0 0 18px rgba(255, 0, 230, 0.15);
+        }
+
+        .menu, .account-list {
+            width: 100%;
+            max-width: 450px;
         }
 
         .level-btn {
@@ -247,14 +240,6 @@
             box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
         }
 
-        .level-btn span {
-            display: block;
-            margin-top: 5px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #d7c9ff;
-        }
-
         .cta-text {
             display: inline-block !important;
             margin-top: 11px !important;
@@ -264,7 +249,6 @@
             color: #ffffff !important;
             font-size: 13px !important;
             font-weight: 900 !important;
-            letter-spacing: 0.2px;
             box-shadow:
                 0 0 12px rgba(255, 0, 230, 0.55),
                 0 0 22px rgba(123, 0, 255, 0.35);
@@ -317,7 +301,7 @@
             font-size: 13px;
         }
 
-        .account-item .pick-cta {
+        .pick-cta {
             display: inline-block;
             margin-top: 9px;
             padding: 6px 10px;
@@ -415,11 +399,6 @@
             margin-top: 10px;
         }
 
-        button:active,
-        .telegram-btn:active {
-            transform: scale(0.97);
-        }
-
         .close-btn {
             background: rgba(255, 255, 255, 0.12);
             box-shadow: none;
@@ -469,7 +448,6 @@
 
 <body>
 
-    <!-- Customer Login Screen -->
     <div class="customer-login-screen" id="customerLoginScreen">
         <div class="customer-login-card">
             <div class="login-logo">DS</div>
@@ -505,7 +483,6 @@
         </div>
     </div>
 
-    <!-- Main Customer Website -->
     <div class="container">
         <div class="top-box">
             <h1>DemiSke Vault</h1>
@@ -524,45 +501,14 @@
         </div>
 
         <div class="menu">
-            <button class="level-btn" onclick="showAccounts('level_1_50')">
-                Level 1-50
-                <span class="cta-text">View Available Accounts →</span>
-            </button>
-
-            <button class="level-btn" onclick="showAccounts('level_50_100')">
-                Level 50-100
-                <span class="cta-text">View Available Accounts →</span>
-            </button>
-
-            <button class="level-btn" onclick="showAccounts('level_100_150')">
-                Level 100-150
-                <span class="cta-text">View Available Accounts →</span>
-            </button>
-
-            <button class="level-btn" onclick="showAccounts('level_150_200')">
-                Level 150-200
-                <span class="cta-text">View Available Accounts →</span>
-            </button>
-
-            <button class="level-btn" onclick="showAccounts('level_200_250')">
-                Level 200-250
-                <span class="cta-text">View Available Accounts →</span>
-            </button>
-
-            <button class="level-btn" onclick="showAccounts('level_250_300')">
-                Level 250-300
-                <span class="cta-text">View Available Accounts →</span>
-            </button>
-
-            <button class="level-btn" onclick="showAccounts('level_300_400')">
-                Level 300-400
-                <span class="cta-text">View Available Accounts →</span>
-            </button>
-
-            <button class="level-btn" onclick="showAccounts('level_400_500')">
-                Level 400-500
-                <span class="cta-text">View Available Accounts →</span>
-            </button>
+            <button class="level-btn" onclick="showAccounts('level_1_50')">Level 1-50<span class="cta-text">View Available Accounts →</span></button>
+            <button class="level-btn" onclick="showAccounts('level_50_100')">Level 50-100<span class="cta-text">View Available Accounts →</span></button>
+            <button class="level-btn" onclick="showAccounts('level_100_150')">Level 100-150<span class="cta-text">View Available Accounts →</span></button>
+            <button class="level-btn" onclick="showAccounts('level_150_200')">Level 150-200<span class="cta-text">View Available Accounts →</span></button>
+            <button class="level-btn" onclick="showAccounts('level_200_250')">Level 200-250<span class="cta-text">View Available Accounts →</span></button>
+            <button class="level-btn" onclick="showAccounts('level_250_300')">Level 250-300<span class="cta-text">View Available Accounts →</span></button>
+            <button class="level-btn" onclick="showAccounts('level_300_400')">Level 300-400<span class="cta-text">View Available Accounts →</span></button>
+            <button class="level-btn" onclick="showAccounts('level_400_500')">Level 400-500<span class="cta-text">View Available Accounts →</span></button>
         </div>
 
         <div class="account-list" id="accountList">
@@ -575,7 +521,6 @@
         </div>
     </div>
 
-    <!-- Account Details Popup -->
     <div class="popup-bg" id="accountPopup">
         <div class="popup">
             <h2>Account Details</h2>
@@ -597,7 +542,6 @@
         </div>
     </div>
 
-    <!-- Seller Popup -->
     <div class="popup-bg" id="sellerPopup">
         <div class="popup">
             <h2>Choose Seller</h2>
@@ -611,7 +555,6 @@
         </div>
     </div>
 
-    <!-- GCash Popup -->
     <div class="popup-bg" id="gcashPopup">
         <div class="popup">
             <h2>GCash Payment</h2>
@@ -619,14 +562,14 @@
             <div class="gcash-box">
                 <p><strong>Selected Account:</strong> <span id="gcashAccount"></span></p>
                 <p><strong>Seller:</strong> <span id="gcashSeller"></span></p>
-                <p><strong>GCash Name:</strong> Ka*a an****n p. </p>
-                <p><strong>GCash Number:</strong> 09296357078</p>
+                <p><strong>GCash Name:</strong> <span id="gcashName">Select seller first</span></p>
+                <p><strong>GCash Number:</strong> <span id="gcashNumber">Select seller first</span></p>
                 <p><strong>Amount:</strong> ₱<span id="paymentAmount"></span></p>
             </div>
 
             <p>After payment, submit proof below.</p>
 
-            <form name="payment-proof" method="POST" data-netlify="true" enctype="multipart/form-data">
+            <form name="payment-proof" method="POST" action="/" data-netlify="true" enctype="multipart/form-data">
                 <input type="hidden" name="form-name" value="payment-proof">
                 <input type="hidden" name="account" id="formAccount">
                 <input type="hidden" name="level" id="formLevel">
@@ -662,7 +605,6 @@
         let selectedSeller = "";
         let customerMode = "login";
 
-        /* CUSTOMER LOGIN FUNCTIONS */
         function setCustomerMode(mode) {
             customerMode = mode;
 
@@ -773,7 +715,6 @@
             }
         });
 
-        /* SHOP FUNCTIONS */
         function getCategoryTitle(category) {
             const titles = {
                 "level_1_50": "Level 1-50 Accounts",
@@ -855,6 +796,17 @@
         function openGcash(seller) {
             selectedSeller = seller;
 
+            const gcashInfo = {
+                Demi: {
+                    name: "DEMI GCASH NAME",
+                    number: "09XXXXXXXXX"
+                },
+                SKE: {
+                    name: "SKE GCASH NAME",
+                    number: "09YYYYYYYYY"
+                }
+            };
+
             document.getElementById("sellerPopup").style.display = "none";
             document.getElementById("gcashPopup").style.display = "flex";
 
@@ -863,6 +815,9 @@
 
             document.getElementById("gcashSeller").innerText = selectedSeller;
             document.getElementById("paymentAmount").innerText = selectedAccount.price;
+
+            document.getElementById("gcashName").innerText = gcashInfo[seller].name;
+            document.getElementById("gcashNumber").innerText = gcashInfo[seller].number;
 
             document.getElementById("formAccount").value = selectedAccount.name;
             document.getElementById("formLevel").value = selectedAccount.level;
