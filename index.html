@@ -32,6 +32,136 @@
             background-attachment: fixed;
         }
 
+        /* CUSTOMER LOGIN */
+        .customer-login-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 22px;
+            background:
+                radial-gradient(circle at top, rgba(255, 0, 230, 0.26), transparent 35%),
+                linear-gradient(rgba(5, 8, 18, 0.90), rgba(5, 8, 18, 0.98)),
+                url("bg.jpg");
+            background-size: cover;
+            background-position: center;
+        }
+
+        .customer-login-card {
+            width: 100%;
+            max-width: 390px;
+            padding: 26px 22px;
+            border-radius: 28px;
+            background: rgba(13, 18, 36, 0.92);
+            border: 1px solid rgba(255, 0, 255, 0.42);
+            box-shadow:
+                0 0 35px rgba(255, 0, 255, 0.32),
+                inset 0 0 22px rgba(123, 0, 255, 0.12);
+            backdrop-filter: blur(14px);
+            text-align: center;
+        }
+
+        .login-logo {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 15px;
+            border-radius: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff00e6, #7b00ff);
+            box-shadow: 0 0 28px rgba(255, 0, 230, 0.45);
+        }
+
+        .customer-login-card h2 {
+            margin: 0 0 8px;
+            font-size: 32px;
+            color: white;
+            text-shadow:
+                0 0 8px #ff00ff,
+                0 0 18px #a600ff;
+        }
+
+        .customer-login-card p {
+            color: #d9c5ff;
+            margin-bottom: 15px;
+        }
+
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .auth-tab {
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: none;
+        }
+
+        .auth-tab.active {
+            background: linear-gradient(135deg, #ff00e6, #7b00ff);
+            box-shadow:
+                0 0 15px rgba(255, 0, 230, 0.45),
+                0 0 25px rgba(123, 0, 255, 0.30);
+        }
+
+        .customer-login-card label {
+            text-align: left;
+            display: block;
+            margin: 12px 0 6px;
+            color: #ffb8ff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .customer-login-card input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 0, 255, 0.35);
+            background: rgba(0, 0, 0, 0.42);
+            color: white;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .customer-login-card input:focus {
+            border-color: rgba(255, 77, 255, 0.9);
+            box-shadow: 0 0 14px rgba(255, 0, 230, 0.35);
+        }
+
+        .remember-line {
+            display: flex !important;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px !important;
+            color: #d9c5ff !important;
+        }
+
+        .remember-line input {
+            width: auto;
+        }
+
+        .auth-error {
+            display: none;
+            color: #ff6bff !important;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        .auth-success {
+            display: none;
+            color: #8dffb3 !important;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        /* MAIN WEBSITE */
         .container {
             min-height: 100vh;
             padding: 28px 18px 42px;
@@ -70,6 +200,17 @@
             font-weight: bold;
             margin: 6px 0;
             text-shadow: 0 0 12px #c000ff;
+        }
+
+        .customer-pill {
+            margin: 12px auto 0;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 0, 255, 0.28);
+            color: #f3d6ff;
+            font-size: 13px;
+            max-width: 300px;
         }
 
         .menu, .account-list {
@@ -230,6 +371,11 @@
             margin-top: 10px;
         }
 
+        button:active,
+        .telegram-btn:active {
+            transform: scale(0.97);
+        }
+
         .close-btn {
             background: rgba(255, 255, 255, 0.12);
             box-shadow: none;
@@ -278,11 +424,55 @@
 </head>
 
 <body>
+
+    <!-- Customer Login Screen -->
+    <div class="customer-login-screen" id="customerLoginScreen">
+        <div class="customer-login-card">
+            <div class="login-logo">DS</div>
+
+            <h2>DemiSke Vault</h2>
+            <p id="customerAuthText">Login to access the shop</p>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="loginTab" onclick="setCustomerMode('login')">Login</button>
+                <button class="auth-tab" id="registerTab" onclick="setCustomerMode('register')">Register</button>
+            </div>
+
+            <label>Username</label>
+            <input type="text" id="customerUsername" placeholder="Enter username">
+
+            <label>Password</label>
+            <input type="password" id="customerPassword" placeholder="Enter password">
+
+            <div id="customerConfirmBox" style="display:none;">
+                <label>Confirm Password</label>
+                <input type="password" id="customerConfirmPassword" placeholder="Confirm password">
+            </div>
+
+            <label class="remember-line" id="rememberLine">
+                <input type="checkbox" id="customerRemember">
+                Remember me
+            </label>
+
+            <button id="customerAuthButton" onclick="customerLogin()">Login</button>
+
+            <p class="auth-error" id="customerAuthError"></p>
+            <p class="auth-success" id="customerAuthSuccess"></p>
+        </div>
+    </div>
+
+    <!-- Main Customer Website -->
     <div class="container">
         <div class="top-box">
             <h1>DemiSke Vault</h1>
             <p class="subtitle">Premium Accounts • Fast Transaction • Trusted Seller</p>
             <p class="telegram">Telegram: @Demixyloadmin</p>
+
+            <div class="customer-pill">
+                Logged in as: <span id="currentCustomerName">Customer</span>
+            </div>
+
+            <button onclick="customerLogout()" class="close-btn">Logout</button>
         </div>
 
         <div class="menu">
@@ -306,6 +496,7 @@
         </div>
     </div>
 
+    <!-- Account Details Popup -->
     <div class="popup-bg" id="accountPopup">
         <div class="popup">
             <h2>Account Details</h2>
@@ -327,6 +518,7 @@
         </div>
     </div>
 
+    <!-- Seller Popup -->
     <div class="popup-bg" id="sellerPopup">
         <div class="popup">
             <h2>Choose Seller</h2>
@@ -340,6 +532,7 @@
         </div>
     </div>
 
+    <!-- GCash Popup -->
     <div class="popup-bg" id="gcashPopup">
         <div class="popup">
             <h2>GCash Payment</h2>
@@ -362,7 +555,7 @@
                 <input type="hidden" name="amount" id="formAmount">
 
                 <label>Telegram Username</label>
-                <input type="text" name="telegram" placeholder="@username" required>
+                <input type="text" name="telegram" id="proofTelegram" placeholder="@username" required>
 
                 <label>GCash Reference Number</label>
                 <input type="text" name="reference" placeholder="GCash reference number" required>
@@ -388,7 +581,120 @@
 
         let selectedAccount = null;
         let selectedSeller = "";
+        let customerMode = "login";
 
+        /* CUSTOMER LOGIN FUNCTIONS */
+        function setCustomerMode(mode) {
+            customerMode = mode;
+
+            document.getElementById("customerAuthError").style.display = "none";
+            document.getElementById("customerAuthSuccess").style.display = "none";
+
+            if (mode === "login") {
+                document.getElementById("customerAuthText").innerText = "Login to access the shop";
+                document.getElementById("customerConfirmBox").style.display = "none";
+                document.getElementById("rememberLine").style.display = "flex";
+                document.getElementById("customerAuthButton").innerText = "Login";
+                document.getElementById("customerAuthButton").setAttribute("onclick", "customerLogin()");
+
+                document.getElementById("loginTab").classList.add("active");
+                document.getElementById("registerTab").classList.remove("active");
+            } else {
+                document.getElementById("customerAuthText").innerText = "Create customer account";
+                document.getElementById("customerConfirmBox").style.display = "block";
+                document.getElementById("rememberLine").style.display = "none";
+                document.getElementById("customerAuthButton").innerText = "Register";
+                document.getElementById("customerAuthButton").setAttribute("onclick", "customerRegister()");
+
+                document.getElementById("registerTab").classList.add("active");
+                document.getElementById("loginTab").classList.remove("active");
+            }
+        }
+
+        function customerRegister() {
+            const username = document.getElementById("customerUsername").value.trim();
+            const password = document.getElementById("customerPassword").value.trim();
+            const confirmPassword = document.getElementById("customerConfirmPassword").value.trim();
+
+            if (!username || !password || !confirmPassword) {
+                showCustomerError("Please complete all fields.");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showCustomerError("Passwords do not match.");
+                return;
+            }
+
+            localStorage.setItem("customerUsername", username);
+            localStorage.setItem("customerPassword", password);
+
+            document.getElementById("customerAuthError").style.display = "none";
+            document.getElementById("customerAuthSuccess").innerText = "Registered successfully. You can now login.";
+            document.getElementById("customerAuthSuccess").style.display = "block";
+
+            setCustomerMode("login");
+        }
+
+        function customerLogin() {
+            const username = document.getElementById("customerUsername").value.trim();
+            const password = document.getElementById("customerPassword").value.trim();
+            const remember = document.getElementById("customerRemember").checked;
+
+            const savedUsername = localStorage.getItem("customerUsername");
+            const savedPassword = localStorage.getItem("customerPassword");
+
+            if (username === savedUsername && password === savedPassword) {
+                if (remember) {
+                    localStorage.setItem("customerLoggedIn", "yes");
+                } else {
+                    sessionStorage.setItem("customerLoggedIn", "yes");
+                }
+
+                localStorage.setItem("currentCustomer", username);
+                document.getElementById("customerLoginScreen").style.display = "none";
+                document.getElementById("currentCustomerName").innerText = username;
+
+                const proofTelegram = document.getElementById("proofTelegram");
+                if (proofTelegram) {
+                    proofTelegram.value = username;
+                }
+            } else {
+                showCustomerError("Wrong username or password.");
+            }
+        }
+
+        function showCustomerError(message) {
+            document.getElementById("customerAuthError").innerText = message;
+            document.getElementById("customerAuthError").style.display = "block";
+            document.getElementById("customerAuthSuccess").style.display = "none";
+        }
+
+        function customerLogout() {
+            localStorage.removeItem("customerLoggedIn");
+            sessionStorage.removeItem("customerLoggedIn");
+            location.reload();
+        }
+
+        window.addEventListener("load", function () {
+            const loggedIn =
+                localStorage.getItem("customerLoggedIn") === "yes" ||
+                sessionStorage.getItem("customerLoggedIn") === "yes";
+
+            const currentCustomer = localStorage.getItem("currentCustomer");
+
+            if (loggedIn) {
+                document.getElementById("customerLoginScreen").style.display = "none";
+                document.getElementById("currentCustomerName").innerText = currentCustomer || "Customer";
+
+                const proofTelegram = document.getElementById("proofTelegram");
+                if (proofTelegram && currentCustomer) {
+                    proofTelegram.value = currentCustomer;
+                }
+            }
+        });
+
+        /* SHOP FUNCTIONS */
         function getCategoryTitle(category) {
             const titles = {
                 "level_1_50": "Level 1-50 Accounts",
@@ -482,6 +788,13 @@
             document.getElementById("formLevel").value = selectedAccount.level;
             document.getElementById("formSeller").value = selectedSeller;
             document.getElementById("formAmount").value = "₱" + selectedAccount.price;
+
+            const currentCustomer = localStorage.getItem("currentCustomer");
+            const proofTelegram = document.getElementById("proofTelegram");
+
+            if (proofTelegram && currentCustomer) {
+                proofTelegram.value = currentCustomer;
+            }
         }
 
         function backToAccount() {
