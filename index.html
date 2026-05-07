@@ -13,10 +13,11 @@
 
         :root {
             --red: #ff1e1e;
-            --dark-red: #7a0000;
+            --deep-red: #7a0000;
             --orange: #ff6a00;
-            --soft-red: #ffb3b3;
             --gold: #ffcc66;
+            --soft-red: #ffd0d0;
+            --card: rgba(22, 8, 10, 0.88);
         }
 
         body {
@@ -26,12 +27,26 @@
             font-family: Arial, sans-serif;
             text-align: center;
             background:
-                radial-gradient(circle at top, rgba(255, 0, 0, 0.24), transparent 35%),
-                linear-gradient(rgba(8, 4, 8, 0.86), rgba(3, 3, 8, 0.97)),
+                radial-gradient(circle at 50% 0%, rgba(255, 0, 0, 0.32), transparent 34%),
+                radial-gradient(circle at 100% 25%, rgba(255, 106, 0, 0.13), transparent 30%),
+                linear-gradient(rgba(7, 3, 6, 0.88), rgba(2, 2, 7, 0.98)),
                 url("bg.jpg");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 34px 34px;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.75), transparent);
+            z-index: 0;
         }
 
         .customer-login-screen {
@@ -43,7 +58,7 @@
             align-items: center;
             padding: 22px;
             background:
-                radial-gradient(circle at top, rgba(255, 0, 0, 0.28), transparent 35%),
+                radial-gradient(circle at top, rgba(255, 0, 0, 0.30), transparent 35%),
                 linear-gradient(rgba(5, 2, 2, 0.92), rgba(5, 5, 10, 0.98)),
                 url("bg.jpg");
             background-size: cover;
@@ -88,7 +103,7 @@
         }
 
         .customer-login-card p {
-            color: #ffd0d0;
+            color: var(--soft-red);
             margin-bottom: 15px;
         }
 
@@ -158,8 +173,10 @@
         }
 
         .container {
+            position: relative;
+            z-index: 1;
             min-height: 100vh;
-            padding: 28px 18px 42px;
+            padding: 24px 16px 42px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -167,20 +184,25 @@
 
         .top-box {
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
             margin-bottom: 18px;
-            padding: 20px;
-            border-radius: 26px;
-            background: rgba(20, 8, 8, 0.78);
-            border: 1px solid rgba(255, 60, 60, 0.35);
-            box-shadow: 0 0 28px rgba(255, 0, 0, 0.25);
+            padding: 22px;
+            border-radius: 28px;
+            background:
+                linear-gradient(155deg, rgba(34, 4, 6, 0.90), rgba(8, 8, 14, 0.86)),
+                radial-gradient(circle at top, rgba(255, 0, 0, 0.18), transparent 45%);
+            border: 1px solid rgba(255, 60, 60, 0.42);
+            box-shadow:
+                0 0 28px rgba(255, 0, 0, 0.25),
+                inset 0 0 18px rgba(255, 0, 0, 0.08);
             backdrop-filter: blur(10px);
         }
 
         h1 {
             margin: 0 0 8px;
-            font-size: 36px;
+            font-size: 40px;
             color: #ffffff;
+            letter-spacing: 0.8px;
             text-shadow:
                 0 0 8px #ff0000,
                 0 0 18px #ff3b3b,
@@ -201,52 +223,175 @@
         }
 
         .customer-pill {
-            margin: 12px auto 0;
+            margin: 14px auto 0;
             padding: 10px 14px;
             border-radius: 999px;
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255, 60, 60, 0.28);
+            background: rgba(0, 0, 0, 0.38);
+            border: 1px solid rgba(255, 60, 60, 0.30);
             color: #ffd0d0;
             font-size: 13px;
             max-width: 300px;
         }
 
-        .helper-note {
+        .hero-panel {
             width: 100%;
-            max-width: 450px;
-            margin-bottom: 12px;
-            padding: 14px;
-            border-radius: 17px;
-            background: rgba(255, 0, 0, 0.12);
-            border: 1px solid rgba(255, 60, 60, 0.28);
-            color: #ffe0e0;
-            font-size: 14px;
-            line-height: 1.5;
-            box-shadow: 0 0 18px rgba(255, 0, 0, 0.15);
+            max-width: 500px;
+            margin-bottom: 16px;
+            padding: 16px;
+            border-radius: 24px;
+            background:
+                linear-gradient(145deg, rgba(255, 0, 0, 0.12), rgba(0, 0, 0, 0.48));
+            border: 1px solid rgba(255, 65, 65, 0.30);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.14);
+            text-align: left;
         }
 
-        .menu, .account-list {
+        .hero-panel h2 {
+            margin: 0 0 8px;
+            font-size: 20px;
+            text-shadow: 0 0 12px #ff0000;
+        }
+
+        .hero-panel p {
+            margin: 0;
+            color: #f1d4d4;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .stats-row {
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .stat-card {
+            padding: 12px 8px;
+            border-radius: 18px;
+            background: rgba(15, 8, 10, 0.82);
+            border: 1px solid rgba(255, 60, 60, 0.22);
+            box-shadow: inset 0 0 14px rgba(255, 0, 0, 0.08);
+        }
+
+        .stat-card strong {
+            display: block;
+            font-size: 15px;
+            color: white;
+        }
+
+        .stat-card span {
+            display: block;
+            margin-top: 3px;
+            color: #ffb3b3;
+            font-size: 11px;
+        }
+
+        .menu-shell {
+            width: 100%;
+            max-width: 500px;
+            padding: 18px;
+            border-radius: 30px;
+            background:
+                linear-gradient(155deg, rgba(22, 8, 10, 0.90), rgba(5, 5, 12, 0.92)),
+                radial-gradient(circle at top right, rgba(255, 0, 0, 0.18), transparent 45%);
+            border: 1px solid rgba(255, 60, 60, 0.32);
+            box-shadow:
+                0 0 26px rgba(255, 0, 0, 0.16),
+                inset 0 0 20px rgba(255, 0, 0, 0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        .menu-title {
+            margin: 0 0 12px;
+            text-align: left;
+        }
+
+        .menu-title h2 {
+            margin: 0;
+            font-size: 24px;
+            text-shadow: 0 0 14px rgba(255, 0, 0, 0.85);
+        }
+
+        .menu-title p {
+            margin: 6px 0 0;
+            font-size: 13px;
+            color: #ffd0d0;
+        }
+
+        .menu {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
         }
 
         .level-btn {
+            position: relative;
+            overflow: hidden;
             width: 100%;
-            margin: 10px 0;
-            padding: 20px 15px;
+            margin: 0;
+            padding: 18px 16px;
             border-radius: 22px;
-            border: 1px solid rgba(255, 60, 60, 0.16);
+            border: 1px solid rgba(255, 75, 75, 0.24);
             background:
-                linear-gradient(135deg, rgba(75, 5, 5, 0.98), rgba(20, 20, 30, 0.98)),
-                radial-gradient(circle at right, rgba(255, 0, 0, 0.18), transparent 45%);
+                linear-gradient(135deg, rgba(84, 7, 7, 0.98), rgba(15, 15, 24, 0.98)),
+                radial-gradient(circle at right, rgba(255, 106, 0, 0.18), transparent 45%);
             color: #ffffff;
-            font-size: 22px;
-            font-weight: 900;
-            text-align: center;
+            text-align: left;
             cursor: pointer;
             box-shadow:
                 0 10px 22px rgba(0, 0, 0, 0.35),
                 0 0 18px rgba(255, 0, 0, 0.16);
+        }
+
+        .level-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -70%;
+            width: 55%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+            transform: skewX(-20deg);
+        }
+
+        .level-btn:active {
+            transform: scale(0.98);
+        }
+
+        .level-main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .level-name {
+            font-size: 21px;
+            font-weight: 900;
+            letter-spacing: 0.3px;
+        }
+
+        .level-badge {
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(255, 106, 0, 0.18);
+            border: 1px solid rgba(255, 180, 80, 0.30);
+            color: #ffcc66;
+            font-size: 11px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .level-sub {
+            display: block;
+            margin-top: 8px;
+            color: #ffd0d0;
+            font-size: 13px;
+            line-height: 1.4;
         }
 
         .cta-text {
@@ -256,24 +401,24 @@
             border-radius: 999px;
             background: linear-gradient(135deg, #ff1e1e, #8b0000, #ff6a00);
             color: #ffffff !important;
-            font-size: 13px !important;
+            font-size: 12px !important;
             font-weight: 900 !important;
             box-shadow:
                 0 0 12px rgba(255, 0, 0, 0.55),
                 0 0 22px rgba(255, 106, 0, 0.25);
         }
 
-        .level-btn:active {
-            transform: scale(0.97);
-        }
-
         .account-list {
             display: none;
-            margin-top: 16px;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 18px;
             padding: 18px;
-            border-radius: 24px;
-            background: rgba(16, 10, 14, 0.92);
-            border: 1px solid rgba(255, 60, 60, 0.32);
+            border-radius: 28px;
+            background:
+                linear-gradient(155deg, rgba(18, 8, 10, 0.94), rgba(6, 6, 12, 0.95)),
+                radial-gradient(circle at top, rgba(255, 0, 0, 0.16), transparent 45%);
+            border: 1px solid rgba(255, 60, 60, 0.35);
             box-shadow: 0 0 24px rgba(255, 0, 0, 0.18);
             backdrop-filter: blur(10px);
         }
@@ -286,15 +431,18 @@
 
         .account-item {
             width: 100%;
-            margin: 9px 0;
+            margin: 11px 0;
             padding: 15px;
-            border-radius: 16px;
-            background: rgba(40, 18, 18, 0.96);
-            border: 1px solid rgba(255, 60, 60, 0.14);
+            border-radius: 20px;
+            background:
+                linear-gradient(145deg, rgba(60, 14, 14, 0.96), rgba(10, 10, 18, 0.96));
+            border: 1px solid rgba(255, 60, 60, 0.20);
             color: white;
             text-align: left;
             cursor: pointer;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+            box-shadow:
+                0 8px 18px rgba(0,0,0,0.25),
+                inset 0 0 16px rgba(255, 0, 0, 0.06);
         }
 
         .account-item strong {
@@ -305,38 +453,35 @@
 
         .account-item span {
             display: block;
-            margin-top: 4px;
+            margin-top: 5px;
             color: #ffd0d0;
             font-size: 13px;
         }
 
         .pick-cta {
             display: inline-block;
-            margin-top: 9px;
-            padding: 6px 10px;
+            margin-top: 10px;
+            padding: 7px 11px;
             border-radius: 999px;
-            background: rgba(255, 0, 0, 0.22);
+            background: rgba(255, 0, 0, 0.24);
+            border: 1px solid rgba(255, 80, 80, 0.25);
             color: #ffffff;
             font-size: 12px;
-            font-weight: 800;
+            font-weight: 900;
         }
 
         .note {
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
             margin-top: 18px;
             padding: 15px;
-            border-radius: 17px;
+            border-radius: 18px;
             background: rgba(0, 0, 0, 0.45);
             border: 1px solid rgba(255, 60, 60, 0.25);
             font-size: 13px;
             color: #cccccc;
             line-height: 1.5;
         }
-
-        /* ============================= */
-        /* FULL RED GAMING MODAL UPGRADE */
-        /* ============================= */
 
         .popup-bg {
             display: none;
@@ -370,21 +515,6 @@
                 0 0 60px rgba(255, 106, 0, 0.18),
                 inset 0 0 22px rgba(255, 0, 0, 0.10);
             backdrop-filter: blur(14px);
-        }
-
-        .popup::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: 30px;
-            padding: 1px;
-            background: linear-gradient(135deg, #ff1b1b, #ff8a00, #7b0000, #ff1b1b);
-            -webkit-mask:
-                linear-gradient(#fff 0 0) content-box,
-                linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
         }
 
         .popup h2 {
@@ -564,21 +694,20 @@
 
         @media (max-width: 480px) {
             h1 {
-                font-size: 31px;
+                font-size: 32px;
             }
 
-            .level-btn {
-                font-size: 20px;
-                padding: 18px 12px;
+            .level-name {
+                font-size: 19px;
+            }
+
+            .account-img {
+                height: 235px;
             }
 
             .popup {
                 max-width: 94vw;
                 padding: 20px;
-            }
-
-            .account-img {
-                height: 235px;
             }
 
             .popup h2 {
@@ -638,19 +767,105 @@
             <button onclick="customerLogout()" class="close-btn">Logout</button>
         </div>
 
-        <div class="helper-note">
-            🎮 Tap a level below, then choose an account from the list.
+        <div class="hero-panel">
+            <h2>🔥 Premium Gaming Accounts</h2>
+            <p>Choose your level range, view the full account details, then message your selected seller directly on Telegram.</p>
         </div>
 
-        <div class="menu">
-            <button class="level-btn" onclick="showAccounts('level_1_50')">Level 1-50<span class="cta-text">View Available Accounts →</span></button>
-            <button class="level-btn" onclick="showAccounts('level_50_100')">Level 50-100<span class="cta-text">View Available Accounts →</span></button>
-            <button class="level-btn" onclick="showAccounts('level_100_150')">Level 100-150<span class="cta-text">View Available Accounts →</span></button>
-            <button class="level-btn" onclick="showAccounts('level_150_200')">Level 150-200<span class="cta-text">View Available Accounts →</span></button>
-            <button class="level-btn" onclick="showAccounts('level_200_250')">Level 200-250<span class="cta-text">View Available Accounts →</span></button>
-            <button class="level-btn" onclick="showAccounts('level_250_300')">Level 250-300<span class="cta-text">View Available Accounts →</span></button>
-            <button class="level-btn" onclick="showAccounts('level_300_400')">Level 300-400<span class="cta-text">View Available Accounts →</span></button>
-            <button class="level-btn" onclick="showAccounts('level_400_500')">Level 400-500<span class="cta-text">View Available Accounts →</span></button>
+        <div class="stats-row">
+            <div class="stat-card">
+                <strong>Fast</strong>
+                <span>Transaction</span>
+            </div>
+            <div class="stat-card">
+                <strong>Trusted</strong>
+                <span>Sellers</span>
+            </div>
+            <div class="stat-card">
+                <strong>Secure</strong>
+                <span>Manual Deal</span>
+            </div>
+        </div>
+
+        <div class="menu-shell">
+            <div class="menu-title">
+                <h2>Choose Account Level</h2>
+                <p>Tap a level range below to view available accounts.</p>
+            </div>
+
+            <div class="menu">
+                <button class="level-btn" onclick="showAccounts('level_1_50')">
+                    <div class="level-main">
+                        <span class="level-name">Level 1-50</span>
+                        <span class="level-badge">STARTER</span>
+                    </div>
+                    <span class="level-sub">Entry-level accounts for quick start buyers.</span>
+                    <span class="cta-text">View Accounts →</span>
+                </button>
+
+                <button class="level-btn" onclick="showAccounts('level_50_100')">
+                    <div class="level-main">
+                        <span class="level-name">Level 50-100</span>
+                        <span class="level-badge">BOOSTED</span>
+                    </div>
+                    <span class="level-sub">Better progress and stronger profile value.</span>
+                    <span class="cta-text">View Accounts →</span>
+                </button>
+
+                <button class="level-btn" onclick="showAccounts('level_100_150')">
+                    <div class="level-main">
+                        <span class="level-name">Level 100-150</span>
+                        <span class="level-badge">PRO</span>
+                    </div>
+                    <span class="level-sub">Solid accounts for serious players.</span>
+                    <span class="cta-text">View Accounts →</span>
+                </button>
+
+                <button class="level-btn" onclick="showAccounts('level_150_200')">
+                    <div class="level-main">
+                        <span class="level-name">Level 150-200</span>
+                        <span class="level-badge">ELITE</span>
+                    </div>
+                    <span class="level-sub">High-value accounts with stronger progress.</span>
+                    <span class="cta-text">View Accounts →</span>
+                </button>
+
+                <button class="level-btn" onclick="showAccounts('level_200_250')">
+                    <div class="level-main">
+                        <span class="level-name">Level 200-250</span>
+                        <span class="level-badge">PREMIUM</span>
+                    </div>
+                    <span class="level-sub">Premium-level accounts for collectors.</span>
+                    <span class="cta-text">View Accounts →</span>
+                </button>
+
+                <button class="level-btn" onclick="showAccounts('level_250_300')">
+                    <div class="level-main">
+                        <span class="level-name">Level 250-300</span>
+                        <span class="level-badge">RARE</span>
+                    </div>
+                    <span class="level-sub">Rare account range with strong history.</span>
+                    <span class="cta-text">View Accounts →</span>
+                </button>
+
+                <button class="level-btn" onclick="showAccounts('level_300_400')">
+                    <div class="level-main">
+                        <span class="level-name">Level 300-400</span>
+                        <span class="level-badge">LEGEND</span>
+                    </div>
+                    <span class="level-sub">Legendary range for high-tier buyers.</span>
+                    <span class="cta-text">View Accounts →</span>
+                </button>
+
+                <button class="level-btn" onclick="showAccounts('level_400_500')">
+                    <div class="level-main">
+                        <span class="level-name">Level 400-500</span>
+                        <span class="level-badge">MYTHIC</span>
+                    </div>
+                    <span class="level-sub">Top-tier range for premium collectors.</span>
+                    <span class="cta-text">View Accounts →</span>
+                </button>
+            </div>
         </div>
 
         <div class="account-list" id="accountList">
