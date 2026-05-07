@@ -334,13 +334,19 @@
             line-height: 1.5;
         }
 
+        /* ============================= */
+        /* FULL RED GAMING MODAL UPGRADE */
+        /* ============================= */
+
         .popup-bg {
             display: none;
             position: fixed;
             inset: 0;
             background:
-                radial-gradient(circle at top, rgba(255, 0, 0, 0.20), transparent 35%),
-                rgba(0, 0, 0, 0.88);
+                radial-gradient(circle at top, rgba(255, 0, 0, 0.25), transparent 35%),
+                radial-gradient(circle at bottom, rgba(255, 106, 0, 0.12), transparent 40%),
+                rgba(0, 0, 0, 0.90);
+            backdrop-filter: blur(7px);
             justify-content: center;
             align-items: center;
             padding: 18px;
@@ -350,19 +356,19 @@
         .popup {
             position: relative;
             width: 100%;
-            max-width: 430px;
+            max-width: 440px;
             max-height: 92vh;
             overflow-y: auto;
             background:
-                linear-gradient(160deg, rgba(25, 0, 0, 0.98), rgba(8, 8, 14, 0.98)),
-                radial-gradient(circle at top, rgba(255, 0, 0, 0.20), transparent 45%);
-            border: 1px solid rgba(255, 40, 40, 0.60);
-            border-radius: 28px;
+                linear-gradient(155deg, rgba(28, 0, 0, 0.98), rgba(7, 7, 13, 0.98)),
+                radial-gradient(circle at top, rgba(255, 0, 0, 0.22), transparent 48%);
+            border: 1px solid rgba(255, 55, 55, 0.70);
+            border-radius: 30px;
             padding: 22px;
             box-shadow:
-                0 0 24px rgba(255, 0, 0, 0.45),
-                0 0 55px rgba(120, 0, 0, 0.35),
-                inset 0 0 22px rgba(255, 0, 0, 0.08);
+                0 0 26px rgba(255, 0, 0, 0.45),
+                0 0 60px rgba(255, 106, 0, 0.18),
+                inset 0 0 22px rgba(255, 0, 0, 0.10);
             backdrop-filter: blur(14px);
         }
 
@@ -370,7 +376,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            border-radius: 28px;
+            border-radius: 30px;
             padding: 1px;
             background: linear-gradient(135deg, #ff1b1b, #ff8a00, #7b0000, #ff1b1b);
             -webkit-mask:
@@ -394,31 +400,33 @@
         }
 
         .popup p {
-            color: #f1d7d7;
+            color: #f3d8d8;
             line-height: 1.5;
         }
 
         .image-slider {
             width: 100%;
             padding: 10px;
-            border-radius: 22px;
+            border-radius: 24px;
             background:
-                linear-gradient(145deg, rgba(255, 0, 0, 0.12), rgba(0, 0, 0, 0.55));
-            border: 1px solid rgba(255, 60, 60, 0.35);
-            box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.10);
+                linear-gradient(145deg, rgba(255, 0, 0, 0.14), rgba(0, 0, 0, 0.58));
+            border: 1px solid rgba(255, 65, 65, 0.42);
+            box-shadow:
+                inset 0 0 20px rgba(255, 0, 0, 0.12),
+                0 0 18px rgba(255, 0, 0, 0.16);
         }
 
         .account-img {
             width: 100%;
-            height: 260px;
-            border-radius: 18px;
-            border: 1px solid rgba(255, 45, 45, 0.65);
+            height: 265px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 45, 45, 0.75);
             margin: 0 0 12px;
-            background: rgba(0, 0, 0, 0.50);
+            background: rgba(0, 0, 0, 0.55);
             object-fit: cover;
             box-shadow:
-                0 0 16px rgba(255, 0, 0, 0.35),
-                inset 0 0 20px rgba(255, 0, 0, 0.08);
+                0 0 16px rgba(255, 0, 0, 0.38),
+                inset 0 0 20px rgba(255, 0, 0, 0.10);
         }
 
         .slider-controls {
@@ -433,7 +441,7 @@
             font-size: 13px;
             border-radius: 14px;
             background: linear-gradient(135deg, #4b0505, #b60000);
-            box-shadow: 0 0 14px rgba(255, 0, 0, 0.28);
+            box-shadow: 0 0 14px rgba(255, 0, 0, 0.30);
         }
 
         #imageCounter {
@@ -447,19 +455,21 @@
         .info-box,
         .gcash-box {
             background:
-                linear-gradient(145deg, rgba(35, 0, 0, 0.80), rgba(0, 0, 0, 0.55));
-            border: 1px solid rgba(255, 60, 60, 0.42);
-            border-radius: 20px;
+                linear-gradient(145deg, rgba(40, 0, 0, 0.82), rgba(0, 0, 0, 0.58));
+            border: 1px solid rgba(255, 65, 65, 0.45);
+            border-radius: 22px;
             padding: 16px;
             margin: 16px 0;
             text-align: left;
-            box-shadow: inset 0 0 18px rgba(255, 0, 0, 0.08);
+            box-shadow:
+                inset 0 0 18px rgba(255, 0, 0, 0.10),
+                0 0 16px rgba(255, 0, 0, 0.10);
         }
 
         .info-box p,
         .gcash-box p {
             margin: 9px 0;
-            color: #f1d7d7;
+            color: #f5dcdc;
             font-size: 14px;
         }
 
@@ -490,8 +500,8 @@
             font-size: 15px;
             background: linear-gradient(135deg, #ff1e1e, #8b0000, #ff6a00);
             box-shadow:
-                0 0 16px rgba(255, 0, 0, 0.50),
-                0 0 32px rgba(255, 106, 0, 0.22);
+                0 0 16px rgba(255, 0, 0, 0.52),
+                0 0 32px rgba(255, 106, 0, 0.24);
             cursor: pointer;
             margin-top: 10px;
             text-transform: uppercase;
@@ -505,15 +515,43 @@
 
         .close-btn {
             background: rgba(255, 255, 255, 0.10);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.14);
             box-shadow: none;
             text-transform: none;
         }
 
         .back-btn {
-            background: rgba(120, 0, 0, 0.55);
-            border: 1px solid rgba(255, 60, 60, 0.30);
+            background: rgba(120, 0, 0, 0.60);
+            border: 1px solid rgba(255, 60, 60, 0.34);
             box-shadow: none;
+        }
+
+        .seller-option {
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 20px;
+            background:
+                linear-gradient(145deg, rgba(255, 0, 0, 0.16), rgba(0, 0, 0, 0.55));
+            border: 1px solid rgba(255, 60, 60, 0.38);
+            box-shadow: 0 0 18px rgba(255, 0, 0, 0.15);
+            text-align: left;
+        }
+
+        .seller-option h3 {
+            margin: 0 0 6px;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+        }
+
+        .seller-option p {
+            margin: 4px 0 10px;
+            color: #ffd0d0;
+            font-size: 13px;
+        }
+
+        .telegram-btn {
+            text-align: center;
+            margin-top: 14px;
         }
 
         .status-text {
@@ -534,8 +572,17 @@
                 padding: 18px 12px;
             }
 
+            .popup {
+                max-width: 94vw;
+                padding: 20px;
+            }
+
             .account-img {
                 height: 235px;
+            }
+
+            .popup h2 {
+                font-size: 24px;
             }
         }
     </style>
@@ -649,10 +696,19 @@
     <div class="popup-bg" id="sellerPopup">
         <div class="popup">
             <h2>Choose Seller</h2>
-            <p>Choose where you want to buy this account.</p>
+            <p>Select which seller you want to buy from. Each seller has a separate GCash account.</p>
 
-            <button onclick="openGcash('Demi')">Buy from Demi</button>
-            <button onclick="openGcash('SKE')">Buy from SKE</button>
+            <div class="seller-option">
+                <h3>🔥 Demi</h3>
+                <p>Fast transaction • Main seller</p>
+                <button onclick="openGcash('Demi')">Buy from Demi</button>
+            </div>
+
+            <div class="seller-option">
+                <h3>⚡ SKE</h3>
+                <p>Alternative seller • Direct payment</p>
+                <button onclick="openGcash('SKE')">Buy from SKE</button>
+            </div>
 
             <button class="back-btn" onclick="backToAccount()">Back to Account</button>
             <button class="close-btn" onclick="closePopups()">Cancel</button>
@@ -675,6 +731,7 @@
                 <p><strong>Step 1:</strong> Send the exact amount to the GCash shown above.</p>
                 <p><strong>Step 2:</strong> Take a screenshot of your payment.</p>
                 <p><strong>Step 3:</strong> Tap the button below and send your payment proof directly to the seller.</p>
+                <p><strong>Step 4:</strong> Wait for the seller to confirm and deliver your account.</p>
             </div>
 
             <a class="telegram-btn" id="sellerDmBtn" href="#" target="_blank">
