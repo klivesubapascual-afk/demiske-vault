@@ -11,13 +11,6 @@ function jsonResponse(statusCode, body) {
   };
 }
 
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
-
 async function telegram(method, payload) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
 
@@ -40,11 +33,6 @@ exports.handler = async function (event) {
 
     const update = JSON.parse(event.body || "{}");
 
-    const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
-
     if (update.message) {
       const chatId = update.message.chat.id;
       const text = update.message.text || "";
@@ -54,9 +42,8 @@ exports.handler = async function (event) {
           chat_id: chatId,
           text:
             "Welcome to DemiSke Vault Bot ✅\n\n" +
-            "Your Telegram ID is:\n" +
-            `${chatId}\n\n` +
-            "Copy this number and paste it on the website when submitting payment proof.",
+            "This bot is for admin approval only.\n\n" +
+            "Customers will receive their account username/password directly on the website after approval.",
         });
       }
 
@@ -92,32 +79,24 @@ exports.handler = async function (event) {
       return jsonResponse(200, { ok: true });
     }
 
-    const { data: order, error: orderError } = await supabase
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    const newStatus = action === "approve" ? "approved" : "denied";
+
+    const { data: order, error } = await supabase
       .from("orders")
-      .select("*")
+      .update({ status: newStatus })
       .eq("id", orderId)
+      .select()
       .single();
 
-    if (orderError || !order) {
+    if (error || !order) {
       await telegram("answerCallbackQuery", {
         callback_query_id: callback.id,
-        text: "Order not found.",
-        show_alert: true,
-      });
-
-      return jsonResponse(200, { ok: true });
-    }
-
-    const { data: account, error: accountError } = await supabase
-      .from("accounts")
-      .select("*")
-      .eq("id", order.account_id)
-      .single();
-
-    if (accountError || !account) {
-      await telegram("answerCallbackQuery", {
-        callback_query_id: callback.id,
-        text: "Account not found.",
+        text: "Order not found or update failed.",
         show_alert: true,
       });
 
@@ -125,31 +104,9 @@ exports.handler = async function (event) {
     }
 
     if (action === "approve") {
-      await supabase
-        .from("orders")
-        .update({ status: "approved" })
-        .eq("id", orderId);
-
-      const customerMessage =
-        `✅ <b>Payment Approved!</b>\n\n` +
-        `<b>Account:</b> ${escapeHtml(account.name)}\n` +
-        `<b>Level:</b> ${escapeHtml(account.level)}\n` +
-        `<b>Nickname:</b> ${escapeHtml(account.nickname || "N/A")}\n` +
-        `<b>Region:</b> ${escapeHtml(account.region || "N/A")}\n` +
-        `<b>UID:</b> ${escapeHtml(account.uid || "N/A")}\n\n` +
-        `<b>Account Username:</b> ${escapeHtml(account.account_username || "Not set")}\n` +
-        `<b>Account Password:</b> ${escapeHtml(account.account_password || "Not set")}\n\n` +
-        `Thank you for buying from DemiSke Vault.`;
-
-      await telegram("sendMessage", {
-        chat_id: order.customer_telegram_id,
-        text: customerMessage,
-        parse_mode: "HTML",
-      });
-
       await telegram("answerCallbackQuery", {
         callback_query_id: callback.id,
-        text: "Approved. Account details sent to customer.",
+        text: "Approved. Customer can now see account details on the website.",
       });
 
       await telegram("editMessageCaption", {
@@ -158,8 +115,9 @@ exports.handler = async function (event) {
         caption:
           `✅ APPROVED\n\n` +
           `Order ID: ${order.id}\n` +
-          `Account: ${order.account_name}\n` +
-          `Customer Telegram ID: ${order.customer_telegram_id}`,
+          `Customer Username: ${order.customer_username}\n` +
+          `Account: ${order.account_name}\n\n` +
+          `Customer can now check the website to see account username/password.`,
         reply_markup: {
           inline_keyboard: [],
         },
@@ -167,21 +125,9 @@ exports.handler = async function (event) {
     }
 
     if (action === "deny") {
-      await supabase
-        .from("orders")
-        .update({ status: "denied" })
-        .eq("id", orderId);
-
-      await telegram("sendMessage", {
-        chat_id: order.customer_telegram_id,
-        text:
-          "❌ Payment denied.\n\n" +
-          "Your payment proof was not approved. Please contact admin or resend a valid proof.",
-      });
-
       await telegram("answerCallbackQuery", {
         callback_query_id: callback.id,
-        text: "Denied. Customer has been notified.",
+        text: "Denied. Customer will see denied status on the website.",
       });
 
       await telegram("editMessageCaption", {
@@ -190,8 +136,8 @@ exports.handler = async function (event) {
         caption:
           `❌ DENIED\n\n` +
           `Order ID: ${order.id}\n` +
-          `Account: ${order.account_name}\n` +
-          `Customer Telegram ID: ${order.customer_telegram_id}`,
+          `Customer Username: ${order.customer_username}\n` +
+          `Account: ${order.account_name}`,
         reply_markup: {
           inline_keyboard: [],
         },
