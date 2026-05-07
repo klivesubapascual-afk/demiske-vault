@@ -16,26 +16,94 @@
             font-family: Arial, sans-serif;
             text-align: center;
             background:
-                radial-gradient(circle at top, rgba(200, 0, 255, 0.25), transparent 35%),
-                linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.92)),
+                linear-gradient(rgba(10, 18, 35, 0.82), rgba(5, 8, 18, 0.94)),
                 url("bg.jpg");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }
 
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background:
+                linear-gradient(rgba(5, 8, 18, 0.88), rgba(5, 8, 18, 0.98)),
+                url("bg.jpg");
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 380px;
+            background: rgba(16, 20, 35, 0.96);
+            border: 1px solid rgba(255, 0, 255, 0.45);
+            border-radius: 22px;
+            padding: 25px;
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.35);
+            text-align: center;
+        }
+
+        .login-box h2 {
+            margin-top: 0;
+            font-size: 32px;
+            text-shadow:
+                0 0 8px #ff00ff,
+                0 0 18px #a600ff;
+        }
+
+        .login-box p {
+            color: #d9c5ff;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 0, 255, 0.35);
+            background: rgba(0, 0, 0, 0.45);
+            color: white;
+            outline: none;
+            text-align: center;
+            margin: 12px 0;
+            font-size: 15px;
+        }
+
+        .login-error {
+            display: none;
+            color: #ff6bff;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
         .container {
             min-height: 100vh;
-            padding: 40px 18px;
+            padding: 32px 18px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
         }
 
+        .top-box {
+            width: 100%;
+            max-width: 430px;
+            margin-bottom: 18px;
+            padding: 18px;
+            border-radius: 22px;
+            background: rgba(17, 26, 45, 0.72);
+            border: 1px solid rgba(160, 120, 255, 0.28);
+            box-shadow: 0 0 25px rgba(123, 0, 255, 0.25);
+            backdrop-filter: blur(8px);
+        }
+
         h1 {
-            font-size: 42px;
-            margin-bottom: 8px;
+            margin: 0 0 8px;
+            font-size: 34px;
             color: #ffffff;
             text-shadow:
                 0 0 8px #ff00ff,
@@ -44,75 +112,49 @@
         }
 
         .subtitle {
-            color: #e6d7ff;
-            margin-bottom: 10px;
-            font-size: 15px;
-            text-shadow: 0 0 10px rgba(180, 0, 255, 0.8);
+            color: #d7d7e8;
+            margin: 0 0 8px;
+            font-size: 14px;
         }
 
         .telegram {
             color: #ff4dff;
             font-weight: bold;
-            margin-bottom: 28px;
+            margin: 0;
             text-shadow: 0 0 12px #c000ff;
         }
 
-        .card {
+        .menu {
             width: 100%;
-            max-width: 380px;
-            background: rgba(10, 10, 18, 0.78);
-            border: 1px solid rgba(213, 0, 255, 0.55);
-            border-radius: 20px;
-            padding: 22px;
-            margin: 14px auto;
-            box-shadow:
-                0 0 18px rgba(180, 0, 255, 0.35),
-                inset 0 0 18px rgba(120, 0, 255, 0.16);
-            backdrop-filter: blur(8px);
+            max-width: 430px;
         }
 
-        .card h2 {
-            margin: 0 0 8px;
-            font-size: 24px;
-        }
-
-        .card p {
-            margin: 0 0 18px;
-            color: #d9c5ff;
-            font-size: 17px;
-        }
-
-        .price {
-            color: #ff4dff;
-            font-weight: bold;
-            text-shadow: 0 0 12px #c000ff;
-        }
-
-        button, .telegram-btn {
-            display: block;
+        .level-btn {
             width: 100%;
-            padding: 14px;
-            border-radius: 14px;
-            border: none;
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            font-size: 15px;
-            background: linear-gradient(135deg, #ff00e6, #7b00ff);
-            box-shadow:
-                0 0 15px rgba(255, 0, 230, 0.65),
-                0 0 28px rgba(123, 0, 255, 0.45);
+            margin: 9px 0;
+            padding: 19px 14px;
+            border-radius: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(48, 62, 88, 0.94);
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 800;
+            text-align: center;
             cursor: pointer;
+            box-shadow:
+                0 8px 20px rgba(0, 0, 0, 0.35),
+                inset 0 0 12px rgba(255, 255, 255, 0.03);
         }
 
-        button:active, .telegram-btn:active {
-            transform: scale(0.97);
+        .level-btn:active {
+            transform: scale(0.98);
+            background: rgba(65, 80, 112, 0.98);
         }
 
         .note {
             width: 100%;
-            max-width: 380px;
-            margin-top: 20px;
+            max-width: 430px;
+            margin-top: 18px;
             padding: 14px;
             border-radius: 14px;
             background: rgba(0, 0, 0, 0.45);
@@ -125,7 +167,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.78);
+            background: rgba(0, 0, 0, 0.82);
             justify-content: center;
             align-items: center;
             padding: 18px;
@@ -134,16 +176,16 @@
 
         .popup {
             width: 100%;
-            max-width: 390px;
+            max-width: 410px;
             max-height: 90vh;
             overflow-y: auto;
-            background: rgba(15, 10, 25, 0.96);
-            border: 1px solid rgba(255, 0, 255, 0.55);
+            background: rgba(16, 20, 35, 0.98);
+            border: 1px solid rgba(255, 0, 255, 0.48);
             border-radius: 22px;
-            padding: 24px;
+            padding: 22px;
             box-shadow:
-                0 0 25px rgba(255, 0, 255, 0.45),
-                inset 0 0 18px rgba(120, 0, 255, 0.18);
+                0 0 25px rgba(255, 0, 255, 0.35),
+                inset 0 0 18px rgba(120, 0, 255, 0.15);
             animation: pop 0.2s ease;
         }
 
@@ -174,6 +216,7 @@
             border-radius: 16px;
             border: 1px solid rgba(255, 0, 255, 0.35);
             margin: 12px 0;
+            background: rgba(0, 0, 0, 0.35);
         }
 
         .info-box, .gcash-box {
@@ -189,18 +232,34 @@
             color: #ff4dff;
         }
 
+        button, .telegram-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            border: none;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            background: linear-gradient(135deg, #ff00e6, #7b00ff);
+            box-shadow:
+                0 0 15px rgba(255, 0, 230, 0.55),
+                0 0 28px rgba(123, 0, 255, 0.35);
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
         .choice-btn {
             margin: 12px 0;
         }
 
         .close-btn {
-            margin-top: 12px;
             background: rgba(255, 255, 255, 0.12);
             box-shadow: none;
         }
 
         .back-btn {
-            margin-top: 12px;
             background: rgba(123, 0, 255, 0.45);
             box-shadow: none;
         }
@@ -227,41 +286,64 @@
             color: white;
             outline: none;
         }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 30px;
+            }
+
+            .level-btn {
+                font-size: 20px;
+                padding: 18px 12px;
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h2>DemiSke Vault</h2>
+            <p>Enter password to access the shop.</p>
+
+            <input type="password" id="passwordInput" placeholder="Enter password">
+
+            <button onclick="login()">Login</button>
+
+            <p class="login-error" id="loginError">Wrong password. Try again.</p>
+        </div>
+    </div>
+
+    <!-- Main Website -->
     <div class="container">
-        <h1>DemiSke Vault</h1>
-        <p class="subtitle">Premium Accounts • Fast Transaction • Trusted Seller</p>
-        <p class="telegram">Telegram: @Demixyloadmin</p>
-
-        <div class="card">
-            <h2>Level 1-50</h2>
-            <p>Price: <span class="price">₱150</span></p>
-            <button onclick="openAccountInfo('Level 1-50 Account', 'Level 1-50', '150', 'acc1.jpg', 'Starter account. Good for beginners and ready to use.')">
-                View Account
-            </button>
+        <div class="top-box">
+            <h1>DemiSke Vault</h1>
+            <p class="subtitle">Premium Accounts • Fast Transaction • Trusted Seller</p>
+            <p class="telegram">Telegram: @Demixyloadmin</p>
         </div>
 
-        <div class="card">
-            <h2>Level 50-100</h2>
-            <p>Price: <span class="price">₱300</span></p>
-            <button onclick="openAccountInfo('Level 50-100 Account', 'Level 50-100', '300', 'acc2.jpg', 'Mid-level account with better progress and value.')">
-                View Account
-            </button>
-        </div>
+        <div class="menu">
+            <button class="level-btn" onclick="openAccountInfo('Level 1-50 Account', 'Level 1-50', '150', 'acc1.jpg', 'Starter account. Good for beginners and ready to use.')">Level 1-50</button>
 
-        <div class="card">
-            <h2>Level 100-150</h2>
-            <p>Price: <span class="price">₱400</span></p>
-            <button onclick="openAccountInfo('Level 100-150 Account', 'Level 100-150', '400', 'acc3.jpg', 'High-level account with strong progress. Recommended pick.')">
-                View Account
-            </button>
+            <button class="level-btn" onclick="openAccountInfo('Level 50-100 Account', 'Level 50-100', '300', 'acc2.jpg', 'Mid-level account with better progress and value.')">Level 50-100</button>
+
+            <button class="level-btn" onclick="openAccountInfo('Level 100-150 Account', 'Level 100-150', '400', 'acc3.jpg', 'High-level account with strong progress. Recommended pick.')">Level 100-150</button>
+
+            <button class="level-btn" onclick="openAccountInfo('KhunICE Account', 'Level 184', '550', 'acc4.jpg', 'Nickname: KhunICE&lt;3 | Region: TH | UID: 361673204 | Includes weapon and soldier collections shown in the picture.')">Level 150-200</button>
+
+            <button class="level-btn" onclick="openAccountInfo('Level 200-250 Account', 'Level 200-250', '700', 'acc5.jpg', 'Premium account with higher level progress.')">Level 200-250</button>
+
+            <button class="level-btn" onclick="openAccountInfo('Level 250-300 Account', 'Level 250-300', '850', 'acc6.jpg', 'High-tier account. Good value for serious buyers.')">Level 250-300</button>
+
+            <button class="level-btn" onclick="openAccountInfo('Level 300-400 Account', 'Level 300-400', '1000', 'acc7.jpg', 'Elite account with strong progress.')">Level 300-400</button>
+
+            <button class="level-btn" onclick="openAccountInfo('Level 400-500 Account', 'Level 400-500', '1800', 'acc8.jpg', 'Top-tier account. Best for premium buyers.')">Level 400-500</button>
         </div>
 
         <div class="note">
-            Pick an account, click continue, choose Demi or SKE, then submit your GCash proof.
+            Pick an account level, check the info, click continue, choose Demi or SKE, then submit your GCash proof.
         </div>
     </div>
 
@@ -330,7 +412,7 @@
                 <label>Upload GCash Screenshot</label>
                 <input type="file" name="proof" accept="image/*" required>
 
-                <button type="submit" style="margin-top: 15px;">Submit Proof</button>
+                <button type="submit">Submit Proof</button>
             </form>
 
             <a class="telegram-btn" href="https://t.me/Demixyloadmin">Message Admin on Telegram</a>
@@ -345,6 +427,24 @@
         let selectedLevel = "";
         let selectedPrice = "";
         let selectedSeller = "";
+
+        function login() {
+            const password = document.getElementById("passwordInput").value;
+            const correctPassword = "demiske123";
+
+            if (password === correctPassword) {
+                document.getElementById("loginScreen").style.display = "none";
+                localStorage.setItem("loggedIn", "yes");
+            } else {
+                document.getElementById("loginError").style.display = "block";
+            }
+        }
+
+        window.onload = function() {
+            if (localStorage.getItem("loggedIn") === "yes") {
+                document.getElementById("loginScreen").style.display = "none";
+            }
+        };
 
         function openAccountInfo(account, level, price, image, details) {
             selectedAccount = account;
