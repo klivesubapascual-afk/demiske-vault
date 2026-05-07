@@ -80,9 +80,7 @@
             margin: 0 0 8px;
             font-size: 32px;
             color: white;
-            text-shadow:
-                0 0 8px #ff00ff,
-                0 0 18px #a600ff;
+            text-shadow: 0 0 8px #ff00ff, 0 0 18px #a600ff;
         }
 
         .customer-login-card p {
@@ -179,10 +177,7 @@
             margin: 0 0 8px;
             font-size: 36px;
             color: #ffffff;
-            text-shadow:
-                0 0 8px #ff00ff,
-                0 0 18px #a600ff,
-                0 0 35px #6a00ff;
+            text-shadow: 0 0 8px #ff00ff, 0 0 18px #a600ff, 0 0 35px #6a00ff;
         }
 
         .subtitle {
@@ -414,6 +409,33 @@
             box-shadow: none;
         }
 
+        label {
+            display: block;
+            margin: 12px 0 6px;
+            color: #ffb8ff;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 0, 255, 0.35);
+            background: rgba(0, 0, 0, 0.42);
+            color: white;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .status-text {
+            margin-top: 12px;
+            color: #d9c5ff;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
         @media (max-width: 480px) {
             h1 {
                 font-size: 31px;
@@ -550,13 +572,27 @@
 
             <div class="info-box">
                 <p><strong>Step 1:</strong> Send the exact amount to the GCash shown above.</p>
-                <p><strong>Step 2:</strong> Take a screenshot of your payment.</p>
-                <p><strong>Step 3:</strong> Tap the Telegram button below and send your payment proof.</p>
+                <p><strong>Step 2:</strong> Start the Telegram bot and copy your Telegram ID.</p>
+                <p><strong>Step 3:</strong> Upload your GCash screenshot below.</p>
+                <p><strong>Step 4:</strong> Wait for admin approval. If approved, the bot will send the account username/password automatically.</p>
             </div>
 
-            <a class="telegram-btn" id="telegramProofBtn" href="https://t.me/Demixyloadmin" target="_blank">
-                Send Payment Proof on Telegram
+            <a class="telegram-btn" href="https://t.me/Demixyloadmin" target="_blank">
+                Open Telegram Bot / Admin
             </a>
+
+            <label>Your Telegram ID</label>
+            <input type="text" id="customerTelegramId" placeholder="Example: 123456789">
+
+            <label>GCash Reference Number</label>
+            <input type="text" id="paymentReference" placeholder="Enter GCash reference number">
+
+            <label>Upload GCash Screenshot</label>
+            <input type="file" id="proofImage" accept="image/*">
+
+            <button onclick="submitProof()">Submit Proof for Approval</button>
+
+            <p class="status-text" id="proofStatus"></p>
 
             <button class="back-btn" onclick="backToSeller()">Back to Seller Choice</button>
             <button class="close-btn" onclick="closePopups()">Close</button>
@@ -777,19 +813,80 @@
             document.getElementById("gcashName").innerText = gcashInfo[seller].name;
             document.getElementById("gcashNumber").innerText = gcashInfo[seller].number;
 
-            const currentCustomer = localStorage.getItem("currentCustomer") || "Customer";
+            document.getElementById("proofStatus").innerText = "";
+        }
 
-            const telegramMessage =
-                "PAYMENT PROOF%0A%0A" +
-                "Customer: " + encodeURIComponent(currentCustomer) + "%0A" +
-                "Account: " + encodeURIComponent(selectedAccount.name || "N/A") + "%0A" +
-                "Level: " + encodeURIComponent(selectedAccount.level || "N/A") + "%0A" +
-                "Seller: " + encodeURIComponent(selectedSeller) + "%0A" +
-                "Amount: ₱" + encodeURIComponent(selectedAccount.price || "0") + "%0A%0A" +
-                "I will send my GCash screenshot here.";
+        function fileToBase64(file) {
+            return new Promise(function(resolve, reject) {
+                const reader = new FileReader();
 
-            document.getElementById("telegramProofBtn").href =
-                "https://t.me/Demixyloadmin?text=" + telegramMessage;
+                reader.onload = function() {
+                    resolve(reader.result);
+                };
+
+                reader.onerror = function() {
+                    reject(new Error("Failed to read image file."));
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function submitProof() {
+            const status = document.getElementById("proofStatus");
+            const telegramId = document.getElementById("customerTelegramId").value.trim();
+            const reference = document.getElementById("paymentReference").value.trim();
+            const file = document.getElementById("proofImage").files[0];
+
+            if (!selectedAccount) {
+                status.innerText = "Please select an account first.";
+                return;
+            }
+
+            if (!selectedSeller) {
+                status.innerText = "Please select a seller first.";
+                return;
+            }
+
+            if (!telegramId || !reference || !file) {
+                status.innerText = "Please complete Telegram ID, reference number, and proof screenshot.";
+                return;
+            }
+
+            status.innerText = "Submitting proof to admin bot...";
+
+            try {
+                const base64 = await fileToBase64(file);
+
+                const response = await fetch("/.netlify/functions/submit-proof", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        account_id: selectedAccount.id,
+                        seller: selectedSeller,
+                        customer_telegram_id: telegramId,
+                        payment_reference: reference,
+                        proof_image_base64: base64,
+                        proof_image_type: file.type
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    status.innerText = "Error: " + (result.error || result.details || "Submit failed.");
+                    return;
+                }
+
+                status.innerText = "Proof submitted. Please wait for admin approval in Telegram.";
+
+                document.getElementById("paymentReference").value = "";
+                document.getElementById("proofImage").value = "";
+            } catch (error) {
+                status.innerText = "Error: " + error.message;
+            }
         }
 
         function backToAccount() {
