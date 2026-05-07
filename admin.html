@@ -13,27 +13,29 @@
 
         :root {
             --red: #ff1e1e;
-            --deep-red: #7a0000;
+            --red2: #990000;
             --orange: #ff6a00;
             --gold: #ffcc66;
-            --soft-red: #ffd0d0;
-            --dark: rgba(8, 8, 14, 0.96);
+            --text: #ffffff;
+            --soft: #ffd6d6;
+            --card: rgba(14, 14, 22, 0.94);
+            --line: rgba(255, 60, 60, 0.35);
         }
 
         body {
             margin: 0;
             min-height: 100vh;
             font-family: Arial, sans-serif;
-            color: white;
+            color: var(--text);
             background:
-                radial-gradient(circle at top, rgba(255, 0, 0, 0.30), transparent 34%),
-                radial-gradient(circle at bottom right, rgba(255, 106, 0, 0.16), transparent 35%),
-                linear-gradient(rgba(5, 3, 5, 0.90), rgba(0, 0, 0, 0.98)),
+                radial-gradient(circle at top, rgba(255, 0, 0, 0.32), transparent 36%),
+                radial-gradient(circle at bottom right, rgba(255, 106, 0, 0.16), transparent 34%),
+                linear-gradient(rgba(5, 5, 10, 0.90), rgba(0, 0, 0, 0.98)),
                 url("bg.jpg");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            padding: 24px 16px 40px;
+            padding: 18px;
         }
 
         body::before {
@@ -45,38 +47,41 @@
                 linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
             background-size: 34px 34px;
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.78), transparent);
             z-index: 0;
         }
 
         .page {
             position: relative;
             z-index: 1;
+            max-width: 620px;
+            margin: auto;
         }
 
-        .box {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto 20px;
+        .panel {
             background:
-                linear-gradient(155deg, rgba(28, 0, 0, 0.94), rgba(7, 7, 13, 0.96)),
-                radial-gradient(circle at top, rgba(255, 0, 0, 0.16), transparent 45%);
-            border: 1px solid rgba(255, 55, 55, 0.50);
+                linear-gradient(155deg, rgba(35, 0, 0, 0.92), rgba(8, 8, 16, 0.96)),
+                radial-gradient(circle at top right, rgba(255, 0, 0, 0.18), transparent 44%);
+            border: 1px solid var(--line);
             border-radius: 30px;
             padding: 22px;
+            margin-bottom: 20px;
             box-shadow:
-                0 0 26px rgba(255, 0, 0, 0.30),
-                0 0 60px rgba(255, 106, 0, 0.12),
+                0 0 30px rgba(255, 0, 0, 0.28),
+                0 0 60px rgba(255, 106, 0, 0.10),
                 inset 0 0 22px rgba(255, 0, 0, 0.08);
             backdrop-filter: blur(12px);
         }
 
-        .admin-header {
-            text-align: center;
-            margin-bottom: 18px;
+        .hidden {
+            display: none;
         }
 
-        .admin-logo {
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
             width: 76px;
             height: 76px;
             margin: 0 auto 14px;
@@ -84,60 +89,72 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #ff1e1e, #7a0000, #ff6a00);
-            box-shadow:
-                0 0 22px rgba(255, 0, 0, 0.55),
-                inset 0 0 18px rgba(255, 255, 255, 0.10);
-            font-size: 30px;
             font-weight: 1000;
+            font-size: 30px;
+            background: linear-gradient(135deg, var(--red), var(--red2), var(--orange));
+            box-shadow:
+                0 0 22px rgba(255, 0, 0, 0.60),
+                inset 0 0 16px rgba(255,255,255,0.12);
         }
 
         h1, h2 {
+            margin: 0 0 8px;
             text-align: center;
-            margin: 0 0 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
             text-shadow:
                 0 0 8px #ff0000,
-                0 0 18px #ff3b3b,
-                0 0 32px #7a0000;
+                0 0 20px #ff3b3b,
+                0 0 35px #7a0000;
         }
 
         .subtext {
-            color: #ffd0d0;
-            font-size: 14px;
+            color: var(--soft);
             line-height: 1.5;
+            font-size: 14px;
             text-align: center;
-            margin: 0 0 14px;
+            margin: 0;
         }
 
-        .admin-stats {
+        .stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            margin: 14px 0 4px;
+            margin-top: 16px;
         }
 
-        .stat-card {
-            padding: 11px 8px;
+        .stat {
+            padding: 12px 8px;
             border-radius: 18px;
-            background: rgba(0, 0, 0, 0.38);
-            border: 1px solid rgba(255, 60, 60, 0.25);
-            box-shadow: inset 0 0 14px rgba(255, 0, 0, 0.08);
+            background: rgba(0,0,0,0.38);
+            border: 1px solid rgba(255, 70, 70, 0.24);
             text-align: center;
         }
 
-        .stat-card strong {
+        .stat strong {
             display: block;
-            color: white;
             font-size: 14px;
         }
 
-        .stat-card span {
+        .stat span {
             display: block;
-            margin-top: 3px;
             color: #ffb3b3;
             font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .section {
+            margin-top: 18px;
+            padding: 12px 14px;
+            border-radius: 18px;
+            background:
+                linear-gradient(135deg, rgba(255, 0, 0, 0.16), rgba(0,0,0,0.44));
+            border: 1px solid rgba(255, 60, 60, 0.25);
+            color: white;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            box-shadow: inset 0 0 14px rgba(255,0,0,0.08);
         }
 
         label {
@@ -145,16 +162,16 @@
             margin-top: 14px;
             margin-bottom: 6px;
             color: #ffb3b3;
-            font-weight: bold;
             font-size: 14px;
+            font-weight: bold;
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 14px;
+            padding: 15px;
             border-radius: 16px;
             border: 1px solid rgba(255, 60, 60, 0.42);
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(0, 0, 0, 0.48);
             color: white;
             outline: none;
             font-size: 15px;
@@ -162,15 +179,10 @@
         }
 
         input:focus, select:focus, textarea:focus {
-            border-color: rgba(255, 110, 80, 0.85);
+            border-color: rgba(255, 120, 80, 0.88);
             box-shadow:
-                0 0 14px rgba(255, 0, 0, 0.30),
+                0 0 14px rgba(255, 0, 0, 0.35),
                 inset 0 0 14px rgba(255, 0, 0, 0.08);
-        }
-
-        textarea {
-            min-height: 100px;
-            resize: vertical;
         }
 
         select option {
@@ -178,16 +190,46 @@
             color: white;
         }
 
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .show-pass-btn {
+            position: absolute;
+            right: 8px;
+            bottom: 8px;
+            width: auto;
+            margin: 0;
+            padding: 8px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            box-shadow: none;
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.16);
+            text-transform: none;
+        }
+
         button {
             width: 100%;
             margin-top: 16px;
-            padding: 14px;
-            border: 1px solid rgba(255, 120, 80, 0.46);
+            padding: 15px;
             border-radius: 16px;
+            border: 1px solid rgba(255, 120, 80, 0.46);
             color: white;
             font-weight: bold;
             font-size: 15px;
-            background: linear-gradient(135deg, #ff1e1e, #8b0000, #ff6a00);
+            background: linear-gradient(135deg, var(--red), var(--red2), var(--orange));
             box-shadow:
                 0 0 16px rgba(255, 0, 0, 0.50),
                 0 0 32px rgba(255, 106, 0, 0.20);
@@ -213,29 +255,11 @@
         }
 
         .status {
+            color: var(--soft);
             text-align: center;
             margin-top: 14px;
-            color: #ffd0d0;
-            line-height: 1.5;
             font-size: 14px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .section-title {
-            margin-top: 12px;
-            padding: 12px 14px;
-            border-radius: 18px;
-            background:
-                linear-gradient(135deg, rgba(255, 0, 0, 0.14), rgba(0, 0, 0, 0.44));
-            border: 1px solid rgba(255, 60, 60, 0.26);
-            color: #ffffff;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            box-shadow: inset 0 0 14px rgba(255, 0, 0, 0.08);
+            line-height: 1.5;
         }
 
         #imagePreviewBox {
@@ -247,18 +271,18 @@
 
         #imagePreviewBox img {
             width: 100%;
-            height: 130px;
+            height: 135px;
             object-fit: cover;
             border-radius: 16px;
             border: 1px solid rgba(255, 60, 60, 0.42);
-            box-shadow: 0 0 14px rgba(255, 0, 0, 0.20);
+            box-shadow: 0 0 14px rgba(255, 0, 0, 0.22);
         }
 
         .account-card {
             background:
                 linear-gradient(145deg, rgba(55, 8, 8, 0.92), rgba(8, 8, 14, 0.94));
             border: 1px solid rgba(255, 60, 60, 0.30);
-            border-radius: 22px;
+            border-radius: 24px;
             padding: 15px;
             margin-top: 14px;
             box-shadow:
@@ -268,15 +292,15 @@
 
         .account-card img {
             width: 100%;
-            border-radius: 16px;
-            margin-bottom: 10px;
             max-height: 270px;
             object-fit: cover;
+            border-radius: 16px;
             border: 1px solid rgba(255, 60, 60, 0.35);
+            margin-bottom: 10px;
         }
 
         .account-card strong {
-            color: #ffffff;
+            color: white;
             text-shadow: 0 0 10px rgba(255, 0, 0, 0.70);
         }
 
@@ -285,28 +309,23 @@
             color: #f5dcdc;
         }
 
-        .mini {
-            color: #ffd0d0;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        .image-count {
+        .pill {
             display: inline-block;
             margin-top: 6px;
             padding: 6px 10px;
             border-radius: 999px;
             background: rgba(255, 106, 0, 0.16);
             border: 1px solid rgba(255, 180, 80, 0.30);
-            color: #ffcc66;
+            color: var(--gold);
             font-size: 12px;
             font-weight: 900;
         }
 
-        .card-actions {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
+        .mini {
+            color: #ffd0d0;
+            font-size: 13px;
+            line-height: 1.5;
+            word-break: break-word;
         }
 
         .modal-bg {
@@ -340,15 +359,9 @@
             text-align: center;
         }
 
-        .modal h2 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
         .modal p {
-            color: #ffd0d0;
+            color: var(--soft);
             line-height: 1.5;
-            margin: 0 0 12px;
         }
 
         .modal-actions {
@@ -357,22 +370,27 @@
             gap: 10px;
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 520px) {
             body {
-                padding: 18px 12px 34px;
+                padding: 14px 10px 30px;
             }
 
-            .box {
+            .panel {
                 padding: 20px;
                 border-radius: 26px;
             }
 
-            h1 {
-                font-size: 28px;
+            .row {
+                grid-template-columns: 1fr;
+                gap: 0;
             }
 
-            .admin-stats {
+            .stats {
                 grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 30px;
             }
 
             .modal-actions {
@@ -384,11 +402,12 @@
 
 <body>
 <div class="page">
-    <div class="box" id="loginBox">
-        <div class="admin-header">
-            <div class="admin-logo">DS</div>
+
+    <div class="panel" id="loginBox">
+        <div class="header">
+            <div class="logo">DS</div>
             <h1>Admin Login</h1>
-            <p class="subtext">Manage DemiSke Vault accounts, pictures, prices, and credentials.</p>
+            <p class="subtext">Manage accounts, prices, pictures, and login credentials.</p>
         </div>
 
         <label>Email</label>
@@ -398,69 +417,78 @@
         <input type="password" id="adminPassword" placeholder="Admin password">
 
         <button onclick="adminLogin()">Login</button>
-
         <p class="status" id="loginStatus"></p>
     </div>
 
-    <div class="box hidden" id="adminBox">
-        <div class="admin-header">
-            <div class="admin-logo">DS</div>
+    <div class="panel hidden" id="adminBox">
+        <div class="header">
+            <div class="logo">DS</div>
             <h1>DemiSke Admin</h1>
-            <p class="subtext">
-                Upload multiple account pictures, add full account details, and manage listings.
-            </p>
+            <p class="subtext">Add account details faster using clean sections below.</p>
 
-            <div class="admin-stats">
-                <div class="stat-card">
+            <div class="stats">
+                <div class="stat">
                     <strong>Multi</strong>
                     <span>Pictures</span>
                 </div>
-                <div class="stat-card">
-                    <strong>Fast</strong>
-                    <span>Upload</span>
+                <div class="stat">
+                    <strong>Easy</strong>
+                    <span>Input</span>
                 </div>
-                <div class="stat-card">
-                    <strong>Manual</strong>
-                    <span>Control</span>
+                <div class="stat">
+                    <strong>Gaming</strong>
+                    <span>Theme</span>
                 </div>
             </div>
         </div>
 
-        <div class="section-title">Account Media</div>
-
-        <label>Account Pictures</label>
+        <div class="section">1. Account Pictures</div>
+        <label>Upload Pictures</label>
         <input type="file" id="accountImage" accept="image/*" multiple onchange="previewImages(event)">
         <div id="imagePreviewBox"></div>
 
-        <div class="section-title">Basic Details</div>
+        <div class="section">2. Basic Info</div>
 
         <label>Account Name</label>
         <input type="text" id="accountName" placeholder="Example: KhunICE Account">
 
-        <label>Level</label>
-        <input type="text" id="accountLevel" placeholder="Example: Level 184">
+        <div class="row">
+            <div>
+                <label>Level</label>
+                <input type="text" id="accountLevel" placeholder="Example: Level 184">
+            </div>
+            <div>
+                <label>Price</label>
+                <input type="text" id="accountPrice" placeholder="Example: 550">
+            </div>
+        </div>
 
-        <label>Price</label>
-        <input type="text" id="accountPrice" placeholder="Example: 550">
-
-        <label>UID</label>
-        <input type="text" id="accountUid" placeholder="Example: 361673204">
-
-        <label>Region</label>
-        <input type="text" id="accountRegion" placeholder="Example: TH">
+        <div class="row">
+            <div>
+                <label>UID</label>
+                <input type="text" id="accountUid" placeholder="Example: 361673204">
+            </div>
+            <div>
+                <label>Region</label>
+                <input type="text" id="accountRegion" placeholder="Example: TH">
+            </div>
+        </div>
 
         <label>Nickname</label>
         <input type="text" id="accountNickname" placeholder="Example: KhunICE">
 
-        <div class="section-title">Login Credentials</div>
+        <div class="section">3. Login Details</div>
 
         <label>Account Username</label>
         <input type="text" id="accountUsername" placeholder="Actual account username">
 
         <label>Account Password</label>
-        <input type="text" id="accountPassword" placeholder="Actual account password">
+        <div class="password-wrap">
+            <input type="password" id="accountPassword" placeholder="Actual account password">
+            <button type="button" class="show-pass-btn" onclick="togglePassword()">Show</button>
+        </div>
 
-        <div class="section-title">Category</div>
+        <div class="section">4. Category & Details</div>
 
         <label>Category</label>
         <select id="accountCategory">
@@ -474,8 +502,8 @@
             <option value="level_400_500">Level 400-500</option>
         </select>
 
-        <label>Extra Details</label>
-        <textarea id="accountDetails" placeholder="Example: Includes weapon and soldier collections."></textarea>
+        <label>Extra Details / Features</label>
+        <textarea id="accountDetails" placeholder="Example: Includes rare skins, weapons, soldiers, bundles, etc."></textarea>
 
         <button onclick="saveAccount()">Save Account</button>
         <button class="secondary" onclick="adminLogout()">Logout</button>
@@ -483,11 +511,12 @@
         <p class="status" id="saveStatus"></p>
     </div>
 
-    <div class="box hidden" id="accountBox">
+    <div class="panel hidden" id="accountBox">
         <h2>Saved Accounts</h2>
-        <p class="subtext">Your active listings are shown below. Delete accounts after they are sold.</p>
+        <p class="subtext">Active accounts listed in your customer shop.</p>
         <div id="adminAccounts"></div>
     </div>
+
 </div>
 
 <div class="modal-bg" id="deleteModal">
@@ -549,6 +578,19 @@
     async function adminLogout() {
         await db.auth.signOut();
         location.reload();
+    }
+
+    function togglePassword() {
+        const input = document.getElementById("accountPassword");
+        const btn = document.querySelector(".show-pass-btn");
+
+        if (input.type === "password") {
+            input.type = "text";
+            btn.innerText = "Hide";
+        } else {
+            input.type = "password";
+            btn.innerText = "Show";
+        }
     }
 
     function previewImages(event) {
@@ -685,18 +727,17 @@
             div.innerHTML = `
                 <img src="${account.image_url || ""}" alt="Account image">
                 <p><strong>${account.name || "Unnamed Account"}</strong></p>
-                <span class="image-count">${imageCount} picture(s)</span>
+                <span class="pill">${imageCount} picture(s)</span>
                 <p>${account.level || "No level"} • ₱${account.price || "0"}</p>
                 <p>Nickname: ${account.nickname || "N/A"}</p>
                 <p>Region: ${account.region || "N/A"}</p>
                 <p>UID: ${account.uid || "N/A"}</p>
                 <p>Category: ${account.category || "N/A"}</p>
-                <p class="mini">Account Username: ${account.account_username || "Not set"}</p>
-                <p class="mini">Account Password: ${account.account_password || "Not set"}</p>
-                <div class="card-actions">
-                    <button class="danger" onclick="openDeleteModal('${account.id}')">Delete Account</button>
-                </div>
+                <p class="mini">Username: ${account.account_username || "Not set"}</p>
+                <p class="mini">Password: ${account.account_password || "Not set"}</p>
+                <button class="danger" onclick="openDeleteModal('${account.id}')">Delete Account</button>
             `;
+
             container.appendChild(div);
         });
     }
