@@ -11,144 +11,136 @@ function jsonResponse(statusCode, body) {
   };
 }
 
-async function telegram(method, payload) {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
 
-  const res = await fetch(TELEGRAM_API(token, method), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-
-  return res.json();
+function base64ToBlob(base64, mimeType) {
+  const cleanBase64 = base64.includes(",") ? base64.split(",")[1] : base64;
+  const buffer = Buffer.from(cleanBase64, "base64");
+  return new Blob([buffer], { type: mimeType || "image/jpeg" });
 }
 
 exports.handler = async function (event) {
   try {
     if (event.httpMethod !== "POST") {
-      return jsonResponse(200, { ok: true });
+      return jsonResponse(405, { error: "Method not allowed" });
     }
 
-    const update = JSON.parse(event.body || "{}");
+    const {
+      account_id,
+      seller,
+      customer_username,
+      payment_reference,
+      proof_image_base64,
+      proof_image_type,
+    } = JSON.parse(event.body || "{}");
 
-    if (update.message) {
-      const chatId = update.message.chat.id;
-      const text = update.message.text || "";
-
-      if (text.startsWith("/start")) {
-        await telegram("sendMessage", {
-          chat_id: chatId,
-          text:
-            "Welcome to DemiSke Vault Bot ✅\n\n" +
-            "This bot is for admin approval only.\n\n" +
-            "Customers will receive their account username/password directly on the website after approval.",
-        });
-      }
-
-      return jsonResponse(200, { ok: true });
-    }
-
-    if (!update.callback_query) {
-      return jsonResponse(200, { ok: true });
-    }
-
-    const callback = update.callback_query;
-    const adminId = String(process.env.TELEGRAM_ADMIN_ID);
-    const fromId = String(callback.from.id);
-
-    if (fromId !== adminId) {
-      await telegram("answerCallbackQuery", {
-        callback_query_id: callback.id,
-        text: "You are not allowed to approve/deny orders.",
-        show_alert: true,
+    if (!account_id || !seller || !customer_username || !payment_reference || !proof_image_base64) {
+      return jsonResponse(400, {
+        error: "Missing account, seller, username, reference number, or proof screenshot.",
       });
-
-      return jsonResponse(200, { ok: true });
     }
 
-    const [action, orderId] = String(callback.data || "").split(":");
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    const adminId = process.env.TELEGRAM_ADMIN_ID;
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (!["approve", "deny"].includes(action) || !orderId) {
-      await telegram("answerCallbackQuery", {
-        callback_query_id: callback.id,
-        text: "Invalid action.",
+    if (!botToken || !adminId || !supabaseUrl || !serviceRoleKey) {
+      return jsonResponse(500, {
+        error: "Server environment variables are incomplete.",
       });
-
-      return jsonResponse(200, { ok: true });
     }
 
-    const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    const newStatus = action === "approve" ? "approved" : "denied";
+    const { data: account, error: accountError } = await supabase
+      .from("accounts")
+      .select("*")
+      .eq("id", account_id)
+      .single();
 
-    const { data: order, error } = await supabase
+    if (accountError || !account) {
+      return jsonResponse(404, { error: "Account not found." });
+    }
+
+    const { data: order, error: orderError } = await supabase
       .from("orders")
-      .update({ status: newStatus })
-      .eq("id", orderId)
+      .insert({
+        account_id: account.id,
+        account_name: account.name,
+        account_level: account.level,
+        account_price: account.price,
+        seller,
+        customer_username,
+        payment_reference,
+        status: "pending",
+      })
       .select()
       .single();
 
-    if (error || !order) {
-      await telegram("answerCallbackQuery", {
-        callback_query_id: callback.id,
-        text: "Order not found or update failed.",
-        show_alert: true,
-      });
-
-      return jsonResponse(200, { ok: true });
-    }
-
-    if (action === "approve") {
-      await telegram("answerCallbackQuery", {
-        callback_query_id: callback.id,
-        text: "Approved. Customer can now see account details on the website.",
-      });
-
-      await telegram("editMessageCaption", {
-        chat_id: callback.message.chat.id,
-        message_id: callback.message.message_id,
-        caption:
-          `✅ APPROVED\n\n` +
-          `Order ID: ${order.id}\n` +
-          `Customer Username: ${order.customer_username}\n` +
-          `Account: ${order.account_name}\n\n` +
-          `Customer can now check the website to see account username/password.`,
-        reply_markup: {
-          inline_keyboard: [],
-        },
+    if (orderError || !order) {
+      return jsonResponse(500, {
+        error: orderError?.message || "Failed to create order.",
       });
     }
 
-    if (action === "deny") {
-      await telegram("answerCallbackQuery", {
-        callback_query_id: callback.id,
-        text: "Denied. Customer will see denied status on the website.",
-      });
+    const caption =
+      `🧾 <b>New Payment Proof</b>\n\n` +
+      `<b>Order ID:</b> ${escapeHtml(order.id)}\n` +
+      `<b>Customer Username:</b> ${escapeHtml(customer_username)}\n` +
+      `<b>Account:</b> ${escapeHtml(account.name)}\n` +
+      `<b>Level:</b> ${escapeHtml(account.level)}\n` +
+      `<b>Seller:</b> ${escapeHtml(seller)}\n` +
+      `<b>Amount:</b> ₱${escapeHtml(account.price)}\n` +
+      `<b>Reference:</b> ${escapeHtml(payment_reference)}\n\n` +
+      `Choose an action below:`;
 
-      await telegram("editMessageCaption", {
-        chat_id: callback.message.chat.id,
-        message_id: callback.message.message_id,
-        caption:
-          `❌ DENIED\n\n` +
-          `Order ID: ${order.id}\n` +
-          `Customer Username: ${order.customer_username}\n` +
-          `Account: ${order.account_name}`,
-        reply_markup: {
-          inline_keyboard: [],
-        },
+    const formData = new FormData();
+    formData.append("chat_id", adminId);
+    formData.append("caption", caption);
+    formData.append("parse_mode", "HTML");
+    formData.append(
+      "reply_markup",
+      JSON.stringify({
+        inline_keyboard: [
+          [
+            { text: "✅ Approve", callback_data: `approve:${order.id}` },
+            { text: "❌ Deny", callback_data: `deny:${order.id}` },
+          ],
+        ],
+      })
+    );
+
+    const imageBlob = base64ToBlob(proof_image_base64, proof_image_type || "image/jpeg");
+    formData.append("photo", imageBlob, "payment-proof.jpg");
+
+    const tgResponse = await fetch(TELEGRAM_API(botToken, "sendPhoto"), {
+      method: "POST",
+      body: formData,
+    });
+
+    const tgData = await tgResponse.json();
+
+    if (!tgData.ok) {
+      return jsonResponse(500, {
+        error: "Telegram send failed.",
+        details: tgData.description,
       });
     }
 
-    return jsonResponse(200, { ok: true });
-  } catch (error) {
     return jsonResponse(200, {
-      ok: false,
-      error: error.message,
+      success: true,
+      message: "Payment proof sent to admin for approval.",
+      order_id: order.id,
+    });
+  } catch (error) {
+    return jsonResponse(500, {
+      error: error.message || "Unexpected server error.",
     });
   }
 };
