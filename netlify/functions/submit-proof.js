@@ -1,8 +1,5 @@
 const { createClient } = require("@supabase/supabase-js");
 
-const TELEGRAM_API = (token, method) =>
-  `https://api.telegram.org/bot${token}/${method}`;
-
 function jsonResponse(statusCode, body) {
   return {
     statusCode,
@@ -11,130 +8,72 @@ function jsonResponse(statusCode, body) {
   };
 }
 
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
-
-function base64ToBlob(base64, mimeType) {
-  const cleanBase64 = base64.includes(",") ? base64.split(",")[1] : base64;
-  const buffer = Buffer.from(cleanBase64, "base64");
-  return new Blob([buffer], { type: mimeType || "image/jpeg" });
-}
-
 exports.handler = async function (event) {
   try {
-    if (event.httpMethod !== "POST") {
-      return jsonResponse(405, { error: "Method not allowed" });
-    }
+    const orderId = event.queryStringParameters?.order_id;
+    const customerUsername = event.queryStringParameters?.customer_username;
 
-    const {
-      account_id,
-      seller,
-      customer_username,
-      payment_reference,
-      proof_image_base64,
-      proof_image_type,
-    } = JSON.parse(event.body || "{}");
-
-    if (!account_id || !seller || !customer_username || !payment_reference || !proof_image_base64) {
+    if (!orderId || !customerUsername) {
       return jsonResponse(400, {
-        error: "Missing account, seller, username, reference number, or proof screenshot.",
+        error: "Missing order ID or username.",
       });
     }
 
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    const adminId = process.env.TELEGRAM_ADMIN_ID;
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!botToken || !adminId || !supabaseUrl || !serviceRoleKey) {
-      return jsonResponse(500, { error: "Server environment variables are incomplete." });
-    }
-
-    const supabase = createClient(supabaseUrl, serviceRoleKey);
-
-    const { data: account, error: accountError } = await supabase
-      .from("accounts")
-      .select("*")
-      .eq("id", account_id)
-      .single();
-
-    if (accountError || !account) {
-      return jsonResponse(404, { error: "Account not found." });
-    }
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
 
     const { data: order, error: orderError } = await supabase
       .from("orders")
-      .insert({
-        account_id: account.id,
-        account_name: account.name,
-        account_level: account.level,
-        account_price: account.price,
-        seller,
-        customer_username,
-        payment_reference,
-        status: "pending",
-      })
-      .select()
+      .select("*")
+      .eq("id", orderId)
+      .eq("customer_username", customerUsername)
       .single();
 
     if (orderError || !order) {
-      return jsonResponse(500, { error: orderError?.message || "Failed to create order." });
+      return jsonResponse(404, {
+        error: "Order not found.",
+      });
     }
 
-    const caption =
-      `🧾 <b>New Payment Proof</b>\n\n` +
-      `<b>Order ID:</b> ${escapeHtml(order.id)}\n` +
-      `<b>Customer Username:</b> ${escapeHtml(customer_username)}\n` +
-      `<b>Account:</b> ${escapeHtml(account.name)}\n` +
-      `<b>Level:</b> ${escapeHtml(account.level)}\n` +
-      `<b>Seller:</b> ${escapeHtml(seller)}\n` +
-      `<b>Amount:</b> ₱${escapeHtml(account.price)}\n` +
-      `<b>Reference:</b> ${escapeHtml(payment_reference)}\n\n` +
-      `Choose an action below:`;
+    if (order.status === "pending") {
+      return jsonResponse(200, {
+        status: "pending",
+        message: "Your payment is still waiting for admin approval.",
+      });
+    }
 
-    const formData = new FormData();
-    formData.append("chat_id", adminId);
-    formData.append("caption", caption);
-    formData.append("parse_mode", "HTML");
-    formData.append(
-      "reply_markup",
-      JSON.stringify({
-        inline_keyboard: [
-          [
-            { text: "✅ Approve", callback_data: `approve:${order.id}` },
-            { text: "❌ Deny", callback_data: `deny:${order.id}` },
-          ],
-        ],
-      })
-    );
+    if (order.status === "denied") {
+      return jsonResponse(200, {
+        status: "denied",
+        message: "Your payment proof was denied. Please contact admin.",
+      });
+    }
 
-    const imageBlob = base64ToBlob(proof_image_base64, proof_image_type || "image/jpeg");
-    formData.append("photo", imageBlob, "payment-proof.jpg");
-
-    const tgResponse = await fetch(TELEGRAM_API(botToken, "sendPhoto"), {
-      method: "POST",
-      body: formData,
-    });
-
-    const tgData = await tgResponse.json();
-
-    if (!tgData.ok) {
-      return jsonResponse(500, {
-        error: "Telegram send failed.",
-        details: tgData.description,
+    if (order.status === "approved") {
+      return jsonResponse(200, {
+        status: "approved",
+        message: "Payment approved.",
+        account: {
+          name: order.delivered_account_name,
+          level: order.delivered_account_level,
+          nickname: order.delivered_nickname,
+          region: order.delivered_region,
+          uid: order.delivered_uid,
+          account_username: order.delivered_account_username,
+          account_password: order.delivered_account_password,
+        },
       });
     }
 
     return jsonResponse(200, {
-      success: true,
-      message: "Payment proof sent to admin for approval.",
-      order_id: order.id,
+      status: order.status || "unknown",
+      message: "Unknown order status.",
     });
   } catch (error) {
-    return jsonResponse(500, { error: error.message || "Unexpected server error." });
+    return jsonResponse(500, {
+      error: error.message,
+    });
   }
 };
