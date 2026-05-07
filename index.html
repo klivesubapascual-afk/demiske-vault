@@ -179,7 +179,10 @@
             margin: 0 0 8px;
             font-size: 36px;
             color: #ffffff;
-            text-shadow: 0 0 8px #ff00ff, 0 0 18px #a600ff, 0 0 35px #6a00ff;
+            text-shadow:
+                0 0 8px #ff00ff,
+                0 0 18px #a600ff,
+                0 0 35px #6a00ff;
         }
 
         .subtitle {
@@ -394,7 +397,9 @@
             font-weight: bold;
             font-size: 15px;
             background: linear-gradient(135deg, #ff00e6, #7b00ff);
-            box-shadow: 0 0 15px rgba(255, 0, 230, 0.55), 0 0 28px rgba(123, 0, 255, 0.35);
+            box-shadow:
+                0 0 15px rgba(255, 0, 230, 0.55),
+                0 0 28px rgba(123, 0, 255, 0.35);
             cursor: pointer;
             margin-top: 10px;
         }
@@ -569,8 +574,13 @@
 
             <p>After payment, submit proof below.</p>
 
-            <form name="payment-proof" method="POST" action="/" data-netlify="true" enctype="multipart/form-data">
+            <form name="payment-proof" method="POST" action="/success.html" data-netlify="true" data-netlify-honeypot="bot-field" enctype="multipart/form-data">
                 <input type="hidden" name="form-name" value="payment-proof">
+
+                <p style="display:none;">
+                    <label>Don’t fill this out: <input name="bot-field"></label>
+                </p>
+
                 <input type="hidden" name="account" id="formAccount">
                 <input type="hidden" name="level" id="formLevel">
                 <input type="hidden" name="seller" id="formSeller">
@@ -850,4 +860,3 @@
     </script>
 </body>
 </html>
- 
