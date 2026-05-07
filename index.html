@@ -1,103 +1,389 @@
-<script>
-    const SUPABASE_URL = "https://ikryvpvjbgplhnkcgtit.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_PVjsZN2CLSI8N_2fgU5ICg_J5Lc0XAr";
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DemiSke Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    let selectedAccount = null;
-    let selectedSeller = "";
-
-    async function showAccounts(category) {
-        const listBox = document.getElementById("accountList");
-        const itemBox = document.getElementById("accountItems");
-        const title = document.getElementById("accountListTitle");
-
-        title.innerText = category.replace("level_", "Level ").replaceAll("_", "-") + " Accounts";
-        itemBox.innerHTML = "<p>Loading accounts...</p>";
-        listBox.style.display = "block";
-        listBox.scrollIntoView({ behavior: "smooth", block: "start" });
-
-        const { data, error } = await db
-            .from("accounts")
-            .select("*")
-            .eq("category", category)
-            .order("created_at", { ascending: false });
-
-        if (error) {
-            itemBox.innerHTML = "<p>" + error.message + "</p>";
-            return;
+    <style>
+        * {
+            box-sizing: border-box;
         }
 
-        if (!data || data.length === 0) {
-            itemBox.innerHTML = "<p>No accounts available in this category yet.</p>";
-            return;
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+            background:
+                radial-gradient(circle at top, rgba(255, 0, 230, 0.22), transparent 35%),
+                linear-gradient(rgba(5, 8, 18, 0.90), rgba(5, 8, 18, 0.98)),
+                url("bg.jpg");
+            background-size: cover;
+            background-position: center;
+            padding: 24px 16px;
         }
 
-        itemBox.innerHTML = "";
+        .box {
+            width: 100%;
+            max-width: 460px;
+            margin: 0 auto 20px;
+            background: rgba(13, 18, 36, 0.92);
+            border: 1px solid rgba(255, 0, 255, 0.42);
+            border-radius: 24px;
+            padding: 22px;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.25);
+            backdrop-filter: blur(12px);
+        }
 
-        data.forEach(account => {
-            const item = document.createElement("div");
-            item.className = "account-item";
-            item.innerHTML = `
-                <strong>${account.name}</strong>
-                <span>${account.level} • ₱${account.price} • ${account.region || "No region"}</span>
-            `;
-            item.onclick = function() {
-                openAccount(account);
-            };
-            itemBox.appendChild(item);
-        });
-    }
+        h1, h2 {
+            text-align: center;
+            text-shadow: 0 0 10px #ff00ff, 0 0 22px #7b00ff;
+        }
 
-    function openAccount(account) {
-        selectedAccount = account;
+        label {
+            display: block;
+            margin-top: 14px;
+            margin-bottom: 6px;
+            color: #ffb8ff;
+            font-weight: bold;
+            font-size: 14px;
+        }
 
-        document.getElementById("accountImage").src = account.image_url || "";
-        document.getElementById("infoAccount").innerText = account.name || "";
-        document.getElementById("infoLevel").innerText = account.level || "";
-        document.getElementById("infoPrice").innerText = account.price || "";
-        document.getElementById("infoNickname").innerText = account.nickname || "N/A";
-        document.getElementById("infoRegion").innerText = account.region || "N/A";
-        document.getElementById("infoUid").innerText = account.uid || "N/A";
-        document.getElementById("infoDetails").innerText = account.details || "No extra details.";
+        input, select, textarea {
+            width: 100%;
+            padding: 13px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 0, 255, 0.35);
+            background: rgba(0, 0, 0, 0.45);
+            color: white;
+            outline: none;
+            font-size: 15px;
+        }
 
-        document.getElementById("accountPopup").style.display = "flex";
-    }
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
 
-    function openSellerPopup() {
-        document.getElementById("accountPopup").style.display = "none";
-        document.getElementById("sellerPopup").style.display = "flex";
-    }
+        button {
+            width: 100%;
+            margin-top: 16px;
+            padding: 14px;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            background: linear-gradient(135deg, #ff00e6, #7b00ff);
+            box-shadow: 0 0 18px rgba(255, 0, 230, 0.45);
+        }
 
-    function openGcash(seller) {
-        selectedSeller = seller;
+        .secondary {
+            background: rgba(255,255,255,0.12);
+            box-shadow: none;
+        }
 
-        document.getElementById("sellerPopup").style.display = "none";
-        document.getElementById("gcashPopup").style.display = "flex";
+        .danger {
+            background: rgba(255, 60, 90, 0.35);
+            box-shadow: none;
+        }
 
-        document.getElementById("gcashAccount").innerText = selectedAccount.name + " - " + selectedAccount.level;
-        document.getElementById("gcashSeller").innerText = selectedSeller;
-        document.getElementById("paymentAmount").innerText = selectedAccount.price;
+        .status {
+            text-align: center;
+            margin-top: 14px;
+            color: #d9c5ff;
+            line-height: 1.5;
+        }
 
-        document.getElementById("formAccount").value = selectedAccount.name;
-        document.getElementById("formLevel").value = selectedAccount.level;
-        document.getElementById("formSeller").value = selectedSeller;
-        document.getElementById("formAmount").value = "₱" + selectedAccount.price;
-    }
+        .hidden {
+            display: none;
+        }
 
-    function backToAccount() {
-        document.getElementById("sellerPopup").style.display = "none";
-        document.getElementById("accountPopup").style.display = "flex";
-    }
+        .preview {
+            width: 100%;
+            border-radius: 16px;
+            margin-top: 14px;
+            border: 1px solid rgba(255,0,255,0.35);
+            display: none;
+        }
 
-    function backToSeller() {
-        document.getElementById("gcashPopup").style.display = "none";
-        document.getElementById("sellerPopup").style.display = "flex";
-    }
+        .account-card {
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(255,0,255,0.25);
+            border-radius: 16px;
+            padding: 14px;
+            margin-top: 12px;
+        }
 
-    function closePopups() {
-        document.getElementById("accountPopup").style.display = "none";
-        document.getElementById("sellerPopup").style.display = "none";
-        document.getElementById("gcashPopup").style.display = "none";
-    }
-</script>
+        .account-card img {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .account-card strong {
+            color: #ff4dff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box" id="loginBox">
+        <h1>Admin Login</h1>
+
+        <label>Email</label>
+        <input type="email" id="adminEmail" placeholder="Admin email">
+
+        <label>Password</label>
+        <input type="password" id="adminPassword" placeholder="Admin password">
+
+        <button onclick="adminLogin()">Login</button>
+
+        <p class="status" id="loginStatus"></p>
+    </div>
+
+    <div class="box hidden" id="adminBox">
+        <h1>DemiSke Admin</h1>
+        <p class="status">Upload account picture and details. It will appear automatically on the website.</p>
+
+        <label>Account Picture</label>
+        <input type="file" id="accountImage" accept="image/*" onchange="previewImage(event)">
+        <img id="imagePreview" class="preview">
+
+        <label>Account Name</label>
+        <input type="text" id="accountName" placeholder="Example: KhunICE Account">
+
+        <label>Level</label>
+        <input type="text" id="accountLevel" placeholder="Example: Level 184">
+
+        <label>Price</label>
+        <input type="text" id="accountPrice" placeholder="Example: 550">
+
+        <label>UID</label>
+        <input type="text" id="accountUid" placeholder="Example: 361673204">
+
+        <label>Region</label>
+        <input type="text" id="accountRegion" placeholder="Example: TH">
+
+        <label>Nickname</label>
+        <input type="text" id="accountNickname" placeholder="Example: KhunICE<3">
+
+        <label>Category</label>
+        <select id="accountCategory">
+            <option value="level_1_50">Level 1-50</option>
+            <option value="level_50_100">Level 50-100</option>
+            <option value="level_100_150">Level 100-150</option>
+            <option value="level_150_200">Level 150-200</option>
+            <option value="level_200_250">Level 200-250</option>
+            <option value="level_250_300">Level 250-300</option>
+            <option value="level_300_400">Level 300-400</option>
+            <option value="level_400_500">Level 400-500</option>
+        </select>
+
+        <label>Extra Details</label>
+        <textarea id="accountDetails" placeholder="Example: Includes weapon and soldier collections."></textarea>
+
+        <button onclick="saveAccount()">Save Account</button>
+        <button class="secondary" onclick="adminLogout()">Logout</button>
+
+        <p class="status" id="saveStatus"></p>
+    </div>
+
+    <div class="box hidden" id="accountBox">
+        <h2>Saved Accounts</h2>
+        <div id="adminAccounts"></div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://ikryvpvjbgplhnkcgtit.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_PVjsZN2CLSI8N_2fgU5ICg_J5Lc0XAr";
+
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function checkSession() {
+            const { data } = await db.auth.getSession();
+
+            if (data.session) {
+                showAdmin();
+                loadAdminAccounts();
+            }
+        }
+
+        function showAdmin() {
+            document.getElementById("loginBox").classList.add("hidden");
+            document.getElementById("adminBox").classList.remove("hidden");
+            document.getElementById("accountBox").classList.remove("hidden");
+        }
+
+        async function adminLogin() {
+            const email = document.getElementById("adminEmail").value.trim();
+            const password = document.getElementById("adminPassword").value.trim();
+
+            document.getElementById("loginStatus").innerText = "Logging in...";
+
+            const { error } = await db.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                document.getElementById("loginStatus").innerText = error.message;
+                return;
+            }
+
+            document.getElementById("loginStatus").innerText = "Login successful.";
+            showAdmin();
+            loadAdminAccounts();
+        }
+
+        async function adminLogout() {
+            await db.auth.signOut();
+       y
+     location.reload();
+        }
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById("imagePreview");
+
+            if (file) {
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = "block";
+            }
+        }
+
+        async function saveAccount() {
+            const imageFile = document.getElementById("accountImage").files[0];
+            const name = document.getElementById("accountName").value.trim();
+            const level = document.getElementById("accountLevel").value.trim();
+            const price = document.getElementById("accountPrice").value.trim();
+            const uid = document.getElementById("accountUid").value.trim();
+            const region = document.getElementById("accountRegion").value.trim();
+            const nickname = document.getElementById("accountNickname").value.trim();
+            const category = document.getElementById("accountCategory").value;
+            const details = document.getElementById("accountDetails").value.trim();
+
+            const status = document.getElementById("saveStatus");
+
+            if (!imageFile || !name || !level || !price || !category) {
+                status.innerText = "Please complete picture, name, level, price, and category.";
+                return;
+            }
+
+            status.innerText = "Uploading image...";
+
+            const fileExt = imageFile.name.split(".").pop();
+            const fileName = Date.now() + "-" + Math.random().toString(36).substring(2) + "." + fileExt;
+            const filePath = "accounts/" + fileName;
+
+            const { error: uploadError } = await db.storage
+                .from("account-images")
+                .upload(filePath, imageFile);
+
+            if (uploadError) {
+                status.innerText = "Image upload failed: " + uploadError.message;
+                return;
+            }
+
+            const { data: publicUrlData } = db.storage
+                .from("account-images")
+                .getPublicUrl(filePath);
+
+            const imageUrl = publicUrlData.publicUrl;
+
+            status.innerText = "Saving account...";
+
+            const { error: insertError } = await db
+                .from("accounts")
+                .insert({
+                    name: name,
+                    level: level,
+                    price: price,
+                    uid: uid,
+                    region: region,
+                    nickname: nickname,
+                    category: category,
+                    image_url: imageUrl,
+                    details: details
+                });
+
+            if (insertError) {
+                status.innerText = "Save failed: " + insertError.message;
+                return;
+            }
+
+            status.innerText = "Account saved successfully.";
+
+            document.getElementById("accountImage").value = "";
+            document.getElementById("imagePreview").style.display = "none";
+            document.getElementById("accountName").value = "";
+            document.getElementById("accountLevel").value = "";
+            document.getElementById("accountPrice").value = "";
+            document.getElementById("accountUid").value = "";
+            document.getElementById("accountRegion").value = "";
+            document.getElementById("accountNickname").value = "";
+            document.getElementById("accountDetails").value = "";
+
+            loadAdminAccounts();
+        }
+
+        async function loadAdminAccounts() {
+            const { data, error } = await db
+                .from("accounts")
+                .select("*")
+                .order("created_at", { ascending: false });
+
+            const container = document.getElementById("adminAccounts");
+
+            if (error) {
+                container.innerHTML = "<p>" + error.message + "</p>";
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                container.innerHTML = "<p>No accounts saved yet.</p>";
+                return;
+            }
+
+            container.innerHTML = "";
+
+            data.forEach(account => {
+                const div = document.createElement("div");
+                div.className = "account-card";
+                div.innerHTML = `
+                    <img src="${account.image_url || ""}" alt="Account image">
+                    <p><strong>${account.name}</strong></p>
+                    <p>${account.level} • ₱${account.price}</p>
+                    <p>Nickname: ${account.nickname || "N/A"}</p>
+                    <p>Region: ${account.region || "N/A"}</p>
+                    <p>UID: ${account.uid || "N/A"}</p>
+                    <p>Category: ${account.category}</p>
+                    <button class="danger" onclick="deleteAccount('${account.id}')">Delete Account</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function deleteAccount(id) {
+            const confirmDelete = confirm("Delete this account?");
+            if (!confirmDelete) return;
+
+            const { error } = await db
+                .from("accounts")
+                .delete()
+                .eq("id", id);
+
+            if (error) {
+                alert(error.message);
+                return;
+            }
+
+            loadAdminAccounts();
+        }
+
+        checkSession();
+    </script>
+</body>
+</html>
