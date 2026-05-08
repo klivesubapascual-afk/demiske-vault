@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DemiSke Admin Panel</title>
+  <title>DemiSke Admin</title>
 
   <style>
     * {
@@ -14,156 +14,315 @@
       font-family: Arial, sans-serif;
     }
 
+    :root {
+      --red: #ff003c;
+      --red-soft: #ff3155;
+      --orange: #ff6a00;
+      --text-soft: #ffb8c2;
+      --border: rgba(255, 45, 80, 0.35);
+    }
+
     body {
       min-height: 100vh;
       background:
-        radial-gradient(circle at top left, rgba(255, 0, 60, 0.35), transparent 35%),
-        radial-gradient(circle at bottom right, rgba(255, 90, 0, 0.28), transparent 35%),
-        linear-gradient(135deg, #100006, #1a0008, #050505);
+        radial-gradient(circle at top left, rgba(255, 0, 60, 0.28), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(255, 70, 0, 0.22), transparent 35%),
+        linear-gradient(135deg, #060606, #120006, #000);
       color: white;
-      padding: 18px;
+      padding-bottom: 80px;
     }
 
-    .admin-wrapper {
-      max-width: 850px;
+    .hidden {
+      display: none !important;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 0 25px rgba(255, 0, 60, 0.18);
+    }
+
+    .topbar-inner {
+      max-width: 1100px;
+      margin: auto;
+      padding: 18px 16px 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .menu-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 70, 95, 0.3);
+      background: rgba(255, 255, 255, 0.06);
+      color: white;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.18), transparent 40%),
+        linear-gradient(135deg, #ff003c, #220006, #000);
+      box-shadow: 0 0 22px rgba(255, 0, 60, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 23px;
+      font-weight: 900;
+    }
+
+    .brand h1 {
+      font-size: 25px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #ff003c, #ff6a00);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .top-status {
+      font-size: 12px;
+      color: #ffd0d6;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 70, 95, 0.25);
+      white-space: nowrap;
+    }
+
+    .nav-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .nav-tab {
+      padding: 14px 8px;
+      text-align: center;
+      cursor: pointer;
+      color: #ddd;
+      font-size: 23px;
+      border-bottom: 3px solid transparent;
+    }
+
+    .nav-tab.active {
+      color: white;
+      border-bottom-color: var(--red-soft);
+      background: rgba(255, 0, 60, 0.14);
+    }
+
+    .app {
+      max-width: 1100px;
       margin: auto;
     }
 
-    .admin-card {
-      background: rgba(8, 8, 16, 0.9);
-      border: 1px solid rgba(255, 70, 95, 0.4);
+    .content {
+      padding: 18px 16px;
+    }
+
+    .hero-card,
+    .panel-card {
+      margin-top: 18px;
+      padding: 22px;
       border-radius: 28px;
-      padding: 25px;
-      box-shadow:
-        0 0 30px rgba(255, 0, 60, 0.28),
-        inset 0 0 18px rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(12px);
+      background:
+        radial-gradient(circle at top left, rgba(255, 0, 60, 0.23), transparent 40%),
+        linear-gradient(135deg, rgba(40, 0, 10, 0.88), rgba(10, 10, 18, 0.92));
+      border: 1px solid var(--border);
+      box-shadow: 0 0 34px rgba(255, 0, 60, 0.2);
     }
 
-    .header {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-
-    .header h1 {
+    .hero-card h2 {
       font-size: 38px;
-      font-weight: 900;
-      background: linear-gradient(90deg, #ff1744, #ff6a00, #ff003c);
-      -webkit-background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 25px rgba(255, 0, 70, 0.4);
+      line-height: 1.1;
+      margin-bottom: 10px;
     }
 
-    .header p {
-      margin-top: 10px;
-      color: #ffc4cc;
+    .hero-card p {
+      color: #ffc2cb;
       font-size: 15px;
-      line-height: 1.6;
+      line-height: 1.5;
+    }
+
+    .trust-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 80, 100, 0.35);
+      color: #ffd0d6;
+      margin-bottom: 18px;
+      font-size: 14px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      background: #00ff88;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #00ff88;
     }
 
     .section-title {
-      font-size: 18px;
-      font-weight: 900;
-      color: #ff8d9d;
-      margin: 26px 0 14px;
+      margin: 28px 0 14px;
+    }
+
+    .section-title h2 {
+      font-size: 26px;
+      margin-bottom: 6px;
+    }
+
+    .section-title p {
+      color: #bdbdbd;
+      font-size: 15px;
+      line-height: 1.4;
     }
 
     .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      margin-bottom: 18px;
+      margin-top: 16px;
     }
 
-    .dashboard-box {
-      border-radius: 20px;
-      padding: 16px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 70, 95, 0.28);
+    .stat-card {
+      padding: 18px 12px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.045);
       text-align: center;
     }
 
-    .dashboard-box strong {
+    .stat-card strong {
       display: block;
-      font-size: 26px;
-      color: white;
-      margin-bottom: 4px;
-    }
-
-    .dashboard-box span {
-      font-size: 12px;
-      color: #ffc4cc;
-    }
-
-    .notification-box {
-      display: grid;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .notification-item {
-      padding: 15px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 70, 95, 0.35);
-      position: relative;
-    }
-
-    .notification-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .notif-type {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #ff003c, #ff6a00);
-      font-size: 11px;
-      font-weight: 900;
-    }
-
-    .notif-date {
-      font-size: 12px;
-      color: #aaa;
-    }
-
-    .notification-item h3 {
-      font-size: 16px;
+      font-size: 30px;
       margin-bottom: 6px;
     }
 
-    .notification-item p {
-      color: #ddd;
+    .stat-card span {
+      color: #ffbdc6;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .quick-btn {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.055);
+      color: white;
+      padding: 16px;
+      border-radius: 18px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .quick-btn.primary {
+      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      box-shadow: 0 0 20px rgba(255, 0, 60, 0.3);
+      border: none;
+    }
+
+    .quick-btn.danger {
+      background: rgba(255, 0, 60, 0.18);
+      border: 1px solid rgba(255, 70, 95, 0.35);
+    }
+
+    .notification-list,
+    .product-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .notification-item,
+    .saved-product-item {
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 70, 95, 0.28);
+    }
+
+    .notif-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ff003c, #ff6a00);
+    }
+
+    .notif-date {
+      color: #aaa;
+      font-size: 12px;
+    }
+
+    .notification-item h3,
+    .saved-product-item h3 {
+      font-size: 17px;
+      margin-bottom: 7px;
+    }
+
+    .notification-item p,
+    .saved-product-item p {
+      color: #d2d2d2;
       font-size: 14px;
       line-height: 1.5;
     }
 
-    .notif-contact {
-      margin-top: 8px;
+    .small-info {
+      margin-top: 7px;
       color: #ffc4cc;
       font-size: 13px;
     }
 
-    .empty-notif {
-      padding: 15px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.05);
-      color: #ffc4cc;
+    .empty-state {
       text-align: center;
-      font-size: 14px;
+      padding: 30px 14px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: #ffc4cc;
     }
 
     .form-group {
-      margin-bottom: 17px;
+      margin-bottom: 15px;
     }
 
     label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 7px;
       color: #ffa0ae;
       font-size: 14px;
       font-weight: 800;
@@ -173,26 +332,13 @@
     select,
     textarea {
       width: 100%;
-      padding: 15px 16px;
-      border-radius: 16px;
+      padding: 14px 15px;
+      border-radius: 15px;
       border: 1px solid rgba(255, 60, 95, 0.45);
       background: rgba(4, 4, 12, 0.95);
       color: white;
-      font-size: 15px;
+      font-size: 14px;
       outline: none;
-      transition: 0.2s ease;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: #ff3155;
-      box-shadow: 0 0 0 3px rgba(255, 49, 85, 0.18);
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: #777;
     }
 
     textarea {
@@ -200,32 +346,22 @@
       resize: none;
     }
 
-    .helper-text {
-      font-size: 12px;
-      color: #aaa;
-      margin-top: 7px;
-      line-height: 1.4;
+    input::placeholder,
+    textarea::placeholder {
+      color: #777;
     }
 
     .two-column {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .hidden {
-      display: none;
+      gap: 12px;
     }
 
     .type-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .type-option {
-      position: relative;
+      margin-bottom: 14px;
     }
 
     .type-option input {
@@ -233,19 +369,21 @@
     }
 
     .type-card {
-      min-height: 115px;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 70, 95, 0.35);
-      background: rgba(255, 255, 255, 0.045);
+      min-height: 110px;
       padding: 16px 10px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.045);
       text-align: center;
       cursor: pointer;
       transition: 0.2s ease;
     }
 
-    .type-card:hover {
+    .type-card:hover,
+    .type-option input:checked + .type-card {
+      background: linear-gradient(135deg, rgba(255, 0, 60, 0.28), rgba(255, 106, 0, 0.12));
+      box-shadow: 0 0 22px rgba(255, 0, 60, 0.25);
       transform: translateY(-2px);
-      background: rgba(255, 40, 70, 0.1);
     }
 
     .type-icon {
@@ -255,36 +393,22 @@
 
     .type-card strong {
       display: block;
-      font-size: 15px;
-      color: white;
       margin-bottom: 5px;
     }
 
     .type-card span {
-      font-size: 11px;
-      color: #ffbec7;
-      line-height: 1.3;
-    }
-
-    .type-option input:checked + .type-card {
-      border-color: #ff3155;
-      background: linear-gradient(135deg, rgba(255, 0, 60, 0.32), rgba(255, 106, 0, 0.16));
-      box-shadow: 0 0 20px rgba(255, 0, 60, 0.35);
+      color: #ffbdc6;
+      font-size: 12px;
     }
 
     .upload-box {
       border: 2px dashed rgba(255, 65, 95, 0.65);
-      border-radius: 20px;
-      padding: 24px;
+      border-radius: 22px;
+      padding: 22px;
       text-align: center;
       background: rgba(255, 20, 60, 0.06);
       cursor: pointer;
-      transition: 0.25s ease;
-    }
-
-    .upload-box:hover {
-      background: rgba(255, 20, 60, 0.13);
-      transform: scale(1.01);
+      margin-bottom: 12px;
     }
 
     .upload-box input {
@@ -292,41 +416,27 @@
     }
 
     .upload-icon {
-      font-size: 38px;
+      font-size: 36px;
       margin-bottom: 8px;
-    }
-
-    .upload-box strong {
-      display: block;
-      font-size: 16px;
-      color: white;
-    }
-
-    .upload-box span {
-      display: block;
-      margin-top: 6px;
-      font-size: 13px;
-      color: #ffb6c1;
     }
 
     .preview-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
       gap: 12px;
-      margin-top: 16px;
+      margin-top: 12px;
     }
 
     .preview-item {
       position: relative;
     }
 
-    .preview-grid img {
+    .preview-item img {
       width: 100%;
       height: 95px;
       object-fit: cover;
       border-radius: 16px;
       border: 1px solid rgba(255, 80, 100, 0.5);
-      box-shadow: 0 0 12px rgba(255, 0, 60, 0.25);
     }
 
     .remove-img {
@@ -339,153 +449,153 @@
       border: none;
       background: #ff1744;
       color: white;
-      font-size: 13px;
       cursor: pointer;
-      padding: 0;
-    }
-
-    .product-preview {
-      margin-top: 24px;
-      padding: 18px;
-      border-radius: 22px;
-      border: 1px solid rgba(255, 70, 95, 0.32);
-      background: rgba(255, 255, 255, 0.045);
-    }
-
-    .product-preview h3 {
-      color: #ff8d9d;
-      margin-bottom: 12px;
-      font-size: 18px;
     }
 
     .preview-card {
-      border-radius: 18px;
       overflow: hidden;
-      background: rgba(5, 5, 12, 0.94);
-      border: 1px solid rgba(255, 60, 95, 0.35);
+      border-radius: 24px;
+      background: rgba(14, 14, 20, 0.9);
+      border: 1px solid rgba(255, 70, 95, 0.32);
+      margin-top: 16px;
     }
 
-    .preview-card-img {
-      width: 100%;
-      height: 190px;
-      background: rgba(255, 255, 255, 0.05);
+    .preview-img {
+      height: 170px;
+      background:
+        radial-gradient(circle at center, rgba(255, 0, 60, 0.38), transparent 42%),
+        linear-gradient(135deg, #2b000b, #050505);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #aaa;
-      font-size: 14px;
+      font-size: 54px;
       overflow: hidden;
     }
 
-    .preview-card-img img {
+    .preview-img img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    .preview-card-body {
+    .preview-body {
       padding: 16px;
-    }
-
-    .preview-badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #ff003c, #ff6a00);
-      font-size: 12px;
-      font-weight: 900;
-      margin-bottom: 10px;
-    }
-
-    .preview-card-body h4 {
-      font-size: 20px;
-      margin-bottom: 8px;
     }
 
     .preview-price {
-      color: #ffb0ba;
-      font-size: 18px;
+      color: #ffb8c2;
       font-weight: 900;
-      margin-bottom: 12px;
+      font-size: 20px;
+      margin: 10px 0;
     }
 
-    .preview-info {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 12px;
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 500;
+      display: none;
     }
 
-    .preview-info div {
-      background: rgba(255, 255, 255, 0.045);
-      border-radius: 12px;
-      padding: 10px;
-      font-size: 12px;
-      color: #ddd;
+    .drawer-overlay.active {
+      display: block;
     }
 
-    .preview-desc {
-      color: #bdbdbd;
-      font-size: 13px;
-      line-height: 1.5;
+    .side-drawer {
+      position: fixed;
+      top: 0;
+      left: -310px;
+      width: 300px;
+      height: 100vh;
+      z-index: 600;
+      background:
+        radial-gradient(circle at top left, rgba(255, 0, 60, 0.25), transparent 42%),
+        #09090f;
+      border-right: 1px solid rgba(255, 70, 95, 0.35);
+      box-shadow: 0 0 35px rgba(255, 0, 60, 0.32);
+      padding: 18px;
+      transition: 0.25s ease;
+      overflow-y: auto;
     }
 
-    .btn-row {
-      display: grid;
-      grid-template-columns: 1fr;
+    .side-drawer.active {
+      left: 0;
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
       gap: 12px;
-      margin-top: 26px;
+      margin-bottom: 22px;
     }
 
-    button {
+    .drawer-header .logo {
+      width: 45px;
+      height: 45px;
+    }
+
+    .drawer-header h2 {
+      font-size: 23px;
+      background: linear-gradient(90deg, #ff003c, #ff6a00);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .close-drawer {
+      margin-left: auto;
+      width: 38px;
+      height: 38px;
       border: none;
+      border-radius: 12px;
+      color: white;
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 20px;
       cursor: pointer;
-      border-radius: 18px;
-      padding: 16px;
-      font-size: 16px;
+    }
+
+    .drawer-section-title {
+      color: #ff9aaa;
+      font-size: 13px;
       font-weight: 900;
-      transition: 0.2s ease;
+      margin: 20px 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    .save-btn {
+    .drawer-item {
+      width: 100%;
+      border: 1px solid rgba(255, 70, 95, 0.22);
+      background: rgba(255, 255, 255, 0.055);
       color: white;
-      background: linear-gradient(135deg, #ff003c, #ff3b30, #ff7a00);
-      box-shadow: 0 0 22px rgba(255, 0, 60, 0.35);
+      padding: 14px;
+      border-radius: 16px;
+      margin-bottom: 10px;
+      text-align: left;
+      font-weight: 800;
+      cursor: pointer;
     }
 
-    .save-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 30px rgba(255, 0, 60, 0.55);
+    .drawer-item.primary {
+      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      border: none;
+      box-shadow: 0 0 18px rgba(255, 0, 60, 0.3);
     }
 
-    .clear-btn {
-      color: #ffb5bf;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .clear-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .danger-btn {
-      color: white;
-      background: rgba(255, 0, 60, 0.16);
-      border: 1px solid rgba(255, 70, 95, 0.35);
-    }
-
-    .danger-btn:hover {
-      background: rgba(255, 0, 60, 0.25);
+    .drawer-small {
+      color: #aaa;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 18px;
     }
 
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.72);
+      background: rgba(0, 0, 0, 0.78);
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 18px;
       z-index: 999;
     }
 
@@ -495,41 +605,15 @@
 
     .modal {
       width: 100%;
-      max-width: 395px;
+      max-width: 430px;
+      border-radius: 26px;
+      padding: 24px;
       background:
-        radial-gradient(circle at top, rgba(255, 0, 60, 0.25), transparent 45%),
+        radial-gradient(circle at top, rgba(255, 0, 60, 0.24), transparent 45%),
         #111118;
       border: 1px solid rgba(255, 75, 100, 0.45);
-      border-radius: 26px;
-      padding: 28px;
+      box-shadow: 0 0 40px rgba(255, 0, 60, 0.38);
       text-align: center;
-      box-shadow: 0 0 40px rgba(255, 0, 60, 0.4);
-      animation: popup 0.25s ease;
-    }
-
-    @keyframes popup {
-      from {
-        opacity: 0;
-        transform: scale(0.92) translateY(15px);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-    }
-
-    .modal-icon {
-      width: 70px;
-      height: 70px;
-      margin: 0 auto 16px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #ff003c, #ff7a00);
-      font-size: 34px;
-      box-shadow: 0 0 24px rgba(255, 0, 60, 0.5);
     }
 
     .modal h2 {
@@ -539,368 +623,397 @@
 
     .modal p {
       color: #ffc4cc;
-      font-size: 14px;
       line-height: 1.5;
-      margin-bottom: 22px;
+      margin-bottom: 16px;
+      font-size: 14px;
     }
 
-    .modal button {
+    .modal-btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 14px;
+      font-weight: 900;
+      color: white;
       width: 100%;
       background: linear-gradient(135deg, #ff003c, #ff6a00);
-      color: white;
     }
 
-    @media (max-width: 650px) {
-      body {
-        padding: 14px;
+    @media (max-width: 760px) {
+      .top-status {
+        display: none;
       }
 
-      .admin-card {
-        padding: 22px 18px;
-        border-radius: 24px;
+      .dashboard-grid {
+        grid-template-columns: 1fr 1fr;
       }
 
-      .header h1 {
-        font-size: 31px;
-      }
-
-      .dashboard-grid,
-      .type-grid {
+      .type-grid,
+      .two-column,
+      .quick-actions {
         grid-template-columns: 1fr;
       }
 
-      .two-column {
+      .hero-card h2 {
+        font-size: 32px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .brand h1 {
+        font-size: 20px;
+      }
+
+      .dashboard-grid {
         grid-template-columns: 1fr;
-      }
-
-      .preview-info {
-        grid-template-columns: 1fr;
-      }
-
-      .notification-top {
-        display: block;
-      }
-
-      .notif-date {
-        display: block;
-        margin-top: 7px;
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="admin-wrapper">
-    <div class="admin-card">
-      <div class="header">
+  <!-- SIDE MENU -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+  <aside class="side-drawer" id="sideDrawer">
+    <div class="drawer-header">
+      <div class="logo">A</div>
+      <h2>Admin</h2>
+      <button class="close-drawer" onclick="closeDrawer()">×</button>
+    </div>
+
+    <div class="drawer-section-title">Admin Menu</div>
+
+    <button class="drawer-item primary" onclick="goDrawerPage('dashboard')">📊 Dashboard</button>
+    <button class="drawer-item" onclick="goDrawerPage('notifications')">🔔 Notifications</button>
+    <button class="drawer-item" onclick="goDrawerPage('products')">🛒 Products</button>
+    <button class="drawer-item" onclick="goDrawerPage('add')">➕ Add Product</button>
+
+    <div class="drawer-section-title">Website</div>
+
+    <button class="drawer-item" onclick="openCustomerSite()">🌐 Open Customer Site</button>
+    <button class="drawer-item" onclick="refreshAdmin()">🔄 Refresh Admin</button>
+
+    <p class="drawer-small">
+      This admin panel uses localStorage for now. For real online sync across devices, connect Firebase or Supabase.
+    </p>
+  </aside>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <button class="menu-btn" onclick="openDrawer()">☰</button>
+
+      <div class="brand">
+        <div class="logo">A</div>
         <h1>DemiSke Admin</h1>
-        <p>
-          Manage products, check customer orders, feedback, and issue reports.
-        </p>
       </div>
 
-      <!-- ADMIN DASHBOARD -->
-      <div class="section-title">Admin Dashboard</div>
-
-      <div class="dashboard-grid">
-        <div class="dashboard-box">
-          <strong id="totalNotifications">0</strong>
-          <span>Total Notifications</span>
-        </div>
-
-        <div class="dashboard-box">
-          <strong id="totalOrders">0</strong>
-          <span>Orders</span>
-        </div>
-
-        <div class="dashboard-box">
-          <strong id="totalReports">0</strong>
-          <span>Reports / Feedback</span>
-        </div>
+      <div class="top-status">
+        ● Admin Online
       </div>
+    </div>
 
-      <!-- ADMIN NOTIFICATIONS -->
-      <div class="section-title">Admin Notifications</div>
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="showPage('dashboard', this)">⌂</div>
+      <div class="nav-tab" onclick="showPage('notifications', this)">🔔</div>
+      <div class="nav-tab" onclick="showPage('products', this)">▣</div>
+      <div class="nav-tab" onclick="showPage('add', this)">＋</div>
+    </div>
+  </div>
 
-      <div id="adminNotifications" class="notification-box"></div>
-
-      <div class="btn-row" style="margin-top: 12px;">
-        <button type="button" class="danger-btn" onclick="clearNotifications()">
-          Clear Notifications
-        </button>
-      </div>
-
-      <!-- PRODUCT FORM -->
-      <form id="adminForm">
-        <div class="section-title">Add New Product</div>
-
-        <div class="type-grid">
-          <label class="type-option">
-            <input type="radio" name="productType" value="account" />
-            <div class="type-card">
-              <div class="type-icon">🎮</div>
-              <strong>Account</strong>
-              <span>Game accounts, UID, level, region</span>
-            </div>
-          </label>
-
-          <label class="type-option">
-            <input type="radio" name="productType" value="key" />
-            <div class="type-card">
-              <div class="type-icon">🔑</div>
-              <strong>Key</strong>
-              <span>VIP keys, license, duration</span>
-            </div>
-          </label>
-
-          <label class="type-option">
-            <input type="radio" name="productType" value="other" />
-            <div class="type-card">
-              <div class="type-icon">📦</div>
-              <strong>Other</strong>
-              <span>Services, bundles, top-up, custom</span>
-            </div>
-          </label>
-        </div>
-
-        <div class="helper-text">
-          Select one product type. The form will automatically change based on your choice.
-        </div>
-
-        <div class="section-title">Product Pictures</div>
-
-        <label class="upload-box" for="productPictures">
-          <input type="file" id="productPictures" multiple accept="image/*" />
-          <div class="upload-icon">📸</div>
-          <strong>Tap to upload pictures</strong>
-          <span>Multiple images allowed</span>
-        </label>
-
-        <div id="previewGrid" class="preview-grid"></div>
-
-        <!-- ACCOUNT FIELDS -->
-        <div id="accountFields" class="hidden">
-          <div class="section-title">Account Details</div>
-
-          <div class="form-group">
-            <label>Account Name</label>
-            <input type="text" id="accountName" placeholder="Example: KhunICE Account" />
+  <div class="app">
+    <div class="content">
+      <!-- DASHBOARD -->
+      <section id="dashboardPage">
+        <div class="hero-card">
+          <div class="trust-pill">
+            <span class="dot"></span>
+            Admin control center
           </div>
 
-          <div class="two-column">
-            <div class="form-group">
-              <label>Level</label>
-              <input type="text" id="accountLevel" placeholder="Example: Level 184" />
+          <h2>Manage Store.<br>Track Customers.</h2>
+          <p>
+            View orders, feedback, reports, and manage your account/key/service products.
+          </p>
+
+          <div class="dashboard-grid">
+            <div class="stat-card">
+              <strong id="totalNotifications">0</strong>
+              <span>Notifications</span>
             </div>
 
-            <div class="form-group">
-              <label>Price</label>
-              <input type="number" id="accountPrice" placeholder="Example: 550" />
+            <div class="stat-card">
+              <strong id="totalOrders">0</strong>
+              <span>Orders</span>
+            </div>
+
+            <div class="stat-card">
+              <strong id="totalReports">0</strong>
+              <span>Reports</span>
+            </div>
+
+            <div class="stat-card">
+              <strong id="totalProducts">0</strong>
+              <span>Products</span>
             </div>
           </div>
 
-          <div class="two-column">
-            <div class="form-group">
-              <label>UID</label>
-              <input type="text" id="accountUid" placeholder="Example: 361673204" />
-            </div>
-
-            <div class="form-group">
-              <label>Region</label>
-              <input type="text" id="accountRegion" placeholder="Example: TH" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Nickname</label>
-            <input type="text" id="accountNickname" placeholder="Example: DemiSke Buyer" />
-          </div>
-
-          <div class="form-group">
-            <label>Budget Category</label>
-            <select id="accountCategory">
-              <option value="">Select category</option>
-              <option value="150-200">₱150 - ₱200</option>
-              <option value="201-500">₱201 - ₱500</option>
-              <option value="501-1000">₱501 - ₱1000</option>
-              <option value="1001-2000">₱1001 - ₱2000</option>
-              <option value="2000+">₱2000+</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Description</label>
-            <textarea id="accountDescription" placeholder="Add skins, rare items, login type, or other notes..."></textarea>
+          <div class="quick-actions">
+            <button class="quick-btn primary" onclick="showPage('add')">Add New Product</button>
+            <button class="quick-btn" onclick="showPage('notifications')">View Notifications</button>
           </div>
         </div>
+      </section>
 
-        <!-- KEY FIELDS -->
-        <div id="keyFields" class="hidden">
-          <div class="section-title">Key Details</div>
-
-          <div class="form-group">
-            <label>Key Name</label>
-            <input type="text" id="keyName" placeholder="Example: Astrix VIP Key" />
-          </div>
-
-          <div class="two-column">
-            <div class="form-group">
-              <label>Duration</label>
-              <select id="keyDuration">
-                <option value="">Select duration</option>
-                <option value="1 Day">1 Day</option>
-                <option value="3 Days">3 Days</option>
-                <option value="7 Days">7 Days</option>
-                <option value="14 Days">14 Days</option>
-                <option value="30 Days">30 Days</option>
-                <option value="Lifetime">Lifetime</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Price</label>
-              <input type="number" id="keyPrice" placeholder="Example: 250" />
-            </div>
-          </div>
-
-          <div class="two-column">
-            <div class="form-group">
-              <label>Game / Product</label>
-              <input type="text" id="keyGame" placeholder="Example: PUBGM / MLBB / CODM" />
-            </div>
-
-            <div class="form-group">
-              <label>Platform</label>
-              <select id="keyPlatform">
-                <option value="">Select platform</option>
-                <option value="Android">Android</option>
-                <option value="iOS">iOS</option>
-                <option value="PC">PC</option>
-                <option value="Android / iOS">Android / iOS</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="two-column">
-            <div class="form-group">
-              <label>Server</label>
-              <input type="text" id="keyServer" placeholder="Example: Global / KR / VNG" />
-            </div>
-
-            <div class="form-group">
-              <label>Stock</label>
-              <input type="number" id="keyStock" placeholder="Example: 10" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Description</label>
-            <textarea id="keyDescription" placeholder="Add key features, supported version, rules, or notes..."></textarea>
-          </div>
+      <!-- NOTIFICATIONS -->
+      <section id="notificationsPage" class="hidden">
+        <div class="section-title">
+          <h2>Admin Notifications</h2>
+          <p>Customer orders, feedback, reports, and registrations will appear here.</p>
         </div>
 
-        <!-- OTHER FIELDS -->
-        <div id="otherFields" class="hidden">
-          <div class="section-title">Other Product Details</div>
+        <div id="notificationList" class="notification-list"></div>
 
-          <div class="form-group">
-            <label>Item / Service Name</label>
-            <input type="text" id="otherName" placeholder="Example: Boosting Service" />
-          </div>
+        <div class="quick-actions">
+          <button class="quick-btn danger" onclick="clearNotifications()">Clear Notifications</button>
+          <button class="quick-btn" onclick="loadAdminData()">Refresh</button>
+        </div>
+      </section>
 
-          <div class="two-column">
-            <div class="form-group">
-              <label>Price</label>
-              <input type="number" id="otherPrice" placeholder="Example: 999" />
-            </div>
-
-            <div class="form-group">
-              <label>Category</label>
-              <input type="text" id="otherCategory" placeholder="Example: Service / Top-up / Bundle" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Availability</label>
-            <select id="otherAvailability">
-              <option value="">Select availability</option>
-              <option value="Available">Available</option>
-              <option value="Limited">Limited</option>
-              <option value="Sold Out">Sold Out</option>
-              <option value="Pre-order">Pre-order</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Description</label>
-            <textarea id="otherDescription" placeholder="Write details, inclusions, rules, or delivery time..."></textarea>
-          </div>
+      <!-- PRODUCTS -->
+      <section id="productsPage" class="hidden">
+        <div class="section-title">
+          <h2>Saved Products</h2>
+          <p>Products added from this admin panel.</p>
         </div>
 
-        <!-- LIVE PREVIEW -->
-        <div class="product-preview">
-          <h3>Live Product Preview</h3>
+        <div id="productList" class="product-list"></div>
 
-          <div class="preview-card">
-            <div class="preview-card-img" id="livePreviewImage">
-              No image selected
+        <div class="quick-actions">
+          <button class="quick-btn primary" onclick="showPage('add')">Add Product</button>
+          <button class="quick-btn danger" onclick="clearProducts()">Clear Products</button>
+        </div>
+      </section>
+
+      <!-- ADD PRODUCT -->
+      <section id="addPage" class="hidden">
+        <div class="section-title">
+          <h2>Add New Product</h2>
+          <p>Choose if you are selling an account, key, or other service.</p>
+        </div>
+
+        <div class="panel-card">
+          <form id="adminForm">
+            <div class="type-grid">
+              <label class="type-option">
+                <input type="radio" name="productType" value="account" />
+                <div class="type-card">
+                  <div class="type-icon">🎮</div>
+                  <strong>Account</strong>
+                  <span>Game accounts</span>
+                </div>
+              </label>
+
+              <label class="type-option">
+                <input type="radio" name="productType" value="key" />
+                <div class="type-card">
+                  <div class="type-icon">🔑</div>
+                  <strong>Key</strong>
+                  <span>VIP keys</span>
+                </div>
+              </label>
+
+              <label class="type-option">
+                <input type="radio" name="productType" value="other" />
+                <div class="type-card">
+                  <div class="type-icon">📦</div>
+                  <strong>Other</strong>
+                  <span>Services</span>
+                </div>
+              </label>
             </div>
 
-            <div class="preview-card-body">
-              <div class="preview-badge" id="livePreviewType">No Type Selected</div>
+            <label class="upload-box" for="productPictures">
+              <input type="file" id="productPictures" multiple accept="image/*" />
+              <div class="upload-icon">📸</div>
+              <strong>Tap to upload pictures</strong>
+              <span style="color:#ffb8c2; font-size:13px;">Multiple images allowed</span>
+            </label>
 
-              <h4 id="livePreviewName">Product Name</h4>
+            <div id="previewGrid" class="preview-grid"></div>
 
-              <div class="preview-price" id="livePreviewPrice">₱0</div>
-
-              <div class="preview-info" id="livePreviewInfo">
-                <div>Choose product type first</div>
+            <!-- ACCOUNT -->
+            <div id="accountFields" class="hidden">
+              <div class="section-title">
+                <h2>Account Details</h2>
               </div>
 
-              <p class="preview-desc" id="livePreviewDescription">
-                Product description will appear here.
-              </p>
-            </div>
-          </div>
-        </div>
+              <div class="form-group">
+                <label>Account Name</label>
+                <input type="text" id="accountName" placeholder="Example: Premium Game Account" />
+              </div>
 
-        <div class="btn-row">
-          <button type="submit" class="save-btn">Save Product</button>
-          <button type="button" class="clear-btn" onclick="clearForm()">Clear Form</button>
+              <div class="two-column">
+                <div class="form-group">
+                  <label>Level</label>
+                  <input type="text" id="accountLevel" placeholder="Example: 184" />
+                </div>
+
+                <div class="form-group">
+                  <label>Price</label>
+                  <input type="number" id="accountPrice" placeholder="Example: 550" />
+                </div>
+              </div>
+
+              <div class="two-column">
+                <div class="form-group">
+                  <label>UID</label>
+                  <input type="text" id="accountUid" placeholder="Example: 361673204" />
+                </div>
+
+                <div class="form-group">
+                  <label>Region</label>
+                  <input type="text" id="accountRegion" placeholder="Example: TH" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Description</label>
+                <textarea id="accountDescription" placeholder="Add skins, rare items, or notes..."></textarea>
+              </div>
+            </div>
+
+            <!-- KEY -->
+            <div id="keyFields" class="hidden">
+              <div class="section-title">
+                <h2>Key Details</h2>
+              </div>
+
+              <div class="form-group">
+                <label>Key Name</label>
+                <input type="text" id="keyName" placeholder="Example: Astrix VIP Key" />
+              </div>
+
+              <div class="two-column">
+                <div class="form-group">
+                  <label>Duration</label>
+                  <select id="keyDuration">
+                    <option value="">Select duration</option>
+                    <option value="1 Day">1 Day</option>
+                    <option value="3 Days">3 Days</option>
+                    <option value="7 Days">7 Days</option>
+                    <option value="14 Days">14 Days</option>
+                    <option value="30 Days">30 Days</option>
+                    <option value="Lifetime">Lifetime</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Price</label>
+                  <input type="number" id="keyPrice" placeholder="Example: 250" />
+                </div>
+              </div>
+
+              <div class="two-column">
+                <div class="form-group">
+                  <label>Game / Product</label>
+                  <input type="text" id="keyGame" placeholder="Example: PUBGM" />
+                </div>
+
+                <div class="form-group">
+                  <label>Platform</label>
+                  <select id="keyPlatform">
+                    <option value="">Select platform</option>
+                    <option value="Android">Android</option>
+                    <option value="iOS">iOS</option>
+                    <option value="PC">PC</option>
+                    <option value="Android / iOS">Android / iOS</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Description</label>
+                <textarea id="keyDescription" placeholder="Add key features, supported version, rules, or notes..."></textarea>
+              </div>
+            </div>
+
+            <!-- OTHER -->
+            <div id="otherFields" class="hidden">
+              <div class="section-title">
+                <h2>Other Product Details</h2>
+              </div>
+
+              <div class="form-group">
+                <label>Item / Service Name</label>
+                <input type="text" id="otherName" placeholder="Example: Boosting Service" />
+              </div>
+
+              <div class="two-column">
+                <div class="form-group">
+                  <label>Price</label>
+                  <input type="number" id="otherPrice" placeholder="Example: 999" />
+                </div>
+
+                <div class="form-group">
+                  <label>Category</label>
+                  <input type="text" id="otherCategory" placeholder="Example: Service" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Description</label>
+                <textarea id="otherDescription" placeholder="Write details, inclusions, rules, or delivery time..."></textarea>
+              </div>
+            </div>
+
+            <div class="section-title">
+              <h2>Live Preview</h2>
+            </div>
+
+            <div class="preview-card">
+              <div class="preview-img" id="livePreviewImage">🔥</div>
+
+              <div class="preview-body">
+                <span class="badge" id="livePreviewType">No Type Selected</span>
+                <h3 id="livePreviewName" style="margin-top:10px;">Product Name</h3>
+                <div class="preview-price" id="livePreviewPrice">₱0</div>
+                <p id="livePreviewDetails" style="color:#d2d2d2; line-height:1.5;">Product details will appear here.</p>
+              </div>
+            </div>
+
+            <div class="quick-actions">
+              <button type="submit" class="quick-btn primary">Save Product</button>
+              <button type="button" class="quick-btn" onclick="clearForm()">Clear Form</button>
+            </div>
+          </form>
         </div>
-      </form>
+      </section>
     </div>
   </div>
 
   <!-- SUCCESS MODAL -->
   <div class="modal-overlay" id="successModal">
     <div class="modal">
-      <div class="modal-icon">✓</div>
-      <h2>Product Saved</h2>
-      <p>
-        Your product details have been saved successfully.
-      </p>
-      <button onclick="closeModal()">Done</button>
+      <h2 id="successTitle">Success</h2>
+      <p id="successMessage">Action completed.</p>
+      <button class="modal-btn" onclick="closeModal('successModal')">Done</button>
     </div>
   </div>
 
   <!-- ERROR MODAL -->
   <div class="modal-overlay" id="errorModal">
     <div class="modal">
-      <div class="modal-icon">!</div>
       <h2>Missing Details</h2>
-      <p id="errorText">
-        Please complete the required fields.
-      </p>
-      <button onclick="closeErrorModal()">Okay</button>
+      <p id="errorText">Please complete required fields.</p>
+      <button class="modal-btn" onclick="closeModal('errorModal')">Okay</button>
     </div>
   </div>
 
   <script>
     const adminForm = document.getElementById("adminForm");
-
     const productTypeInputs = document.querySelectorAll("input[name='productType']");
-
     const productPictures = document.getElementById("productPictures");
     const previewGrid = document.getElementById("previewGrid");
 
@@ -908,24 +1021,78 @@
     const keyFields = document.getElementById("keyFields");
     const otherFields = document.getElementById("otherFields");
 
-    const successModal = document.getElementById("successModal");
-    const errorModal = document.getElementById("errorModal");
-    const errorText = document.getElementById("errorText");
-
     const livePreviewImage = document.getElementById("livePreviewImage");
     const livePreviewType = document.getElementById("livePreviewType");
     const livePreviewName = document.getElementById("livePreviewName");
     const livePreviewPrice = document.getElementById("livePreviewPrice");
-    const livePreviewInfo = document.getElementById("livePreviewInfo");
-    const livePreviewDescription = document.getElementById("livePreviewDescription");
-
-    const adminNotifications = document.getElementById("adminNotifications");
-    const totalNotifications = document.getElementById("totalNotifications");
-    const totalOrders = document.getElementById("totalOrders");
-    const totalReports = document.getElementById("totalReports");
+    const livePreviewDetails = document.getElementById("livePreviewDetails");
 
     let selectedProductType = "";
     let selectedImages = [];
+
+    function openDrawer() {
+      document.getElementById("sideDrawer").classList.add("active");
+      document.getElementById("drawerOverlay").classList.add("active");
+    }
+
+    function closeDrawer() {
+      document.getElementById("sideDrawer").classList.remove("active");
+      document.getElementById("drawerOverlay").classList.remove("active");
+    }
+
+    function goDrawerPage(page) {
+      closeDrawer();
+      showPage(page);
+    }
+
+    function showPage(page, tabElement = null) {
+      document.getElementById("dashboardPage").classList.add("hidden");
+      document.getElementById("notificationsPage").classList.add("hidden");
+      document.getElementById("productsPage").classList.add("hidden");
+      document.getElementById("addPage").classList.add("hidden");
+
+      if (page === "dashboard") document.getElementById("dashboardPage").classList.remove("hidden");
+      if (page === "notifications") document.getElementById("notificationsPage").classList.remove("hidden");
+      if (page === "products") document.getElementById("productsPage").classList.remove("hidden");
+      if (page === "add") document.getElementById("addPage").classList.remove("hidden");
+
+      if (tabElement) {
+        document.querySelectorAll(".nav-tab").forEach(tab => tab.classList.remove("active"));
+        tabElement.classList.add("active");
+      }
+
+      loadAdminData();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function openCustomerSite() {
+      window.location.href = "index.html";
+    }
+
+    function refreshAdmin() {
+      loadAdminData();
+      showSuccess("Refreshed", "Admin data has been refreshed.");
+    }
+
+    function getValue(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : "";
+    }
+
+    function showSuccess(title, message) {
+      document.getElementById("successTitle").innerText = title;
+      document.getElementById("successMessage").innerText = message;
+      document.getElementById("successModal").classList.add("active");
+    }
+
+    function showError(message) {
+      document.getElementById("errorText").innerText = message;
+      document.getElementById("errorModal").classList.add("active");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("active");
+    }
 
     productTypeInputs.forEach(input => {
       input.addEventListener("change", function () {
@@ -935,17 +1102,9 @@
         keyFields.classList.add("hidden");
         otherFields.classList.add("hidden");
 
-        if (selectedProductType === "account") {
-          accountFields.classList.remove("hidden");
-        }
-
-        if (selectedProductType === "key") {
-          keyFields.classList.remove("hidden");
-        }
-
-        if (selectedProductType === "other") {
-          otherFields.classList.remove("hidden");
-        }
+        if (selectedProductType === "account") accountFields.classList.remove("hidden");
+        if (selectedProductType === "key") keyFields.classList.remove("hidden");
+        if (selectedProductType === "other") otherFields.classList.remove("hidden");
 
         updateLivePreview();
       });
@@ -967,22 +1126,11 @@
           const item = document.createElement("div");
           item.className = "preview-item";
 
-          const img = document.createElement("img");
-          img.src = e.target.result;
+          item.innerHTML = `
+            <img src="${e.target.result}" alt="Product Image">
+            <button type="button" class="remove-img" onclick="removeImage(${index})">×</button>
+          `;
 
-          const removeBtn = document.createElement("button");
-          removeBtn.className = "remove-img";
-          removeBtn.type = "button";
-          removeBtn.innerHTML = "×";
-
-          removeBtn.onclick = function () {
-            selectedImages.splice(index, 1);
-            renderImagePreviews();
-            updateLivePreview();
-          };
-
-          item.appendChild(img);
-          item.appendChild(removeBtn);
           previewGrid.appendChild(item);
         };
 
@@ -990,74 +1138,71 @@
       });
     }
 
-    function getValue(id) {
-      const element = document.getElementById(id);
-      return element ? element.value.trim() : "";
+    function removeImage(index) {
+      selectedImages.splice(index, 1);
+      renderImagePreviews();
+      updateLivePreview();
     }
 
     function updateLivePreview() {
       let name = "Product Name";
       let price = "0";
-      let description = "Product description will appear here.";
-      let typeText = "No Type Selected";
-      let infoHTML = "<div>Choose product type first</div>";
+      let details = "Product details will appear here.";
+      let type = "No Type Selected";
+      let icon = "🔥";
 
       if (selectedProductType === "account") {
-        typeText = "Account";
+        type = "ACCOUNT";
+        icon = "🎮";
         name = getValue("accountName") || "Account Name";
         price = getValue("accountPrice") || "0";
-        description = getValue("accountDescription") || "Account description will appear here.";
-
-        infoHTML = `
-          <div><strong>Level:</strong> ${getValue("accountLevel") || "N/A"}</div>
-          <div><strong>UID:</strong> ${getValue("accountUid") || "N/A"}</div>
-          <div><strong>Region:</strong> ${getValue("accountRegion") || "N/A"}</div>
-          <div><strong>Category:</strong> ${getValue("accountCategory") || "N/A"}</div>
+        details = `
+          Level: ${getValue("accountLevel") || "N/A"} •
+          UID: ${getValue("accountUid") || "N/A"} •
+          Region: ${getValue("accountRegion") || "N/A"}<br>
+          ${getValue("accountDescription") || "Account description will appear here."}
         `;
       }
 
       if (selectedProductType === "key") {
-        typeText = "Key";
+        type = "KEY";
+        icon = "🔑";
         name = getValue("keyName") || "Key Name";
         price = getValue("keyPrice") || "0";
-        description = getValue("keyDescription") || "Key description will appear here.";
-
-        infoHTML = `
-          <div><strong>Duration:</strong> ${getValue("keyDuration") || "N/A"}</div>
-          <div><strong>Game:</strong> ${getValue("keyGame") || "N/A"}</div>
-          <div><strong>Platform:</strong> ${getValue("keyPlatform") || "N/A"}</div>
-          <div><strong>Server:</strong> ${getValue("keyServer") || "N/A"}</div>
+        details = `
+          Duration: ${getValue("keyDuration") || "N/A"} •
+          Game: ${getValue("keyGame") || "N/A"} •
+          Platform: ${getValue("keyPlatform") || "N/A"}<br>
+          ${getValue("keyDescription") || "Key description will appear here."}
         `;
       }
 
       if (selectedProductType === "other") {
-        typeText = "Other";
+        type = "OTHER";
+        icon = "📦";
         name = getValue("otherName") || "Item / Service Name";
         price = getValue("otherPrice") || "0";
-        description = getValue("otherDescription") || "Item description will appear here.";
-
-        infoHTML = `
-          <div><strong>Category:</strong> ${getValue("otherCategory") || "N/A"}</div>
-          <div><strong>Status:</strong> ${getValue("otherAvailability") || "N/A"}</div>
+        details = `
+          Category: ${getValue("otherCategory") || "N/A"}<br>
+          ${getValue("otherDescription") || "Description will appear here."}
         `;
       }
 
-      livePreviewType.innerText = typeText;
+      livePreviewType.innerText = type;
       livePreviewName.innerText = name;
       livePreviewPrice.innerText = "₱" + price;
-      livePreviewInfo.innerHTML = infoHTML;
-      livePreviewDescription.innerText = description;
+      livePreviewDetails.innerHTML = details;
 
       if (selectedImages.length > 0) {
         const reader = new FileReader();
 
         reader.onload = function (e) {
-          livePreviewImage.innerHTML = `<img src="${e.target.result}" alt="Preview Image">`;
+          livePreviewImage.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
         };
 
         reader.readAsDataURL(selectedImages[0]);
       } else {
-        livePreviewImage.innerHTML = "No image selected";
+        livePreviewImage.innerHTML = icon;
       }
     }
 
@@ -1068,58 +1213,54 @@
       e.preventDefault();
 
       if (!selectedProductType) {
-        showError("Please choose what you are selling first: Account, Key, or Other.");
+        showError("Please choose a product type first.");
         return;
       }
 
       let productData = {
         id: Date.now(),
         productType: selectedProductType,
-        imagesCount: selectedImages.length,
-        createdAt: new Date().toLocaleString()
+        createdAt: new Date().toLocaleString(),
+        imagesCount: selectedImages.length
       };
 
       if (selectedProductType === "account") {
         if (!getValue("accountName") || !getValue("accountPrice")) {
-          showError("Please add Account Name and Price.");
+          showError("Please add account name and price.");
           return;
         }
 
         productData = {
           ...productData,
           name: getValue("accountName"),
-          level: getValue("accountLevel"),
           price: getValue("accountPrice"),
+          level: getValue("accountLevel"),
           uid: getValue("accountUid"),
           region: getValue("accountRegion"),
-          nickname: getValue("accountNickname"),
-          category: getValue("accountCategory"),
           description: getValue("accountDescription")
         };
       }
 
       if (selectedProductType === "key") {
         if (!getValue("keyName") || !getValue("keyPrice")) {
-          showError("Please add Key Name and Price.");
+          showError("Please add key name and price.");
           return;
         }
 
         productData = {
           ...productData,
           name: getValue("keyName"),
-          duration: getValue("keyDuration"),
           price: getValue("keyPrice"),
+          duration: getValue("keyDuration"),
           game: getValue("keyGame"),
           platform: getValue("keyPlatform"),
-          server: getValue("keyServer"),
-          stock: getValue("keyStock"),
           description: getValue("keyDescription")
         };
       }
 
       if (selectedProductType === "other") {
         if (!getValue("otherName") || !getValue("otherPrice")) {
-          showError("Please add Item / Service Name and Price.");
+          showError("Please add item/service name and price.");
           return;
         }
 
@@ -1128,7 +1269,6 @@
           name: getValue("otherName"),
           price: getValue("otherPrice"),
           category: getValue("otherCategory"),
-          availability: getValue("otherAvailability"),
           description: getValue("otherDescription")
         };
       }
@@ -1137,83 +1277,11 @@
       savedProducts.unshift(productData);
       localStorage.setItem("adminProducts", JSON.stringify(savedProducts));
 
-      console.log("Saved Product:", productData);
-
-      successModal.classList.add("active");
-    });
-
-    function loadAdminNotifications() {
-      const notifications = JSON.parse(localStorage.getItem("adminNotifications")) || [];
-
-      totalNotifications.innerText = notifications.length;
-
-      const orders = notifications.filter(item => item.notificationType === "New Order");
-      const reports = notifications.filter(item =>
-        item.notificationType === "Feedback" ||
-        item.notificationType === "Issue Report"
-      );
-
-      totalOrders.innerText = orders.length;
-      totalReports.innerText = reports.length;
-
-      if (notifications.length === 0) {
-        adminNotifications.innerHTML = `
-          <div class="empty-notif">
-            No notifications yet.
-          </div>
-        `;
-        return;
-      }
-
-      adminNotifications.innerHTML = "";
-
-      notifications.forEach(notif => {
-        const item = document.createElement("div");
-        item.className = "notification-item";
-
-        item.innerHTML = `
-          <div class="notification-top">
-            <span class="notif-type">${notif.notificationType || "Notification"}</span>
-            <span class="notif-date">${notif.date || "No date"}</span>
-          </div>
-
-          <h3>${notif.title || "Untitled Notification"}</h3>
-
-          <p>${notif.message || "No message provided."}</p>
-
-          ${notif.category ? `<div class="notif-contact"><strong>Category:</strong> ${notif.category}</div>` : ""}
-          ${notif.customerName ? `<div class="notif-contact"><strong>Customer:</strong> ${notif.customerName}</div>` : ""}
-          ${notif.contact ? `<div class="notif-contact"><strong>Contact:</strong> ${notif.contact}</div>` : ""}
-          ${notif.productName ? `<div class="notif-contact"><strong>Product:</strong> ${notif.productName}</div>` : ""}
-          ${notif.price ? `<div class="notif-contact"><strong>Price:</strong> ₱${notif.price}</div>` : ""}
-        `;
-
-        adminNotifications.appendChild(item);
-      });
-    }
-
-    function clearNotifications() {
-      const confirmClear = confirm("Are you sure you want to clear all notifications?");
-
-      if (!confirmClear) return;
-
-      localStorage.removeItem("adminNotifications");
-      loadAdminNotifications();
-    }
-
-    function showError(message) {
-      errorText.innerText = message;
-      errorModal.classList.add("active");
-    }
-
-    function closeErrorModal() {
-      errorModal.classList.remove("active");
-    }
-
-    function closeModal() {
-      successModal.classList.remove("active");
       clearForm();
-    }
+      loadAdminData();
+
+      showSuccess("Product Saved", "Your product has been added successfully.");
+    });
 
     function clearForm() {
       adminForm.reset();
@@ -1230,12 +1298,135 @@
       livePreviewType.innerText = "No Type Selected";
       livePreviewName.innerText = "Product Name";
       livePreviewPrice.innerText = "₱0";
-      livePreviewInfo.innerHTML = "<div>Choose product type first</div>";
-      livePreviewDescription.innerText = "Product description will appear here.";
-      livePreviewImage.innerHTML = "No image selected";
+      livePreviewDetails.innerText = "Product details will appear here.";
+      livePreviewImage.innerHTML = "🔥";
     }
 
-    loadAdminNotifications();
+    function loadAdminData() {
+      const notifications = JSON.parse(localStorage.getItem("adminNotifications")) || [];
+      const products = JSON.parse(localStorage.getItem("adminProducts")) || [];
+
+      document.getElementById("totalNotifications").innerText = notifications.length;
+      document.getElementById("totalProducts").innerText = products.length;
+
+      const orders = notifications.filter(n => n.notificationType === "New Order");
+      const reports = notifications.filter(n =>
+        n.notificationType === "Issue Report" ||
+        n.notificationType === "Feedback"
+      );
+
+      document.getElementById("totalOrders").innerText = orders.length;
+      document.getElementById("totalReports").innerText = reports.length;
+
+      renderNotifications(notifications);
+      renderSavedProducts(products);
+    }
+
+    function renderNotifications(notifications) {
+      const list = document.getElementById("notificationList");
+
+      if (notifications.length === 0) {
+        list.innerHTML = `<div class="empty-state">No notifications yet.</div>`;
+        return;
+      }
+
+      list.innerHTML = "";
+
+      notifications.forEach(notif => {
+        const item = document.createElement("div");
+        item.className = "notification-item";
+
+        item.innerHTML = `
+          <div class="notif-top">
+            <span class="badge">${notif.notificationType || "Notification"}</span>
+            <span class="notif-date">${notif.date || "No date"}</span>
+          </div>
+
+          <h3>${notif.title || "Untitled Notification"}</h3>
+          <p>${notif.message || "No message provided."}</p>
+
+          ${notif.category ? `<div class="small-info"><strong>Category:</strong> ${notif.category}</div>` : ""}
+          ${notif.customerName ? `<div class="small-info"><strong>Customer:</strong> ${notif.customerName}</div>` : ""}
+          ${notif.contact ? `<div class="small-info"><strong>Contact:</strong> ${notif.contact}</div>` : ""}
+          ${notif.productName ? `<div class="small-info"><strong>Product:</strong> ${notif.productName}</div>` : ""}
+          ${notif.price ? `<div class="small-info"><strong>Price:</strong> ₱${notif.price}</div>` : ""}
+        `;
+
+        list.appendChild(item);
+      });
+    }
+
+    function renderSavedProducts(products) {
+      const list = document.getElementById("productList");
+
+      if (products.length === 0) {
+        list.innerHTML = `<div class="empty-state">No products saved yet.</div>`;
+        return;
+      }
+
+      list.innerHTML = "";
+
+      products.forEach(product => {
+        const item = document.createElement("div");
+        item.className = "saved-product-item";
+
+        item.innerHTML = `
+          <div class="notif-top">
+            <span class="badge">${(product.productType || "Product").toUpperCase()}</span>
+            <span class="notif-date">${product.createdAt || "No date"}</span>
+          </div>
+
+          <h3>${product.name || "Unnamed Product"}</h3>
+          <p>${product.description || "No description."}</p>
+
+          <div class="small-info"><strong>Price:</strong> ₱${product.price || 0}</div>
+
+          <div class="quick-actions">
+            <button class="quick-btn danger" onclick="deleteProduct(${product.id})">Delete Product</button>
+          </div>
+        `;
+
+        list.appendChild(item);
+      });
+    }
+
+    function deleteProduct(id) {
+      const confirmDelete = confirm("Delete this product?");
+
+      if (!confirmDelete) return;
+
+      let products = JSON.parse(localStorage.getItem("adminProducts")) || [];
+      products = products.filter(product => product.id !== id);
+
+      localStorage.setItem("adminProducts", JSON.stringify(products));
+      loadAdminData();
+
+      showSuccess("Deleted", "Product has been removed.");
+    }
+
+    function clearNotifications() {
+      const confirmClear = confirm("Clear all notifications?");
+
+      if (!confirmClear) return;
+
+      localStorage.removeItem("adminNotifications");
+      loadAdminData();
+
+      showSuccess("Cleared", "All notifications have been cleared.");
+    }
+
+    function clearProducts() {
+      const confirmClear = confirm("Clear all saved products?");
+
+      if (!confirmClear) return;
+
+      localStorage.removeItem("adminProducts");
+      loadAdminData();
+
+      showSuccess("Cleared", "All products have been cleared.");
+    }
+
+    loadAdminData();
   </script>
 </body>
 </html>
