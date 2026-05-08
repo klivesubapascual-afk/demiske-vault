@@ -15,13 +15,11 @@
     }
 
     :root {
-      --bg-main: #050505;
       --red: #ff003c;
       --red-soft: #ff3155;
       --orange: #ff6a00;
       --text-soft: #ffb8c2;
       --border: rgba(255, 45, 80, 0.35);
-      --shadow: rgba(255, 0, 60, 0.35);
     }
 
     body {
@@ -32,6 +30,10 @@
         linear-gradient(135deg, #060606, #120006, #000);
       color: white;
       padding-bottom: 80px;
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     .topbar {
@@ -352,6 +354,16 @@
       cursor: pointer;
     }
 
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 32px 14px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: #ffc4cc;
+    }
+
     .status-list {
       display: grid;
       gap: 12px;
@@ -417,10 +429,6 @@
       color: #ffc4cc;
       line-height: 1.5;
       font-size: 14px;
-    }
-
-    .hidden {
-      display: none;
     }
 
     .drawer-overlay {
@@ -684,8 +692,19 @@
 
     <div class="drawer-section-title">Account</div>
 
-    <button class="drawer-item primary" onclick="openLoginModal()">Login</button>
-    <button class="drawer-item" onclick="openRegisterModal()">Register</button>
+    <div id="guestMenu">
+      <button class="drawer-item primary" onclick="openLoginModal()">Login</button>
+      <button class="drawer-item" onclick="openRegisterModal()">Register</button>
+    </div>
+
+    <div id="userMenu" class="hidden">
+      <div class="drawer-item" style="cursor: default;">
+        👤 Logged in as <br>
+        <span id="loggedInName" style="color:#ffb8c2; font-size:13px;">Customer</span>
+      </div>
+
+      <button class="drawer-item primary" onclick="logoutUser()">Log Out</button>
+    </div>
 
     <div class="drawer-section-title">Menu</div>
 
@@ -701,7 +720,7 @@
     <button class="drawer-item" onclick="contactAdmin()">📩 Contact Admin</button>
 
     <p class="drawer-small">
-      Login/Register is only UI for now. To make real accounts, connect Firebase or Supabase.
+      Login/Register is saved on this device only. For real customer accounts, connect Firebase or Supabase.
     </p>
   </aside>
 
@@ -1067,6 +1086,7 @@
     function openDrawer() {
       document.getElementById("sideDrawer").classList.add("active");
       document.getElementById("drawerOverlay").classList.add("active");
+      updateAuthMenu();
     }
 
     function closeDrawer() {
@@ -1094,6 +1114,27 @@
       window.location.href = "https://t.me/XyloGamesPH";
     }
 
+    function updateAuthMenu() {
+      const isLoggedIn = localStorage.getItem("customerLoggedIn") === "true";
+      const customerName = localStorage.getItem("customerName") || "Customer";
+
+      const guestMenu = document.getElementById("guestMenu");
+      const userMenu = document.getElementById("userMenu");
+      const loggedInName = document.getElementById("loggedInName");
+
+      if (!guestMenu || !userMenu || !loggedInName) return;
+
+      if (isLoggedIn) {
+        guestMenu.classList.add("hidden");
+        userMenu.classList.remove("hidden");
+        loggedInName.innerText = customerName;
+      } else {
+        guestMenu.classList.remove("hidden");
+        userMenu.classList.add("hidden");
+        loggedInName.innerText = "Customer";
+      }
+    }
+
     function submitLogin() {
       const user = getValue("loginUser");
       const pass = getValue("loginPassword");
@@ -1107,7 +1148,15 @@
       localStorage.setItem("customerName", user);
 
       closeModal("loginModal");
-      showSuccess("Logged In", "You are now logged in on this device.");
+      updateAuthMenu();
+
+      showSuccess(
+        "Logged In",
+        "You are now logged in on this device."
+      );
+
+      document.getElementById("loginUser").value = "";
+      document.getElementById("loginPassword").value = "";
     }
 
     function submitRegister() {
@@ -1134,7 +1183,30 @@
       });
 
       closeModal("registerModal");
-      showSuccess("Registered", "Your account has been created on this device.");
+      updateAuthMenu();
+
+      showSuccess(
+        "Registered",
+        "Your account has been created on this device."
+      );
+
+      document.getElementById("registerName").value = "";
+      document.getElementById("registerContact").value = "";
+      document.getElementById("registerPassword").value = "";
+    }
+
+    function logoutUser() {
+      localStorage.removeItem("customerLoggedIn");
+      localStorage.removeItem("customerName");
+      localStorage.removeItem("customerContact");
+
+      closeDrawer();
+      updateAuthMenu();
+
+      showSuccess(
+        "Logged Out",
+        "You have been logged out successfully."
+      );
     }
 
     function getProducts() {
@@ -1432,6 +1504,7 @@
     }
 
     renderProducts();
+    updateAuthMenu();
   </script>
 </body>
 </html>
