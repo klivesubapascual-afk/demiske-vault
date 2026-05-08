@@ -89,7 +89,8 @@
     .admin-login-screen {
       position: fixed;
       inset: 0;
-      z-index: 2000;
+      z-index: 99999;
+      pointer-events: auto;
       background:
         radial-gradient(circle at top left, rgba(255, 0, 60, 0.35), transparent 35%),
         radial-gradient(circle at bottom right, rgba(255, 70, 0, 0.22), transparent 35%),
@@ -103,6 +104,9 @@
 
     .admin-login-card {
       width: 100%;
+      position: relative;
+      z-index: 100000;
+      pointer-events: auto;
       max-width: 420px;
       padding: 26px;
       border-radius: 28px;
@@ -149,6 +153,10 @@
 
     .admin-login-btn {
       width: 100%;
+      position: relative;
+      z-index: 100001;
+      pointer-events: auto;
+      touch-action: manipulation;
       border: none;
       cursor: pointer;
       border-radius: 16px;
@@ -907,7 +915,7 @@
         <input type="password" id="adminPassword" placeholder="Enter admin password" />
       </div>
 
-      <button class="admin-login-btn" onclick="adminLogin()">
+      <button type="button" class="admin-login-btn" onclick="adminLogin()">
         Login to Admin Panel
       </button>
 
@@ -1797,6 +1805,12 @@
 
       showSuccess("Cleared", "All products have been cleared.");
     }
+
+    document.getElementById("adminPassword").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        adminLogin();
+      }
+    });
 
     checkAdminLogin();
     loadAdminData();
