@@ -1609,5 +1609,88 @@
     checkLogin();
     loadAdminData();
   </script>
+
+<script id="fixedAdminLoginButton">
+(function () {
+  const ADMIN_USER = "xyloresselers";
+  const ADMIN_PASS = "modtakels ni xylo";
+
+  window.adminLogin = function () {
+    const userInput = document.getElementById("adminUsername");
+    const passInput = document.getElementById("adminPassword");
+    const loginScreen = document.getElementById("loginScreen");
+    const errorBox = document.getElementById("loginError");
+
+    const username = userInput ? userInput.value.trim() : "";
+    const password = passInput ? passInput.value.trim() : "";
+
+    if (username === ADMIN_USER && password === ADMIN_PASS) {
+      localStorage.setItem("adminLoggedIn", "true");
+
+      if (loginScreen) loginScreen.classList.add("hidden");
+      if (errorBox) errorBox.classList.add("hidden");
+
+      alert("Admin login successful.");
+    } else {
+      if (errorBox) {
+        errorBox.classList.remove("hidden");
+        errorBox.innerText = "Wrong username or password.";
+      } else {
+        alert("Wrong username or password.");
+      }
+    }
+  };
+
+  window.adminLogout = function () {
+    localStorage.removeItem("adminLoggedIn");
+    const loginScreen = document.getElementById("loginScreen");
+    if (loginScreen) loginScreen.classList.remove("hidden");
+  };
+
+  function setupLoginFix() {
+    const loginScreen = document.getElementById("loginScreen");
+    const loginButton =
+      document.querySelector('button[onclick*="adminLogin"]') ||
+      document.querySelector(".admin-login-btn");
+
+    const passInput = document.getElementById("adminPassword");
+
+    if (loginScreen) {
+      loginScreen.style.pointerEvents = "auto";
+      loginScreen.style.zIndex = "99999";
+    }
+
+    if (loginButton) {
+      loginButton.type = "button";
+      loginButton.style.pointerEvents = "auto";
+      loginButton.onclick = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        window.adminLogin();
+      };
+    }
+
+    if (passInput) {
+      passInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          window.adminLogin();
+        }
+      });
+    }
+
+    if (localStorage.getItem("adminLoggedIn") === "true" && loginScreen) {
+      loginScreen.classList.add("hidden");
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupLoginFix);
+  } else {
+    setupLoginFix();
+  }
+})();
+</script>
+
 </body>
 </html>
