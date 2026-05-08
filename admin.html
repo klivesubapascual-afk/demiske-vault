@@ -1815,5 +1815,68 @@
 })();
 </script>
 
+
+<script id="fixTypeButtonsClick">
+(function () {
+  function forceType(type) {
+    window.selectedProductType = type;
+
+    const radios = document.querySelectorAll('input[name="productType"]');
+    radios.forEach(function (radio) {
+      radio.checked = radio.value === type;
+    });
+
+    const accountFields = document.getElementById("accountFields");
+    const keyFields = document.getElementById("keyFields");
+    const otherFields = document.getElementById("otherFields");
+
+    if (accountFields) accountFields.classList.add("hidden");
+    if (keyFields) keyFields.classList.add("hidden");
+    if (otherFields) otherFields.classList.add("hidden");
+
+    if (type === "account" && accountFields) accountFields.classList.remove("hidden");
+    if (type === "key" && keyFields) keyFields.classList.remove("hidden");
+    if (type === "other" && otherFields) otherFields.classList.remove("hidden");
+
+    if (typeof updateLivePreview === "function") {
+      updateLivePreview();
+    }
+  }
+
+  window.forceType = forceType;
+
+  function setupTypeButtons() {
+    const typeOptions = document.querySelectorAll(".type-option");
+
+    typeOptions.forEach(function (option) {
+      const radio = option.querySelector('input[name="productType"]');
+      const card = option.querySelector(".type-card");
+
+      if (!radio || !card) return;
+
+      card.style.pointerEvents = "auto";
+      card.style.cursor = "pointer";
+
+      card.onclick = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        forceType(radio.value);
+      };
+
+      option.onclick = function (event) {
+        event.preventDefault();
+        forceType(radio.value);
+      };
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupTypeButtons);
+  } else {
+    setupTypeButtons();
+  }
+})();
+</script>
+
 </body>
 </html>
