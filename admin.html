@@ -1516,13 +1516,38 @@
     document.addEventListener("input", updateLivePreview);
     document.addEventListener("change", updateLivePreview);
 
-
     function fileToDataUrl(file) {
       return new Promise((resolve) => {
+        const img = new Image();
         const reader = new FileReader();
 
         reader.onload = function (event) {
-          resolve(event.target.result);
+          img.onload = function () {
+            const canvas = document.createElement("canvas");
+            const maxSize = 900;
+
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height && width > maxSize) {
+              height = Math.round((height * maxSize) / width);
+              width = maxSize;
+            } else if (height > maxSize) {
+              width = Math.round((width * maxSize) / height);
+              height = maxSize;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const compressedImage = canvas.toDataURL("image/jpeg", 0.68);
+            resolve(compressedImage);
+          };
+
+          img.src = event.target.result;
         };
 
         reader.readAsDataURL(file);
@@ -1533,6 +1558,11 @@
       if (!selectedImages || selectedImages.length === 0) {
         return [];
       }
+
+      return await Promise.all(selectedImages.map(fileToDataUrl));
+    }
+
+
 
       return await Promise.all(selectedImages.map(fileToDataUrl));
     }
