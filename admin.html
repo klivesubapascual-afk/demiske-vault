@@ -1493,7 +1493,6 @@
       });
     }
 
-
     function getApprovalMessage() {
       return "hello this is the reseller send me the proof for confirmation";
     }
@@ -1501,13 +1500,15 @@
     function cleanTelegramUsername(contact) {
       if (!contact) return "";
 
-      let username = contact.trim();
+      let username = String(contact).trim();
 
       username = username.replace("https://t.me/", "");
       username = username.replace("http://t.me/", "");
       username = username.replace("t.me/", "");
       username = username.replace("@", "");
       username = username.split(" ")[0];
+      username = username.split("?")[0];
+      username = username.replace(/[^a-zA-Z0-9_]/g, "");
 
       return username;
     }
@@ -1517,7 +1518,7 @@
 
       if (navigator.clipboard) {
         navigator.clipboard.writeText(message);
-        showSuccess("Copied", "Approval message copied. Paste it in Telegram.");
+        showSuccess("Copied", "Approval message copied.");
       } else {
         prompt("Copy this message:", message);
       }
@@ -1531,6 +1532,29 @@
         showError("Order not found.");
         return;
       }
+
+      order.orderStatus = "Approved";
+      order.approvedAt = new Date().toLocaleString();
+
+      localStorage.setItem("adminNotifications", JSON.stringify(notifications));
+      loadAdminData();
+
+      const message = getApprovalMessage();
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(message);
+      }
+
+      const telegramUsername = cleanTelegramUsername(order.contact);
+
+      if (telegramUsername) {
+        window.location.href = "https://t.me/" + telegramUsername;
+      } else {
+        showSuccess("Order Approved", "Message copied, but no Telegram username was found.");
+      }
+    }
+
+
 
       order.orderStatus = "Approved";
       order.approvedAt = new Date().toLocaleString();
