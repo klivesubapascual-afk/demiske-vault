@@ -1,296 +1,1514 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>DemiSke Admin</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        * { box-sizing:border-box; }
-        body {
-            margin:0; min-height:100vh; font-family:Arial,sans-serif; color:white;
-            background: radial-gradient(circle at top, rgba(255,0,230,.22), transparent 35%),
-            linear-gradient(rgba(5,8,18,.90), rgba(5,8,18,.98)), url("bg.jpg");
-            background-size:cover; background-position:center; padding:24px 16px;
-        }
-        .box { width:100%; max-width:460px; margin:0 auto 20px; background:rgba(13,18,36,.92); border:1px solid rgba(255,0,255,.42); border-radius:24px; padding:22px; box-shadow:0 0 30px rgba(255,0,255,.25); backdrop-filter:blur(12px); }
-        h1,h2 { text-align:center; text-shadow:0 0 10px #ff00ff,0 0 22px #7b00ff; }
-        label { display:block; margin-top:14px; margin-bottom:6px; color:#ffb8ff; font-weight:bold; font-size:14px; }
-        input,select,textarea { width:100%; padding:13px; border-radius:14px; border:1px solid rgba(255,0,255,.35); background:rgba(0,0,0,.45); color:white; outline:none; font-size:15px; }
-        textarea { min-height:90px; resize:vertical; }
-        button { width:100%; margin-top:16px; padding:14px; border:none; border-radius:15px; color:white; font-weight:bold; font-size:15px; background:linear-gradient(135deg,#ff00e6,#7b00ff); box-shadow:0 0 18px rgba(255,0,230,.45); }
-        .secondary { background:rgba(255,255,255,.12); box-shadow:none; }
-        .danger { background:rgba(255,60,90,.35); box-shadow:none; }
-        .status { text-align:center; margin-top:14px; color:#d9c5ff; line-height:1.5; }
-        .hidden { display:none; }
-        .preview-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
-        .preview-grid img { width:100%; height:120px; object-fit:cover; border-radius:14px; border:1px solid rgba(255,0,255,.35); }
-        .account-card { background:rgba(0,0,0,.35); border:1px solid rgba(255,0,255,.25); border-radius:16px; padding:14px; margin-top:12px; }
-        .account-card img { width:100%; border-radius:12px; margin-bottom:10px; max-height:180px; object-fit:cover; }
-        .account-card strong { color:#ff4dff; }
-        .mini { color:#d9c5ff; font-size:13px; line-height:1.5; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>DemiSke Admin Vault</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    :root {
+      --red: #ff003c;
+      --red2: #ff3155;
+      --orange: #ff6a00;
+      --dark: #07070b;
+      --card: rgba(255, 255, 255, 0.055);
+      --border: rgba(255, 65, 95, 0.28);
+      --soft: #ffb8c2;
+      --muted: #a9a9b2;
+      --green: #00ff88;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top right, rgba(255, 0, 60, 0.22), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(255, 106, 0, 0.12), transparent 35%),
+        linear-gradient(145deg, #050507, #100006, #000);
+      color: white;
+      padding-bottom: 92px;
+      overflow-x: hidden;
+    }
+
+    .hidden { display: none !important; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pop {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 60, 0.35); }
+      50% { box-shadow: 0 0 34px rgba(255, 0, 60, 0.65); }
+    }
+
+    .app {
+      max-width: 1100px;
+      margin: auto;
+      padding: 18px 16px;
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      animation: fadeUp 0.35s ease;
+    }
+
+    .logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 45%),
+        linear-gradient(135deg, var(--red), #1b0008, #000);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      font-weight: 900;
+      animation: glow 3s infinite;
+    }
+
+    .brand { flex: 1; }
+
+    .brand h1 {
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--red), #ff7b00);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    .admin-chip {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.06);
+      color: white;
+      padding: 10px 13px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 24px;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      background:
+        radial-gradient(circle at top right, rgba(255, 0, 60, 0.35), transparent 42%),
+        linear-gradient(135deg, rgba(22, 0, 8, 0.96), rgba(8, 8, 15, 0.95));
+      box-shadow: 0 0 35px rgba(255, 0, 60, 0.18);
+      animation: fadeUp 0.45s ease;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      right: -60px;
+      top: -50px;
+      background: rgba(255, 0, 60, 0.16);
+      filter: blur(3px);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.07);
+      color: #ffd1d8;
+      font-size: 13px;
+      margin-bottom: 17px;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+    }
+
+    .hero h2 {
+      font-size: 40px;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      color: #ffc7d0;
+      font-size: 15px;
+      line-height: 1.5;
+      max-width: 620px;
+    }
+
+    .hero-actions,
+    .two-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      border: none;
+      padding: 14px 16px;
+      border-radius: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      color: white;
+      transition: 0.22s ease;
+      text-align: center;
+    }
+
+    .btn:hover,
+    .chip:hover,
+    .product-card:hover,
+    .alert-card:hover,
+    .bottom-item:hover,
+    .stat-card:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--red), #ff6a00);
+      box-shadow: 0 0 22px rgba(255, 0, 60, 0.28);
+    }
+
+    .btn.ghost {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--border);
+    }
+
+    .btn.danger {
+      background: rgba(255, 0, 60, 0.20);
+      border: 1px solid rgba(255, 70, 95, 0.42);
+    }
+
+    .section-title {
+      margin: 26px 0 13px;
+      animation: fadeUp 0.5s ease;
+    }
+
+    .section-title h2 {
+      font-size: 25px;
+      margin-bottom: 5px;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .stat-card,
+    .panel,
+    .mini-card,
+    .alert-card,
+    .product-card {
+      border: 1px solid var(--border);
+      background:
+        radial-gradient(circle at top right, rgba(255, 0, 60, 0.13), transparent 40%),
+        var(--card);
+      box-shadow: 0 0 18px rgba(255, 0, 60, 0.08);
+    }
+
+    .stat-card {
+      padding: 16px;
+      border-radius: 22px;
+      transition: 0.22s ease;
+      animation: pop 0.32s ease both;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 30px;
+      margin-bottom: 5px;
+    }
+
+    .stat-card span {
+      color: var(--soft);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .panel {
+      padding: 18px;
+      border-radius: 26px;
+      animation: fadeUp 0.45s ease;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      color: #ffa0ae;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 70, 95, 0.35);
+      background: rgba(0, 0, 0, 0.35);
+      color: white;
+      outline: none;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: none;
+      height: 105px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--red2);
+      box-shadow: 0 0 0 3px rgba(255, 49, 85, 0.14);
+    }
+
+    .chips {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 4px 0 16px;
+      scrollbar-width: none;
+    }
+
+    .chips::-webkit-scrollbar { display: none; }
+
+    .chip {
+      white-space: nowrap;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.06);
+      color: white;
+      padding: 11px 15px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .chip.active {
+      background: linear-gradient(135deg, var(--red), #ff6a00);
+      border: none;
+      box-shadow: 0 0 18px rgba(255, 0, 60, 0.28);
+    }
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .type-option input { display: none; }
+
+    .type-card {
+      padding: 16px 10px;
+      min-height: 112px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.055);
+      text-align: center;
+      cursor: pointer;
+      transition: 0.22s ease;
+    }
+
+    .type-card:hover,
+    .type-option input:checked + .type-card {
+      background: linear-gradient(135deg, rgba(255, 0, 60, 0.28), rgba(255, 106, 0, 0.12));
+      transform: translateY(-3px);
+      box-shadow: 0 0 22px rgba(255, 0, 60, 0.25);
+    }
+
+    .type-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .type-card strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .type-card span {
+      color: var(--soft);
+      font-size: 12px;
+    }
+
+    .upload-box {
+      border: 2px dashed rgba(255, 65, 95, 0.65);
+      border-radius: 22px;
+      padding: 22px;
+      text-align: center;
+      background: rgba(255, 20, 60, 0.06);
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: 0.22s ease;
+    }
+
+    .upload-box:hover {
+      background: rgba(255, 20, 60, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .upload-box input { display: none; }
+
+    .upload-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+      gap: 12px;
+      margin: 12px 0 16px;
+    }
+
+    .preview-item {
+      position: relative;
+      animation: pop 0.24s ease;
+    }
+
+    .preview-item img {
+      width: 100%;
+      height: 95px;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 80, 100, 0.5);
+    }
+
+    .remove-img {
+      position: absolute;
+      top: -7px;
+      right: -7px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: none;
+      background: #ff1744;
+      color: white;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .preview-card {
+      overflow: hidden;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.045);
+      margin-top: 14px;
+      animation: pop 0.3s ease;
+    }
+
+    .preview-img {
+      height: 185px;
+      background:
+        radial-gradient(circle, rgba(255, 0, 60, 0.38), transparent 43%),
+        linear-gradient(135deg, #210008, #050505);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 55px;
+      overflow: hidden;
+    }
+
+    .preview-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-body {
+      padding: 16px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(255, 0, 60, 0.18);
+      color: #ffc4cc;
+      font-size: 10px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .price {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--soft);
+      margin: 8px 0;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .product-grid,
+    .alert-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .product-grid {
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    }
+
+    .product-card {
+      border-radius: 24px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.22s ease;
+      animation: pop 0.32s ease both;
+    }
+
+    .product-img {
+      height: 140px;
+      background:
+        radial-gradient(circle, rgba(255, 0, 60, 0.38), transparent 43%),
+        linear-gradient(135deg, #210008, #050505);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 44px;
+      overflow: hidden;
+    }
+
+    .product-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 13px;
+    }
+
+    .product-info h3 {
+      font-size: 15px;
+      line-height: 1.25;
+      margin-bottom: 7px;
+    }
+
+    .alert-card {
+      padding: 15px;
+      border-radius: 22px;
+      transition: 0.22s ease;
+      animation: pop 0.32s ease both;
+    }
+
+    .alert-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .alert-date {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .alert-card h3 {
+      font-size: 16px;
+      margin-bottom: 7px;
+    }
+
+    .alert-card p {
+      color: #d7d7dc;
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .empty-state {
+      padding: 28px;
+      text-align: center;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffc4cc;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      z-index: 200;
+      max-width: 620px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      padding: 10px;
+      border-radius: 26px;
+      background: rgba(8, 8, 13, 0.92);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--border);
+      box-shadow: 0 0 30px rgba(255, 0, 60, 0.25);
+    }
+
+    .bottom-item {
+      border: none;
+      background: transparent;
+      color: #ddd;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 9px 4px;
+      transition: 0.2s ease;
+    }
+
+    .bottom-item span {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .bottom-item.active {
+      background: linear-gradient(135deg, rgba(255, 0, 60, 0.32), rgba(255, 106, 0, 0.16));
+      color: white;
+    }
+
+    .login-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background:
+        radial-gradient(circle at top right, rgba(255, 0, 60, 0.25), transparent 35%),
+        linear-gradient(145deg, #050507, #100006, #000);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 430px;
+      padding: 26px;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      background:
+        radial-gradient(circle at top, rgba(255, 0, 60, 0.22), transparent 43%),
+        rgba(10, 10, 18, 0.96);
+      animation: pop 0.28s ease;
+    }
+
+    .login-card h2 {
+      font-size: 28px;
+      margin: 14px 0 8px;
+      text-align: center;
+      background: linear-gradient(90deg, var(--red), var(--orange));
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .login-card p {
+      text-align: center;
+      color: #ffc4cc;
+      line-height: 1.45;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(0, 0, 0, 0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      width: 100%;
+      max-width: 430px;
+      border-radius: 28px;
+      padding: 22px;
+      border: 1px solid rgba(255, 75, 100, 0.42);
+      background:
+        radial-gradient(circle at top, rgba(255, 0, 60, 0.22), transparent 43%),
+        #101018;
+      box-shadow: 0 0 40px rgba(255, 0, 60, 0.35);
+      animation: pop 0.25s ease;
+      text-align: center;
+    }
+
+    .modal h2 {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .modal p {
+      color: #d7d7dc;
+      line-height: 1.5;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 760px) {
+      .hero h2 { font-size: 34px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .form-grid,
+      .type-grid,
+      .hero-actions,
+      .two-actions { grid-template-columns: 1fr; }
+      .product-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); }
+    }
+
+    @media (max-width: 430px) {
+      .brand h1 { font-size: 21px; }
+      .admin-chip { font-size: 12px; padding: 9px 11px; }
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
+
 <body>
-    <div class="box" id="loginBox">
-        <h1>Admin Login</h1>
-        <label>Email</label>
-        <input type="email" id="adminEmail" placeholder="Admin email">
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="logo" style="margin:auto;">A</div>
+
+      <h2>DemiSke Admin</h2>
+      <p>Login to manage products, orders, feedback, and issue reports.</p>
+
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="adminUsername" placeholder="admin" />
+      </div>
+
+      <div class="field">
         <label>Password</label>
-        <input type="password" id="adminPassword" placeholder="Admin password">
-        <button onclick="adminLogin()">Login</button>
-        <p class="status" id="loginStatus"></p>
+        <input type="password" id="adminPassword" placeholder="admin123" />
+      </div>
+
+      <button class="btn primary" style="width:100%;" type="button" onclick="adminLogin()">Login</button>
+
+      <p id="loginError" class="hidden" style="color:#ffb8c2;margin-top:14px;">Wrong username or password.</p>
     </div>
+  </div>
 
-    <div class="box hidden" id="adminBox">
-        <h1>DemiSke Admin</h1>
-        <p class="status">Upload one or more account pictures. Customers can swipe the pictures in account details.</p>
+  <main class="app">
+    <header class="top">
+      <div class="logo">A</div>
 
-        <label>Account Pictures</label>
-        <input type="file" id="accountImages" accept="image/*" multiple onchange="previewImages(event)">
-        <div id="imagePreviewGrid" class="preview-grid"></div>
+      <div class="brand">
+        <h1>DemiSke Vault</h1>
+        <p>Admin control center</p>
+      </div>
 
-        <label>Account Name</label>
-        <input type="text" id="accountName" placeholder="Example: KhunICE Account">
+      <button class="admin-chip" onclick="adminLogout()">Logout</button>
+    </header>
 
-        <label>Level</label>
-        <input type="text" id="accountLevel" placeholder="Example: Level 184">
+    <section class="hero" id="dashboardSection">
+      <div class="status">
+        <span class="status-dot"></span>
+        Admin Online
+      </div>
 
-        <label>Price</label>
-        <input type="text" id="accountPrice" placeholder="Example: 550">
+      <h2>Manage the Vault.<br>Track everything.</h2>
 
-        <label>UID</label>
-        <input type="text" id="accountUid" placeholder="Example: 361673204">
+      <p>
+        Add products, manage uploaded pictures, check customer orders, feedback, and reports.
+      </p>
 
-        <label>Region</label>
-        <input type="text" id="accountRegion" placeholder="Example: TH">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <strong id="statProducts">0</strong>
+          <span>Products</span>
+        </div>
 
-        <label>Nickname</label>
-        <input type="text" id="accountNickname" placeholder="Example: KhunICE">
+        <div class="stat-card">
+          <strong id="statAlerts">0</strong>
+          <span>Notifications</span>
+        </div>
 
-        <label>Account Username</label>
-        <input type="text" id="accountUsername" placeholder="Actual account username">
+        <div class="stat-card">
+          <strong id="statOrders">0</strong>
+          <span>Orders</span>
+        </div>
 
-        <label>Account Password</label>
-        <input type="text" id="accountPassword" placeholder="Actual account password">
+        <div class="stat-card">
+          <strong id="statReports">0</strong>
+          <span>Reports</span>
+        </div>
+      </div>
 
-        <label>Category</label>
-        <select id="accountCategory">
-            <option value="level_1_50">Level 1-50</option>
-            <option value="level_50_100">Level 50-100</option>
-            <option value="level_100_150">Level 100-150</option>
-            <option value="level_150_200">Level 150-200</option>
-            <option value="level_200_250">Level 200-250</option>
-            <option value="level_250_300">Level 250-300</option>
-            <option value="level_300_400">Level 300-400</option>
-            <option value="level_400_500">Level 400-500</option>
-        </select>
+      <div class="hero-actions">
+        <button class="btn primary" onclick="goSection('addSection')">Add Product</button>
+        <button class="btn ghost" onclick="openCustomerSite()">Open Website</button>
+      </div>
+    </section>
 
-        <label>Extra Details</label>
-        <textarea id="accountDetails" placeholder="Example: Includes skins, weapons, and collections."></textarea>
+    <section id="addSection">
+      <div class="section-title">
+        <h2>Add Product</h2>
+        <p>Choose a product type, upload pictures, and save it to the customer website.</p>
+      </div>
 
-        <button onclick="saveAccount()">Save Account</button>
-        <button class="secondary" onclick="adminLogout()">Logout</button>
-        <p class="status" id="saveStatus"></p>
+      <div class="panel">
+        <form id="adminForm">
+          <div class="type-grid">
+            <label class="type-option">
+              <input type="radio" name="productType" value="account" />
+              <div class="type-card">
+                <div class="type-icon">🎮</div>
+                <strong>Account</strong>
+                <span>Game accounts</span>
+              </div>
+            </label>
+
+            <label class="type-option">
+              <input type="radio" name="productType" value="key" />
+              <div class="type-card">
+                <div class="type-icon">🔑</div>
+                <strong>Key</strong>
+                <span>VIP keys</span>
+              </div>
+            </label>
+
+            <label class="type-option">
+              <input type="radio" name="productType" value="other" />
+              <div class="type-card">
+                <div class="type-icon">📦</div>
+                <strong>Service</strong>
+                <span>Others</span>
+              </div>
+            </label>
+          </div>
+
+          <label class="upload-box" for="productPictures">
+            <input type="file" id="productPictures" multiple accept="image/*" />
+            <div class="upload-icon">📸</div>
+            <strong>Tap to upload product pictures</strong>
+            <div class="muted">Use 1–3 images for best result</div>
+          </label>
+
+          <div id="previewGrid" class="preview-grid"></div>
+
+          <div id="accountFields" class="hidden">
+            <div class="form-grid">
+              <div class="field">
+                <label>Account Name</label>
+                <input type="text" id="accountName" placeholder="Premium Game Account" />
+              </div>
+
+              <div class="field">
+                <label>Price</label>
+                <input type="number" id="accountPrice" placeholder="550" />
+              </div>
+
+              <div class="field">
+                <label>Level</label>
+                <input type="text" id="accountLevel" placeholder="184" />
+              </div>
+
+              <div class="field">
+                <label>UID</label>
+                <input type="text" id="accountUid" placeholder="361673204" />
+              </div>
+
+              <div class="field">
+                <label>Region</label>
+                <input type="text" id="accountRegion" placeholder="TH" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Description</label>
+              <textarea id="accountDescription" placeholder="Add skins, rare items, or notes..."></textarea>
+            </div>
+          </div>
+
+          <div id="keyFields" class="hidden">
+            <div class="form-grid">
+              <div class="field">
+                <label>Key Name</label>
+                <input type="text" id="keyName" placeholder="Astrix VIP Key" />
+              </div>
+
+              <div class="field">
+                <label>Price</label>
+                <input type="number" id="keyPrice" placeholder="250" />
+              </div>
+
+              <div class="field">
+                <label>Duration</label>
+                <select id="keyDuration">
+                  <option value="">Select duration</option>
+                  <option>1 Day</option>
+                  <option>3 Days</option>
+                  <option>7 Days</option>
+                  <option>14 Days</option>
+                  <option>30 Days</option>
+                  <option>Lifetime</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Game / Product</label>
+                <input type="text" id="keyGame" placeholder="PUBGM" />
+              </div>
+
+              <div class="field">
+                <label>Platform</label>
+                <select id="keyPlatform">
+                  <option value="">Select platform</option>
+                  <option>Android</option>
+                  <option>iOS</option>
+                  <option>PC</option>
+                  <option>Android / iOS</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Description</label>
+              <textarea id="keyDescription" placeholder="Supported version, rules, or notes..."></textarea>
+            </div>
+          </div>
+
+          <div id="otherFields" class="hidden">
+            <div class="form-grid">
+              <div class="field">
+                <label>Service Name</label>
+                <input type="text" id="otherName" placeholder="Boosting Service" />
+              </div>
+
+              <div class="field">
+                <label>Price</label>
+                <input type="number" id="otherPrice" placeholder="999" />
+              </div>
+
+              <div class="field">
+                <label>Category</label>
+                <input type="text" id="otherCategory" placeholder="Service" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Description</label>
+              <textarea id="otherDescription" placeholder="Details, inclusions, or delivery time..."></textarea>
+            </div>
+          </div>
+
+          <div class="preview-card">
+            <div class="preview-img" id="livePreviewImage">🔥</div>
+
+            <div class="preview-body">
+              <span class="tag" id="livePreviewType">NO TYPE</span>
+              <h3 id="livePreviewName">Product Name</h3>
+              <div class="price" id="livePreviewPrice">₱0</div>
+              <p class="muted" id="livePreviewDetails">Product details will appear here.</p>
+            </div>
+          </div>
+
+          <div class="two-actions">
+            <button type="submit" class="btn primary">Save Product</button>
+            <button type="button" class="btn ghost" onclick="clearForm()">Clear Form</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section id="productsSection">
+      <div class="section-title">
+        <h2>Products</h2>
+        <p>Saved products from your admin panel.</p>
+      </div>
+
+      <div class="chips">
+        <button class="chip active" onclick="setProductFilter('all', this)">All</button>
+        <button class="chip" onclick="setProductFilter('account', this)">🎮 Accounts</button>
+        <button class="chip" onclick="setProductFilter('key', this)">🔑 Keys</button>
+        <button class="chip" onclick="setProductFilter('other', this)">📦 Services</button>
+      </div>
+
+      <div class="product-grid" id="productGrid"></div>
+
+      <div class="two-actions">
+        <button class="btn danger" onclick="clearProducts()">Clear Products</button>
+        <button class="btn ghost" onclick="loadAdminData()">Refresh</button>
+      </div>
+    </section>
+
+    <section id="alertsSection">
+      <div class="section-title">
+        <h2>Notifications</h2>
+        <p>Orders, feedback, reports, and registrations from the customer website.</p>
+      </div>
+
+      <div class="alert-list" id="alertList"></div>
+
+      <div class="two-actions">
+        <button class="btn danger" onclick="clearNotifications()">Clear Notifications</button>
+        <button class="btn ghost" onclick="loadAdminData()">Refresh</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="bottom-item active" onclick="setBottom(this); goSection('dashboardSection')">
+      <span>📊</span>
+      Dashboard
+    </button>
+
+    <button class="bottom-item" onclick="setBottom(this); goSection('addSection')">
+      <span>➕</span>
+      Add
+    </button>
+
+    <button class="bottom-item" onclick="setBottom(this); goSection('productsSection')">
+      <span>📦</span>
+      Products
+    </button>
+
+    <button class="bottom-item" onclick="setBottom(this); goSection('alertsSection')">
+      <span>🔔</span>
+      Alerts
+    </button>
+
+    <button class="bottom-item" onclick="setBottom(this); openCustomerSite()">
+      <span>🌐</span>
+      Site
+    </button>
+  </nav>
+
+  <div class="modal-overlay" id="successModal">
+    <div class="modal">
+      <h2 id="successTitle">Success</h2>
+      <p id="successMessage">Action completed.</p>
+      <button class="btn primary" style="width:100%;" onclick="closeModal('successModal')">Done</button>
     </div>
+  </div>
 
-    <div class="box hidden" id="accountBox">
-        <h2>Saved Accounts</h2>
-        <div id="adminAccounts"></div>
+  <div class="modal-overlay" id="errorModal">
+    <div class="modal">
+      <h2>Missing Details</h2>
+      <p id="errorText">Please complete the required fields.</p>
+      <button class="btn primary" style="width:100%;" onclick="closeModal('errorModal')">Okay</button>
     </div>
+  </div>
 
-    <script>
-        const SUPABASE_URL = "https://ikryvpvjbgplhnkcgtit.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_PVjsZN2CLSI8N_2fgU5ICg_J5Lc0XAr";
-        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <script>
+    const ADMIN_USERNAME = "admin";
+    const ADMIN_PASSWORD = "admin123";
 
-        async function checkSession() {
-            const { data } = await db.auth.getSession();
-            if (data.session) {
-                showAdmin();
-                loadAdminAccounts();
-            }
-        }
+    let selectedProductType = "";
+    let selectedImages = [];
+    let savedImageDataUrls = [];
+    let productFilter = "all";
 
-        function showAdmin() {
-            document.getElementById("loginBox").classList.add("hidden");
-            document.getElementById("adminBox").classList.remove("hidden");
-            document.getElementById("accountBox").classList.remove("hidden");
-        }
+    const adminForm = document.getElementById("adminForm");
+    const productPictures = document.getElementById("productPictures");
+    const previewGrid = document.getElementById("previewGrid");
 
-        async function adminLogin() {
-            const email = document.getElementById("adminEmail").value.trim();
-            const password = document.getElementById("adminPassword").value.trim();
-            document.getElementById("loginStatus").innerText = "Logging in...";
+    function adminLogin() {
+      const username = document.getElementById("adminUsername").value.trim();
+      const password = document.getElementById("adminPassword").value.trim();
 
-            const { error } = await db.auth.signInWithPassword({ email, password });
+      if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+        localStorage.setItem("adminLoggedIn", "true");
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("loginError").classList.add("hidden");
+        loadAdminData();
+      } else {
+        document.getElementById("loginError").classList.remove("hidden");
+      }
+    }
 
-            if (error) {
-                document.getElementById("loginStatus").innerText = error.message;
-                return;
-            }
+    function checkLogin() {
+      if (localStorage.getItem("adminLoggedIn") === "true") {
+        document.getElementById("loginScreen").classList.add("hidden");
+      } else {
+        document.getElementById("loginScreen").classList.remove("hidden");
+      }
+    }
 
-            document.getElementById("loginStatus").innerText = "Login successful.";
-            showAdmin();
-            loadAdminAccounts();
-        }
+    function adminLogout() {
+      localStorage.removeItem("adminLoggedIn");
+      document.getElementById("loginScreen").classList.remove("hidden");
+    }
 
-        async function adminLogout() {
-            await db.auth.signOut();
-            location.reload();
-        }
+    document.getElementById("adminPassword").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") adminLogin();
+    });
 
-        function previewImages(event) {
-            const files = Array.from(event.target.files || []);
-            const grid = document.getElementById("imagePreviewGrid");
-            grid.innerHTML = "";
+    function setBottom(element) {
+      document.querySelectorAll(".bottom-item").forEach(item => item.classList.remove("active"));
+      element.classList.add("active");
+    }
 
-            files.forEach(file => {
-                const img = document.createElement("img");
-                img.src = URL.createObjectURL(file);
-                grid.appendChild(img);
-            });
-        }
+    function goSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+    }
 
-        async function saveAccount() {
-            const imageFiles = Array.from(document.getElementById("accountImages").files || []);
-            const name = document.getElementById("accountName").value.trim();
-            const level = document.getElementById("accountLevel").value.trim();
-            const price = document.getElementById("accountPrice").value.trim();
-            const uid = document.getElementById("accountUid").value.trim();
-            const region = document.getElementById("accountRegion").value.trim();
-            const nickname = document.getElementById("accountNickname").value.trim();
-            const accountUsername = document.getElementById("accountUsername").value.trim();
-            const accountPassword = document.getElementById("accountPassword").value.trim();
-            const category = document.getElementById("accountCategory").value;
-            const details = document.getElementById("accountDetails").value.trim();
-            const status = document.getElementById("saveStatus");
+    function openCustomerSite() {
+      window.location.href = "index.html";
+    }
 
-            if (imageFiles.length === 0 || !name || !level || !price || !category || !accountUsername || !accountPassword) {
-                status.innerText = "Please complete pictures, name, level, price, account username, account password, and category.";
-                return;
-            }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("active");
+    }
 
-            status.innerText = "Uploading images...";
+    function showSuccess(title, message) {
+      document.getElementById("successTitle").innerText = title;
+      document.getElementById("successMessage").innerText = message;
+      document.getElementById("successModal").classList.add("active");
+    }
 
-            const imageUrls = [];
+    function showError(message) {
+      document.getElementById("errorText").innerText = message;
+      document.getElementById("errorModal").classList.add("active");
+    }
 
-            for (const imageFile of imageFiles) {
-                const fileExt = imageFile.name.split(".").pop();
-                const fileName = Date.now() + "-" + Math.random().toString(36).substring(2) + "." + fileExt;
-                const filePath = "accounts/" + fileName;
+    function getValue(id) {
+      const element = document.getElementById(id);
+      return element ? element.value.trim() : "";
+    }
 
-                const { error: uploadError } = await db.storage.from("account-images").upload(filePath, imageFile);
+    function getIcon(type) {
+      if (type === "account") return "🎮";
+      if (type === "key") return "🔑";
+      if (type === "other") return "📦";
+      return "🔥";
+    }
 
-                if (uploadError) {
-                    status.innerText = "Image upload failed: " + uploadError.message;
-                    return;
-                }
+    function fileToDataUrl(file) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const reader = new FileReader();
 
-                const { data: publicUrlData } = db.storage.from("account-images").getPublicUrl(filePath);
-                imageUrls.push(publicUrlData.publicUrl);
-            }
+        reader.onload = function(event) {
+          img.onload = function() {
+            const canvas = document.createElement("canvas");
+            const maxSize = 900;
 
-            status.innerText = "Saving account...";
+            let width = img.width;
+            let height = img.height;
 
-            const { error: insertError } = await db.from("accounts").insert({
-                name,
-                level,
-                price,
-                uid,
-                region,
-                nickname,
-                category,
-                image_url: imageUrls[0] || "",
-                image_urls: imageUrls,
-                details,
-                account_username: accountUsername,
-                account_password: accountPassword
-            });
-
-            if (insertError) {
-                status.innerText = "Save failed: " + insertError.message;
-                return;
+            if (width > height && width > maxSize) {
+              height = Math.round((height * maxSize) / width);
+              width = maxSize;
+            } else if (height > maxSize) {
+              width = Math.round((width * maxSize) / height);
+              height = maxSize;
             }
 
-            status.innerText = "Account saved successfully.";
+            canvas.width = width;
+            canvas.height = height;
 
-            document.getElementById("accountImages").value = "";
-            document.getElementById("imagePreviewGrid").innerHTML = "";
-            document.getElementById("accountName").value = "";
-            document.getElementById("accountLevel").value = "";
-            document.getElementById("accountPrice").value = "";
-            document.getElementById("accountUid").value = "";
-            document.getElementById("accountRegion").value = "";
-            document.getElementById("accountNickname").value = "";
-            document.getElementById("accountUsername").value = "";
-            document.getElementById("accountPassword").value = "";
-            document.getElementById("accountDetails").value = "";
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
 
-            loadAdminAccounts();
+            resolve(canvas.toDataURL("image/jpeg", 0.68));
+          };
+
+          img.src = event.target.result;
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function getSelectedImageData() {
+      if (savedImageDataUrls.length > 0) return savedImageDataUrls;
+      if (!selectedImages.length) return [];
+      return await Promise.all(selectedImages.map(fileToDataUrl));
+    }
+
+    productPictures.addEventListener("change", async function() {
+      selectedImages = Array.from(productPictures.files);
+      savedImageDataUrls = [];
+
+      for (const file of selectedImages) {
+        const compressed = await fileToDataUrl(file);
+        savedImageDataUrls.push(compressed);
+      }
+
+      renderImagePreviews();
+      updateLivePreview();
+    });
+
+    function renderImagePreviews() {
+      previewGrid.innerHTML = "";
+
+      savedImageDataUrls.forEach((imageData, index) => {
+        const item = document.createElement("div");
+        item.className = "preview-item";
+
+        item.innerHTML = `
+          <img src="${imageData}" alt="Product Image">
+          <button type="button" class="remove-img" onclick="removeImage(${index})">×</button>
+        `;
+
+        previewGrid.appendChild(item);
+      });
+    }
+
+    function removeImage(index) {
+      selectedImages.splice(index, 1);
+      savedImageDataUrls.splice(index, 1);
+      renderImagePreviews();
+      updateLivePreview();
+    }
+
+    document.querySelectorAll("input[name='productType']").forEach(input => {
+      input.addEventListener("change", function() {
+        selectedProductType = this.value;
+
+        document.getElementById("accountFields").classList.add("hidden");
+        document.getElementById("keyFields").classList.add("hidden");
+        document.getElementById("otherFields").classList.add("hidden");
+
+        if (selectedProductType === "account") document.getElementById("accountFields").classList.remove("hidden");
+        if (selectedProductType === "key") document.getElementById("keyFields").classList.remove("hidden");
+        if (selectedProductType === "other") document.getElementById("otherFields").classList.remove("hidden");
+
+        updateLivePreview();
+      });
+    });
+
+    function updateLivePreview() {
+      let name = "Product Name";
+      let price = "0";
+      let details = "Product details will appear here.";
+      let type = "NO TYPE";
+
+      if (selectedProductType === "account") {
+        type = "ACCOUNT";
+        name = getValue("accountName") || "Account Name";
+        price = getValue("accountPrice") || "0";
+        details = `Level: ${getValue("accountLevel") || "N/A"} • UID: ${getValue("accountUid") || "N/A"} • Region: ${getValue("accountRegion") || "N/A"}`;
+      }
+
+      if (selectedProductType === "key") {
+        type = "KEY";
+        name = getValue("keyName") || "Key Name";
+        price = getValue("keyPrice") || "0";
+        details = `Duration: ${getValue("keyDuration") || "N/A"} • Game: ${getValue("keyGame") || "N/A"} • Platform: ${getValue("keyPlatform") || "N/A"}`;
+      }
+
+      if (selectedProductType === "other") {
+        type = "SERVICE";
+        name = getValue("otherName") || "Service Name";
+        price = getValue("otherPrice") || "0";
+        details = `Category: ${getValue("otherCategory") || "N/A"}`;
+      }
+
+      document.getElementById("livePreviewType").innerText = type;
+      document.getElementById("livePreviewName").innerText = name;
+      document.getElementById("livePreviewPrice").innerText = "₱" + price;
+      document.getElementById("livePreviewDetails").innerText = details;
+
+      if (savedImageDataUrls.length > 0) {
+        document.getElementById("livePreviewImage").innerHTML = `<img src="${savedImageDataUrls[0]}" alt="Preview">`;
+      } else {
+        document.getElementById("livePreviewImage").innerHTML = getIcon(selectedProductType);
+      }
+    }
+
+    document.addEventListener("input", updateLivePreview);
+    document.addEventListener("change", updateLivePreview);
+
+    adminForm.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      if (!selectedProductType) {
+        showError("Please choose Account, Key, or Service first.");
+        return;
+      }
+
+      const productImages = await getSelectedImageData();
+
+      let productData = {
+        id: Date.now(),
+        productType: selectedProductType,
+        createdAt: new Date().toLocaleString(),
+        imagesCount: productImages.length,
+        images: productImages
+      };
+
+      if (selectedProductType === "account") {
+        if (!getValue("accountName") || !getValue("accountPrice")) {
+          showError("Please add account name and price.");
+          return;
         }
 
-        function normalizeImages(account) {
-            if (Array.isArray(account.image_urls) && account.image_urls.length > 0) return account.image_urls.filter(Boolean);
-            if (typeof account.image_urls === "string" && account.image_urls.trim()) {
-                try {
-                    const parsed = JSON.parse(account.image_urls);
-                    if (Array.isArray(parsed)) return parsed.filter(Boolean);
-                } catch(e) {}
-            }
-            return account.image_url ? [account.image_url] : [];
+        productData = {
+          ...productData,
+          name: getValue("accountName"),
+          price: getValue("accountPrice"),
+          level: getValue("accountLevel"),
+          uid: getValue("accountUid"),
+          region: getValue("accountRegion"),
+          description: getValue("accountDescription")
+        };
+      }
+
+      if (selectedProductType === "key") {
+        if (!getValue("keyName") || !getValue("keyPrice")) {
+          showError("Please add key name and price.");
+          return;
         }
 
-        async function loadAdminAccounts() {
-            const { data, error } = await db.from("accounts").select("*").order("created_at", { ascending: false });
-            const container = document.getElementById("adminAccounts");
+        productData = {
+          ...productData,
+          name: getValue("keyName"),
+          price: getValue("keyPrice"),
+          duration: getValue("keyDuration"),
+          game: getValue("keyGame"),
+          platform: getValue("keyPlatform"),
+          description: getValue("keyDescription")
+        };
+      }
 
-            if (error) {
-                container.innerHTML = "<p>" + error.message + "</p>";
-                return;
-            }
-
-            if (!data || data.length === 0) {
-                container.innerHTML = "<p>No accounts saved yet.</p>";
-                return;
-            }
-
-            container.innerHTML = "";
-
-            data.forEach(account => {
-                const images = normalizeImages(account);
-                const div = document.createElement("div");
-                div.className = "account-card";
-                div.innerHTML = `
-                    <img src="${images[0] || ""}" alt="Account image">
-                    <p><strong>${account.name || "Unnamed Account"}</strong></p>
-                    <p>${account.level || "No level"} • ₱${account.price || "0"}</p>
-                    <p>Nickname: ${account.nickname || "N/A"}</p>
-                    <p>Region: ${account.region || "N/A"}</p>
-                    <p>UID: ${account.uid || "N/A"}</p>
-                    <p>Category: ${account.category || "N/A"}</p>
-                    <p class="mini">Pictures: ${images.length}</p>
-                    <p class="mini">Account Username: ${account.account_username || "Not set"}</p>
-                    <p class="mini">Account Password: ${account.account_password || "Not set"}</p>
-                    <button class="danger" onclick="deleteAccount('${account.id}')">Delete Account</button>
-                `;
-                container.appendChild(div);
-            });
+      if (selectedProductType === "other") {
+        if (!getValue("otherName") || !getValue("otherPrice")) {
+          showError("Please add service name and price.");
+          return;
         }
 
-        async function deleteAccount(id) {
-            const confirmDelete = confirm("Delete this account?");
-            if (!confirmDelete) return;
+        productData = {
+          ...productData,
+          name: getValue("otherName"),
+          price: getValue("otherPrice"),
+          category: getValue("otherCategory"),
+          availability: "Available",
+          description: getValue("otherDescription")
+        };
+      }
 
-            const { error } = await db.from("accounts").delete().eq("id", id);
-            if (error) {
-                alert(error.message);
-                return;
-            }
+      try {
+        const products = JSON.parse(localStorage.getItem("adminProducts")) || [];
+        products.unshift(productData);
+        localStorage.setItem("adminProducts", JSON.stringify(products));
 
-            loadAdminAccounts();
-        }
+        clearForm();
+        loadAdminData();
+        showSuccess("Product Saved", "Saved with " + productImages.length + " image(s).");
+      } catch (error) {
+        showError("Storage is full. Try using only 1 smaller image.");
+      }
+    });
 
-        checkSession();
-    </script>
+    function clearForm() {
+      adminForm.reset();
+
+      selectedProductType = "";
+      selectedImages = [];
+      savedImageDataUrls = [];
+
+      previewGrid.innerHTML = "";
+
+      document.getElementById("accountFields").classList.add("hidden");
+      document.getElementById("keyFields").classList.add("hidden");
+      document.getElementById("otherFields").classList.add("hidden");
+
+      document.getElementById("livePreviewType").innerText = "NO TYPE";
+      document.getElementById("livePreviewName").innerText = "Product Name";
+      document.getElementById("livePreviewPrice").innerText = "₱0";
+      document.getElementById("livePreviewDetails").innerText = "Product details will appear here.";
+      document.getElementById("livePreviewImage").innerHTML = "🔥";
+    }
+
+    function setProductFilter(filter, element) {
+      productFilter = filter;
+
+      document.querySelectorAll(".chip").forEach(chip => chip.classList.remove("active"));
+      element.classList.add("active");
+
+      renderProducts();
+    }
+
+    function loadAdminData() {
+      const products = JSON.parse(localStorage.getItem("adminProducts")) || [];
+      const alerts = JSON.parse(localStorage.getItem("adminNotifications")) || [];
+
+      document.getElementById("statProducts").innerText = products.length;
+      document.getElementById("statAlerts").innerText = alerts.length;
+      document.getElementById("statOrders").innerText = alerts.filter(item => item.notificationType === "New Order").length;
+      document.getElementById("statReports").innerText = alerts.filter(item => item.notificationType === "Issue Report" || item.notificationType === "Feedback").length;
+
+      renderProducts();
+      renderAlerts();
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById("productGrid");
+      let products = JSON.parse(localStorage.getItem("adminProducts")) || [];
+
+      if (productFilter !== "all") {
+        products = products.filter(product => product.productType === productFilter);
+      }
+
+      grid.innerHTML = "";
+
+      if (!products.length) {
+        grid.innerHTML = `<div class="empty-state">No products saved yet.</div>`;
+        return;
+      }
+
+      products.forEach((product, index) => {
+        const image = product.images && product.images.length ? product.images[0] : null;
+
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.style.animationDelay = `${index * 0.05}s`;
+
+        card.innerHTML = `
+          <div class="product-img">
+            ${image ? `<img src="${image}" alt="${product.name || "Product"}">` : getIcon(product.productType)}
+          </div>
+
+          <div class="product-info">
+            <span class="tag">${(product.productType || "PRODUCT").toUpperCase()}</span>
+            <h3>${product.name || "Unnamed Product"}</h3>
+            <div class="price">₱${product.price || 0}</div>
+            <p class="muted">${product.imagesCount || 0} image(s) • ${product.createdAt || "No date"}</p>
+
+            <div class="two-actions">
+              <button class="btn danger" onclick="deleteProduct(${product.id})">Delete</button>
+              <button class="btn ghost" onclick="openCustomerSite()">View</button>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function renderAlerts() {
+      const list = document.getElementById("alertList");
+      const alerts = JSON.parse(localStorage.getItem("adminNotifications")) || [];
+
+      list.innerHTML = "";
+
+      if (!alerts.length) {
+        list.innerHTML = `<div class="empty-state">No notifications yet.</div>`;
+        return;
+      }
+
+      alerts.forEach((alert, index) => {
+        const card = document.createElement("div");
+        card.className = "alert-card";
+        card.style.animationDelay = `${index * 0.05}s`;
+
+        card.innerHTML = `
+          <div class="alert-top">
+            <span class="tag">${alert.notificationType || "Notification"}</span>
+            <span class="alert-date">${alert.date || "No date"}</span>
+          </div>
+
+          <h3>${alert.title || "Untitled Notification"}</h3>
+          <p>${alert.message || "No message provided."}</p>
+
+          ${alert.category ? `<p class="muted"><strong>Category:</strong> ${alert.category}</p>` : ""}
+          ${alert.customerName ? `<p class="muted"><strong>Customer:</strong> ${alert.customerName}</p>` : ""}
+          ${alert.contact ? `<p class="muted"><strong>Contact:</strong> ${alert.contact}</p>` : ""}
+          ${alert.productName ? `<p class="muted"><strong>Product:</strong> ${alert.productName}</p>` : ""}
+          ${alert.price ? `<p class="muted"><strong>Price:</strong> ₱${alert.price}</p>` : ""}
+        `;
+
+        list.appendChild(card);
+      });
+    }
+
+    function deleteProduct(id) {
+      if (!confirm("Delete this product?")) return;
+
+      let products = JSON.parse(localStorage.getItem("adminProducts")) || [];
+      products = products.filter(product => product.id !== id);
+
+      localStorage.setItem("adminProducts", JSON.stringify(products));
+      loadAdminData();
+      showSuccess("Deleted", "Product removed.");
+    }
+
+    function clearProducts() {
+      if (!confirm("Clear all saved products?")) return;
+
+      localStorage.removeItem("adminProducts");
+      loadAdminData();
+      showSuccess("Cleared", "All products removed.");
+    }
+
+    function clearNotifications() {
+      if (!confirm("Clear all notifications?")) return;
+
+      localStorage.removeItem("adminNotifications");
+      loadAdminData();
+      showSuccess("Cleared", "All notifications removed.");
+    }
+
+    checkLogin();
+    loadAdminData();
+  </script>
 </body>
 </html>
