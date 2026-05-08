@@ -1281,6 +1281,7 @@
 
     let selectedProductType = "";
     let selectedImages = [];
+    let savedImageDataUrls = [];
 
     function checkAdminLogin() {
       const isLoggedIn = localStorage.getItem("adminLoggedIn") === "true";
@@ -1415,8 +1416,15 @@
       });
     });
 
-    productPictures.addEventListener("change", function () {
+    productPictures.addEventListener("change", async function () {
       selectedImages = Array.from(productPictures.files);
+      savedImageDataUrls = [];
+
+      for (const file of selectedImages) {
+        const compressed = await fileToDataUrl(file);
+        savedImageDataUrls.push(compressed);
+      }
+
       renderImagePreviews();
       updateLivePreview();
     });
@@ -1424,20 +1432,18 @@
     function renderImagePreviews() {
       previewGrid.innerHTML = "";
 
-      selectedImages.forEach((file, index) => {
-        const reader = new FileReader();
+      savedImageDataUrls.forEach((imageData, index) => {
+        const item = document.createElement("div");
+        item.className = "preview-item";
 
-        reader.onload = function (event) {
-          const item = document.createElement("div");
-          item.className = "preview-item";
+        item.innerHTML = `
+          <img src="${imageData}" alt="Product Image">
+          <button type="button" class="remove-img" onclick="removeImage(${index})">×</button>
+        `;
 
-          item.innerHTML = `
-            <img src="${event.target.result}" alt="Product Image">
-            <button type="button" class="remove-img" onclick="removeImage(${index})">×</button>
-          `;
-
-          previewGrid.appendChild(item);
-        };
+        previewGrid.appendChild(item);
+      });
+    };
 
         reader.readAsDataURL(file);
       });
@@ -1445,6 +1451,7 @@
 
     function removeImage(index) {
       selectedImages.splice(index, 1);
+      savedImageDataUrls.splice(index, 1);
       renderImagePreviews();
       updateLivePreview();
     }
@@ -1498,16 +1505,10 @@
       document.getElementById("livePreviewPrice").innerText = "₱" + price;
       document.getElementById("livePreviewDetails").innerHTML = details;
 
-      if (selectedImages.length > 0) {
-        const reader = new FileReader();
-
-        reader.onload = function (event) {
-          document.getElementById("livePreviewImage").innerHTML = `
-            <img src="${event.target.result}" alt="Preview">
-          `;
-        };
-
-        reader.readAsDataURL(selectedImages[0]);
+      if (savedImageDataUrls.length > 0) {
+        document.getElementById("livePreviewImage").innerHTML = `
+          <img src="${savedImageDataUrls[0]}" alt="Preview">
+        `;
       } else {
         document.getElementById("livePreviewImage").innerHTML = icon;
       }
@@ -1555,9 +1556,16 @@
     }
 
     async function getSelectedImageData() {
+      if (savedImageDataUrls && savedImageDataUrls.length > 0) {
+        return savedImageDataUrls;
+      }
+
       if (!selectedImages || selectedImages.length === 0) {
         return [];
       }
+
+      return await Promise.all(selectedImages.map(fileToDataUrl));
+    }
 
       return await Promise.all(selectedImages.map(fileToDataUrl));
     }
@@ -1641,7 +1649,7 @@
       clearForm();
       loadAdminData();
 
-      showSuccess("Product Saved", "Your product has been added successfully.");
+      showSuccess("Product Saved", "Your product has been added successfully with " + productImages.length + " image(s).");
     });
 
     function clearForm() {
@@ -1649,6 +1657,7 @@
 
       selectedProductType = "";
       selectedImages = [];
+      savedImageDataUrls = [];
 
       previewGrid.innerHTML = "";
 
