@@ -25,22 +25,22 @@
     }
 
     .container {
-      max-width: 1050px;
+      max-width: 1100px;
       margin: auto;
     }
 
     .hero {
       text-align: center;
-      padding: 28px 14px;
-      margin-bottom: 20px;
+      padding: 30px 16px;
+      margin-bottom: 22px;
       border-radius: 28px;
       border: 1px solid rgba(255, 70, 95, 0.35);
-      background: rgba(8, 8, 16, 0.82);
+      background: rgba(8, 8, 16, 0.86);
       box-shadow: 0 0 30px rgba(255, 0, 60, 0.22);
     }
 
     .hero h1 {
-      font-size: 38px;
+      font-size: 40px;
       font-weight: 900;
       background: linear-gradient(90deg, #ff1744, #ff6a00, #ff003c);
       -webkit-background-clip: text;
@@ -63,7 +63,7 @@
 
     .type-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 14px;
       margin-bottom: 20px;
     }
@@ -93,7 +93,7 @@
 
     .type-card strong {
       display: block;
-      font-size: 17px;
+      font-size: 16px;
       margin-bottom: 6px;
     }
 
@@ -151,7 +151,7 @@
     }
 
     .product-img {
-      height: 165px;
+      height: 170px;
       background:
         radial-gradient(circle at center, rgba(255, 0, 60, 0.3), transparent 40%),
         linear-gradient(135deg, #22000a, #050505);
@@ -159,6 +159,7 @@
       align-items: center;
       justify-content: center;
       font-size: 42px;
+      color: #ffc4cc;
     }
 
     .product-body {
@@ -214,6 +215,7 @@
       border-radius: 22px;
       border: 1px solid rgba(255, 70, 95, 0.25);
       background: rgba(255, 255, 255, 0.04);
+      grid-column: 1 / -1;
     }
 
     .modal-overlay {
@@ -249,6 +251,7 @@
         opacity: 0;
         transform: scale(0.94) translateY(12px);
       }
+
       to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -327,7 +330,7 @@
       color: #ffb8c1;
     }
 
-    @media (max-width: 650px) {
+    @media (max-width: 750px) {
       .hero h1 {
         font-size: 31px;
       }
@@ -352,7 +355,7 @@
     <div class="hero">
       <h1>DemiSke Store</h1>
       <p>
-        Choose what you want to buy. You can browse accounts, keys, or other services.
+        Choose what you want to buy. Browse accounts, keys, and other services.
       </p>
     </div>
 
@@ -514,52 +517,102 @@
   </div>
 
   <script>
-    const products = [
-      {
-        id: 1,
-        type: "account",
-        icon: "🎮",
-        name: "Premium Game Account",
-        price: 550,
-        details: "Level 184 • TH Region • Good skins and items"
-      },
-      {
-        id: 2,
-        type: "key",
-        icon: "🔑",
-        name: "Astrix VIP Key",
-        price: 250,
-        details: "14 Days • Android • Global / KR / VNG supported"
-      },
-      {
-        id: 3,
-        type: "other",
-        icon: "📦",
-        name: "Boosting Service",
-        price: 999,
-        details: "Fast service • Manual process • Message admin first"
-      },
-      {
-        id: 4,
-        type: "key",
-        icon: "🔑",
-        name: "30 Days VIP Key",
-        price: 500,
-        details: "30 Days duration • Android • Limited stock"
-      }
-    ];
-
     const productsGrid = document.getElementById("productsGrid");
     const productTitle = document.getElementById("productTitle");
 
     let selectedProduct = null;
+    let currentFilter = "all";
+
+    const demoProducts = [
+      {
+        id: 1,
+        productType: "account",
+        name: "Premium Game Account",
+        price: 550,
+        level: "184",
+        region: "TH",
+        uid: "361673204",
+        category: "501-1000",
+        description: "Good skins, high level account, ready to use."
+      },
+      {
+        id: 2,
+        productType: "key",
+        name: "Astrix VIP Key",
+        price: 250,
+        duration: "14 Days",
+        game: "PUBGM",
+        platform: "Android",
+        server: "Global / KR / VNG",
+        description: "14 days VIP key. Message admin after payment."
+      },
+      {
+        id: 3,
+        productType: "other",
+        name: "Boosting Service",
+        price: 999,
+        category: "Service",
+        availability: "Available",
+        description: "Fast service. Manual process. Message admin first."
+      }
+    ];
+
+    function getProducts() {
+      const savedProducts = JSON.parse(localStorage.getItem("adminProducts")) || [];
+
+      if (savedProducts.length > 0) {
+        return savedProducts;
+      }
+
+      return demoProducts;
+    }
+
+    function getProductIcon(type) {
+      if (type === "account") return "🎮";
+      if (type === "key") return "🔑";
+      if (type === "other") return "📦";
+      return "🔥";
+    }
+
+    function getProductDetails(product) {
+      if (product.productType === "account") {
+        return `
+          Level: ${product.level || "N/A"}<br>
+          UID: ${product.uid || "N/A"}<br>
+          Region: ${product.region || "N/A"}<br>
+          ${product.description || ""}
+        `;
+      }
+
+      if (product.productType === "key") {
+        return `
+          Duration: ${product.duration || "N/A"}<br>
+          Game: ${product.game || "N/A"}<br>
+          Platform: ${product.platform || "N/A"}<br>
+          Server: ${product.server || "N/A"}<br>
+          ${product.description || ""}
+        `;
+      }
+
+      if (product.productType === "other") {
+        return `
+          Category: ${product.category || "N/A"}<br>
+          Status: ${product.availability || "N/A"}<br>
+          ${product.description || ""}
+        `;
+      }
+
+      return product.description || "No details available.";
+    }
 
     function renderProducts(filter = "all") {
       productsGrid.innerHTML = "";
 
+      const products = getProducts();
+
       const filteredProducts = filter === "all"
         ? products
-        : products.filter(product => product.type === filter);
+        : products.filter(product => product.productType === filter);
 
       if (filteredProducts.length === 0) {
         productsGrid.innerHTML = `
@@ -575,13 +628,21 @@
         card.className = "product-card";
 
         card.innerHTML = `
-          <div class="product-img">${product.icon}</div>
+          <div class="product-img">
+            ${getProductIcon(product.productType)}
+          </div>
 
           <div class="product-body">
-            <div class="badge">${product.type.toUpperCase()}</div>
-            <h3>${product.name}</h3>
-            <div class="price">₱${product.price}</div>
-            <div class="details">${product.details}</div>
+            <div class="badge">${(product.productType || "PRODUCT").toUpperCase()}</div>
+
+            <h3>${product.name || "Unnamed Product"}</h3>
+
+            <div class="price">₱${product.price || 0}</div>
+
+            <div class="details">
+              ${getProductDetails(product)}
+            </div>
+
             <button class="buy-btn" onclick="openBuyModal(${product.id})">
               Buy Now
             </button>
@@ -593,6 +654,8 @@
     }
 
     function filterProducts(type, element) {
+      currentFilter = type;
+
       document.querySelectorAll(".type-card").forEach(card => {
         card.classList.remove("active");
       });
@@ -608,7 +671,13 @@
     }
 
     function openBuyModal(productId) {
+      const products = getProducts();
       selectedProduct = products.find(product => product.id === productId);
+
+      if (!selectedProduct) {
+        alert("Product not found.");
+        return;
+      }
 
       document.getElementById("buyProductText").innerText =
         `You are buying: ${selectedProduct.name} for ₱${selectedProduct.price}`;
@@ -663,8 +732,8 @@
 
       saveAdminNotification({
         notificationType: "New Order",
-        category: selectedProduct.type,
-        title: selectedProduct.name,
+        category: selectedProduct.productType,
+        title: "New Customer Order",
         message: `${buyerName} wants to buy ${selectedProduct.name}. Payment method: ${paymentMethod}. Contact: ${buyerContact}`,
         customerName: buyerName,
         contact: buyerContact,
