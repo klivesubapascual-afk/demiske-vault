@@ -1474,11 +1474,86 @@
           ${alert.contact ? `<p class="muted"><strong>Contact:</strong> ${alert.contact}</p>` : ""}
           ${alert.productName ? `<p class="muted"><strong>Product:</strong> ${alert.productName}</p>` : ""}
           ${alert.price ? `<p class="muted"><strong>Price:</strong> ₱${alert.price}</p>` : ""}
+
+          ${alert.notificationType === "New Order" ? `
+            <div class="two-actions">
+              <button class="btn primary" onclick="approveOrder(${alert.id})">
+                Approve Order
+              </button>
+              <button class="btn ghost" onclick="copyApprovalMessage()">
+                Copy Message
+              </button>
+            </div>
+
+            ${alert.orderStatus ? `<p class="muted"><strong>Status:</strong> ${alert.orderStatus}</p>` : ""}
+          ` : ""}
         `;
 
         list.appendChild(card);
       });
     }
+
+
+    function getApprovalMessage() {
+      return "hello this is the reseller send me the proof for confirmation";
+    }
+
+    function cleanTelegramUsername(contact) {
+      if (!contact) return "";
+
+      let username = contact.trim();
+
+      username = username.replace("https://t.me/", "");
+      username = username.replace("http://t.me/", "");
+      username = username.replace("t.me/", "");
+      username = username.replace("@", "");
+      username = username.split(" ")[0];
+
+      return username;
+    }
+
+    function copyApprovalMessage() {
+      const message = getApprovalMessage();
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(message);
+        showSuccess("Copied", "Approval message copied. Paste it in Telegram.");
+      } else {
+        prompt("Copy this message:", message);
+      }
+    }
+
+    function approveOrder(orderId) {
+      const notifications = JSON.parse(localStorage.getItem("adminNotifications")) || [];
+      const order = notifications.find(item => item.id === orderId);
+
+      if (!order) {
+        showError("Order not found.");
+        return;
+      }
+
+      order.orderStatus = "Approved";
+      order.approvedAt = new Date().toLocaleString();
+
+      localStorage.setItem("adminNotifications", JSON.stringify(notifications));
+      loadAdminData();
+
+      const message = getApprovalMessage();
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(message);
+      }
+
+      const telegramUsername = cleanTelegramUsername(order.contact);
+
+      if (telegramUsername) {
+        window.open("https://t.me/" + telegramUsername, "_blank");
+        showSuccess("Order Approved", "Message copied. Telegram chat opened. Paste and send the message.");
+      } else {
+        showSuccess("Order Approved", "Message copied. No Telegram username found, so send it manually.");
+      }
+    }
+
 
     function deleteProduct(id) {
       if (!confirm("Delete this product?")) return;
