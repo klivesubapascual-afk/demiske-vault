@@ -1516,7 +1516,28 @@
     document.addEventListener("input", updateLivePreview);
     document.addEventListener("change", updateLivePreview);
 
-    adminForm.addEventListener("submit", function (event) {
+
+    function fileToDataUrl(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+          resolve(event.target.result);
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function getSelectedImageData() {
+      if (!selectedImages || selectedImages.length === 0) {
+        return [];
+      }
+
+      return await Promise.all(selectedImages.map(fileToDataUrl));
+    }
+
+    adminForm.addEventListener("submit", async function (event) {
       event.preventDefault();
 
       if (!selectedProductType) {
@@ -1524,11 +1545,14 @@
         return;
       }
 
+      const productImages = await getSelectedImageData();
+
       let productData = {
         id: Date.now(),
         productType: selectedProductType,
         createdAt: new Date().toLocaleString(),
-        imagesCount: selectedImages.length
+        imagesCount: selectedImages.length,
+        images: productImages
       };
 
       if (selectedProductType === "account") {

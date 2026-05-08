@@ -381,6 +381,66 @@
       border: none;
     }
 
+
+    .product-carousel {
+      position: relative;
+      height: 165px;
+      background:
+        radial-gradient(circle at center, rgba(255, 0, 60, 0.38), transparent 42%),
+        linear-gradient(135deg, #2b000b, #050505);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-size: 54px;
+    }
+
+    .product-carousel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      animation: popIn 0.25s ease;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(0, 0, 0, 0.55);
+      color: white;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      z-index: 5;
+    }
+
+    .carousel-btn.left {
+      left: 10px;
+    }
+
+    .carousel-btn.right {
+      right: 10px;
+    }
+
+    .carousel-count {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: white;
+      font-size: 11px;
+      font-weight: 900;
+      z-index: 5;
+    }
+
     .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
@@ -1160,6 +1220,8 @@
     const productTitle = document.getElementById("productTitle");
 
     let selectedProduct = null;
+    let productCarouselState = {};
+    let currentFilter = "all";
 
     const demoProducts = [
       {
@@ -1304,6 +1366,57 @@
       return savedProducts.length > 0 ? savedProducts : demoProducts;
     }
 
+
+    function getProductImageHTML(product) {
+      const images = product.images || [];
+      const icon = getProductIcon(product.productType);
+
+      if (!images.length) {
+        return `
+          <div class="product-carousel">
+            ${icon}
+          </div>
+        `;
+      }
+
+      const currentIndex = productCarouselState[product.id] || 0;
+      const currentImage = images[currentIndex] || images[0];
+
+      return `
+        <div class="product-carousel">
+          <img src="${currentImage}" alt="${product.name || 'Product Image'}">
+
+          ${images.length > 1 ? `
+            <button class="carousel-btn left" onclick="changeProductImage(event, ${product.id}, -1)">‹</button>
+            <button class="carousel-btn right" onclick="changeProductImage(event, ${product.id}, 1)">›</button>
+            <div class="carousel-count">${currentIndex + 1}/${images.length}</div>
+          ` : ""}
+        </div>
+      `;
+    }
+
+    function changeProductImage(event, productId, direction) {
+      event.stopPropagation();
+
+      const products = getProducts();
+      const product = products.find(item => item.id === productId);
+
+      if (!product || !product.images || product.images.length === 0) {
+        return;
+      }
+
+      const total = product.images.length;
+      const currentIndex = productCarouselState[productId] || 0;
+      let nextIndex = currentIndex + direction;
+
+      if (nextIndex < 0) nextIndex = total - 1;
+      if (nextIndex >= total) nextIndex = 0;
+
+      productCarouselState[productId] = nextIndex;
+
+      renderProducts(currentFilter);
+    }
+
     function getProductIcon(type) {
       if (type === "account") return "🎮";
       if (type === "key") return "🔑";
@@ -1339,6 +1452,7 @@
     }
 
     function renderProducts(filter = "all") {
+      currentFilter = filter;
       productsGrid.innerHTML = "";
 
       const products = getProducts();
