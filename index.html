@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>DemiSke Store</title>
 
   <style>
@@ -16,10 +15,10 @@
 
     :root {
       --red: #ff003c;
-      --red-soft: #ff3155;
+      --red2: #ff3155;
       --orange: #ff6a00;
-      --text-soft: #ffb8c2;
       --border: rgba(255, 45, 80, 0.35);
+      --soft: #ffb8c2;
     }
 
     body {
@@ -30,10 +29,60 @@
         linear-gradient(135deg, #060606, #120006, #000);
       color: white;
       padding-bottom: 80px;
+      overflow-x: hidden;
     }
 
     .hidden {
       display: none !important;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(0.94) translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @keyframes floatGlow {
+      0%, 100% {
+        transform: translateY(0);
+        box-shadow: 0 0 22px rgba(255, 0, 60, 0.35);
+      }
+      50% {
+        transform: translateY(-5px);
+        box-shadow: 0 0 35px rgba(255, 0, 60, 0.55);
+      }
+    }
+
+    @keyframes pulseDot {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.35);
+        opacity: 0.65;
+      }
     }
 
     .topbar {
@@ -44,6 +93,7 @@
       backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
       box-shadow: 0 0 25px rgba(255, 0, 60, 0.18);
+      animation: fadeIn 0.4s ease;
     }
 
     .topbar-inner {
@@ -64,6 +114,12 @@
       color: white;
       font-size: 25px;
       cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .menu-btn:hover {
+      transform: scale(1.06);
+      background: rgba(255, 0, 60, 0.16);
     }
 
     .brand {
@@ -79,19 +135,19 @@
       border-radius: 15px;
       background:
         radial-gradient(circle at center, rgba(255, 255, 255, 0.18), transparent 40%),
-        linear-gradient(135deg, #ff003c, #220006, #000);
-      box-shadow: 0 0 22px rgba(255, 0, 60, 0.55);
+        linear-gradient(135deg, var(--red), #220006, #000);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 23px;
       font-weight: 900;
+      animation: floatGlow 3.2s ease-in-out infinite;
     }
 
     .brand h1 {
       font-size: 25px;
       font-weight: 900;
-      background: linear-gradient(90deg, #ff003c, #ff6a00);
+      background: linear-gradient(90deg, var(--red), var(--orange));
       -webkit-background-clip: text;
       color: transparent;
     }
@@ -114,17 +170,38 @@
     }
 
     .nav-tab {
-      padding: 14px 8px;
+      padding: 11px 6px 10px;
       text-align: center;
       cursor: pointer;
       color: #ddd;
-      font-size: 24px;
       border-bottom: 3px solid transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: 0.2s ease;
+    }
+
+    .nav-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .nav-tab:hover {
+      background: rgba(255, 0, 60, 0.08);
+      transform: translateY(-1px);
     }
 
     .nav-tab.active {
       color: white;
-      border-bottom-color: var(--red-soft);
+      border-bottom-color: var(--red2);
       background: rgba(255, 0, 60, 0.14);
     }
 
@@ -137,6 +214,10 @@
       padding: 18px 16px;
     }
 
+    section {
+      animation: slideUp 0.35s ease;
+    }
+
     .hero-card {
       margin-top: 18px;
       padding: 24px;
@@ -146,6 +227,7 @@
         linear-gradient(135deg, rgba(40, 0, 10, 0.9), rgba(10, 10, 18, 0.92));
       border: 1px solid var(--border);
       box-shadow: 0 0 34px rgba(255, 0, 60, 0.22);
+      animation: slideUp 0.45s ease;
     }
 
     .trust-pill {
@@ -167,6 +249,7 @@
       background: #00ff88;
       border-radius: 50%;
       box-shadow: 0 0 10px #00ff88;
+      animation: pulseDot 1.5s ease-in-out infinite;
     }
 
     .hero-card h2 {
@@ -187,12 +270,22 @@
       border: none;
       padding: 17px;
       border-radius: 19px;
-      background: linear-gradient(135deg, #ff003c, #ff3b30, #ff6a00);
+      background: linear-gradient(135deg, var(--red), #ff3b30, var(--orange));
       color: white;
       font-size: 16px;
       font-weight: 900;
       box-shadow: 0 0 24px rgba(255, 0, 60, 0.35);
       cursor: pointer;
+      transition: 0.22s ease;
+    }
+
+    .hero-btn:hover,
+    .quick-btn:hover,
+    .buy-btn:hover,
+    .drawer-item:hover,
+    .modal-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
     }
 
     .hero-image {
@@ -207,10 +300,12 @@
       align-items: center;
       justify-content: center;
       font-size: 70px;
+      animation: floatGlow 3.6s ease-in-out infinite;
     }
 
     .section-title {
       margin: 28px 0 14px;
+      animation: slideUp 0.45s ease;
     }
 
     .section-title h2 {
@@ -236,14 +331,15 @@
       background: rgba(255, 255, 255, 0.045);
       text-align: center;
       cursor: pointer;
-      transition: 0.2s ease;
+      transition: 0.22s ease;
+      animation: slideUp 0.45s ease;
     }
 
     .category-card.active,
     .category-card:hover {
       background: linear-gradient(135deg, rgba(255, 0, 60, 0.28), rgba(255, 106, 0, 0.12));
       box-shadow: 0 0 22px rgba(255, 0, 60, 0.25);
-      transform: translateY(-2px);
+      transform: translateY(-4px);
     }
 
     .category-card .icon {
@@ -276,10 +372,11 @@
       border-radius: 18px;
       font-weight: 900;
       cursor: pointer;
+      transition: 0.22s ease;
     }
 
     .quick-btn.primary {
-      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      background: linear-gradient(135deg, var(--red), var(--orange));
       box-shadow: 0 0 20px rgba(255, 0, 60, 0.3);
       border: none;
     }
@@ -297,6 +394,13 @@
       background: rgba(14, 14, 20, 0.9);
       border: 1px solid rgba(255, 70, 95, 0.32);
       box-shadow: 0 0 22px rgba(255, 0, 60, 0.12);
+      animation: popIn 0.35s ease both;
+      transition: 0.22s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 30px rgba(255, 0, 60, 0.28);
     }
 
     .product-img {
@@ -320,7 +424,7 @@
       border-radius: 999px;
       font-size: 11px;
       font-weight: 900;
-      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      background: linear-gradient(135deg, var(--red), var(--orange));
       margin-bottom: 10px;
     }
 
@@ -330,7 +434,7 @@
     }
 
     .price {
-      color: #ffb8c2;
+      color: var(--soft);
       font-weight: 900;
       font-size: 20px;
       margin-bottom: 10px;
@@ -349,9 +453,10 @@
       padding: 14px;
       border-radius: 16px;
       color: white;
-      background: linear-gradient(135deg, #ff003c, #ff3b30, #ff6a00);
+      background: linear-gradient(135deg, var(--red), #ff3b30, var(--orange));
       font-weight: 900;
       cursor: pointer;
+      transition: 0.22s ease;
     }
 
     .empty-state {
@@ -377,13 +482,14 @@
       display: flex;
       align-items: center;
       gap: 14px;
+      animation: slideUp 0.35s ease;
     }
 
     .status-icon {
       width: 54px;
       height: 54px;
       border-radius: 16px;
-      background: linear-gradient(135deg, #ff003c, #240009);
+      background: linear-gradient(135deg, var(--red), #240009);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -418,6 +524,13 @@
         rgba(255, 255, 255, 0.055);
       border: 1px solid rgba(255, 70, 95, 0.32);
       margin-bottom: 14px;
+      animation: slideUp 0.35s ease;
+      transition: 0.22s ease;
+    }
+
+    .promo-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 25px rgba(255, 0, 60, 0.2);
     }
 
     .promo-card h3 {
@@ -437,6 +550,7 @@
       background: rgba(0, 0, 0, 0.75);
       z-index: 500;
       display: none;
+      animation: fadeIn 0.2s ease;
     }
 
     .drawer-overlay.active {
@@ -478,7 +592,7 @@
 
     .drawer-header h2 {
       font-size: 23px;
-      background: linear-gradient(90deg, #ff003c, #ff6a00);
+      background: linear-gradient(90deg, var(--red), var(--orange));
       -webkit-background-clip: text;
       color: transparent;
     }
@@ -515,10 +629,11 @@
       text-align: left;
       font-weight: 800;
       cursor: pointer;
+      transition: 0.22s ease;
     }
 
     .drawer-item.primary {
-      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      background: linear-gradient(135deg, var(--red), var(--orange));
       border: none;
       box-shadow: 0 0 18px rgba(255, 0, 60, 0.3);
     }
@@ -539,6 +654,7 @@
       justify-content: center;
       padding: 18px;
       z-index: 999;
+      animation: fadeIn 0.18s ease;
     }
 
     .modal-overlay.active {
@@ -555,6 +671,7 @@
         #111118;
       border: 1px solid rgba(255, 75, 100, 0.45);
       box-shadow: 0 0 40px rgba(255, 0, 60, 0.38);
+      animation: popIn 0.25s ease;
     }
 
     .modal h2 {
@@ -613,15 +730,16 @@
       padding: 14px;
       font-weight: 900;
       color: white;
+      transition: 0.22s ease;
     }
 
     .submit-btn {
-      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      background: linear-gradient(135deg, var(--red), var(--orange));
     }
 
     .cancel-btn {
       background: rgba(255, 255, 255, 0.08);
-      color: #ffb8c1;
+      color: var(--soft);
     }
 
     @media (max-width: 720px) {
@@ -647,25 +765,8 @@
     }
 
     @media (max-width: 430px) {
-      .topbar-inner {
-        gap: 9px;
-      }
-
-      .menu-btn {
-        width: 42px;
-      }
-
-      .logo {
-        width: 43px;
-        height: 43px;
-      }
-
       .brand h1 {
         font-size: 20px;
-      }
-
-      .hero-card h2 {
-        font-size: 34px;
       }
 
       .category-grid {
@@ -680,7 +781,6 @@
 </head>
 
 <body>
-  <!-- SIDE MENU -->
   <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 
   <aside class="side-drawer" id="sideDrawer">
@@ -711,20 +811,19 @@
     <button class="drawer-item" onclick="goDrawerPage('home')">🏠 Home</button>
     <button class="drawer-item" onclick="goDrawerPage('products')">🛒 Products</button>
     <button class="drawer-item" onclick="goDrawerPage('promos')">🎁 Promos</button>
-    <button class="drawer-item" onclick="goDrawerPage('status')">⌁ Status</button>
+    <button class="drawer-item" onclick="goDrawerPage('status')">📡 Status</button>
 
     <div class="drawer-section-title">Support</div>
 
     <button class="drawer-item" onclick="openFeedbackModal()">💬 Send Feedback</button>
-    <button class="drawer-item" onclick="openReportModal()">⚠ Report an Issue</button>
+    <button class="drawer-item" onclick="openReportModal()">⚠️ Report an Issue</button>
     <button class="drawer-item" onclick="contactAdmin()">📩 Contact Admin</button>
 
     <p class="drawer-small">
-      Login/Register is saved on this device only. For real customer accounts, connect Firebase or Supabase.
+      Login/Register is saved on this device only.
     </p>
   </aside>
 
-  <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-inner">
       <button class="menu-btn" onclick="openDrawer()">☰</button>
@@ -734,23 +833,39 @@
         <h1>DemiSke</h1>
       </div>
 
-      <div class="top-status">
-        ● Store Online
-      </div>
+      <div class="top-status">● Store Online</div>
     </div>
 
     <div class="nav-tabs">
-      <div class="nav-tab active" onclick="showPage('home', this)">⌂</div>
-      <div class="nav-tab" onclick="showPage('products', this)">▣</div>
-      <div class="nav-tab" onclick="showPage('promos', this)">🎁</div>
-      <div class="nav-tab" onclick="showPage('status', this)">⌁</div>
-      <div class="nav-tab" onclick="openReportModal()">▱</div>
+      <div class="nav-tab active" onclick="showPage('home', this)">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Home</span>
+      </div>
+
+      <div class="nav-tab" onclick="showPage('products', this)">
+        <span class="nav-icon">🛒</span>
+        <span class="nav-label">Shop</span>
+      </div>
+
+      <div class="nav-tab" onclick="showPage('promos', this)">
+        <span class="nav-icon">🎁</span>
+        <span class="nav-label">Promos</span>
+      </div>
+
+      <div class="nav-tab" onclick="showPage('status', this)">
+        <span class="nav-icon">📡</span>
+        <span class="nav-label">Status</span>
+      </div>
+
+      <div class="nav-tab" onclick="openReportModal()">
+        <span class="nav-icon">⚠️</span>
+        <span class="nav-label">Report</span>
+      </div>
     </div>
   </div>
 
   <div class="app">
     <div class="content">
-      <!-- HOME -->
       <section id="homePage">
         <div class="hero-card">
           <div class="trust-pill">
@@ -806,7 +921,6 @@
         </div>
       </section>
 
-      <!-- PRODUCTS -->
       <section id="productsPage">
         <div class="section-title" id="productsSection">
           <h2 id="productTitle">Featured Products</h2>
@@ -816,7 +930,6 @@
         <div class="products-grid" id="productsGrid"></div>
       </section>
 
-      <!-- PROMOS -->
       <section id="promosPage" class="hidden">
         <div class="section-title">
           <h2>Promos</h2>
@@ -839,7 +952,6 @@
         </div>
       </section>
 
-      <!-- STATUS -->
       <section id="statusPage" class="hidden">
         <div class="section-title">
           <h2>Product Status</h2>
@@ -1058,7 +1170,6 @@
         level: "184",
         region: "TH",
         uid: "361673204",
-        category: "501-1000",
         description: "Good skins, high level account, ready to use."
       },
       {
@@ -1118,21 +1229,9 @@
       const isLoggedIn = localStorage.getItem("customerLoggedIn") === "true";
       const customerName = localStorage.getItem("customerName") || "Customer";
 
-      const guestMenu = document.getElementById("guestMenu");
-      const userMenu = document.getElementById("userMenu");
-      const loggedInName = document.getElementById("loggedInName");
-
-      if (!guestMenu || !userMenu || !loggedInName) return;
-
-      if (isLoggedIn) {
-        guestMenu.classList.add("hidden");
-        userMenu.classList.remove("hidden");
-        loggedInName.innerText = customerName;
-      } else {
-        guestMenu.classList.remove("hidden");
-        userMenu.classList.add("hidden");
-        loggedInName.innerText = "Customer";
-      }
+      document.getElementById("guestMenu").classList.toggle("hidden", isLoggedIn);
+      document.getElementById("userMenu").classList.toggle("hidden", !isLoggedIn);
+      document.getElementById("loggedInName").innerText = customerName;
     }
 
     function submitLogin() {
@@ -1150,10 +1249,7 @@
       closeModal("loginModal");
       updateAuthMenu();
 
-      showSuccess(
-        "Logged In",
-        "You are now logged in on this device."
-      );
+      showSuccess("Logged In", "You are now logged in on this device.");
 
       document.getElementById("loginUser").value = "";
       document.getElementById("loginPassword").value = "";
@@ -1185,10 +1281,7 @@
       closeModal("registerModal");
       updateAuthMenu();
 
-      showSuccess(
-        "Registered",
-        "Your account has been created on this device."
-      );
+      showSuccess("Registered", "Your account has been created on this device.");
 
       document.getElementById("registerName").value = "";
       document.getElementById("registerContact").value = "";
@@ -1203,20 +1296,12 @@
       closeDrawer();
       updateAuthMenu();
 
-      showSuccess(
-        "Logged Out",
-        "You have been logged out successfully."
-      );
+      showSuccess("Logged Out", "You have been logged out successfully.");
     }
 
     function getProducts() {
       const savedProducts = JSON.parse(localStorage.getItem("adminProducts")) || [];
-
-      if (savedProducts.length > 0) {
-        return savedProducts;
-      }
-
-      return demoProducts;
+      return savedProducts.length > 0 ? savedProducts : demoProducts;
     }
 
     function getProductIcon(type) {
@@ -1246,15 +1331,11 @@
         `;
       }
 
-      if (product.productType === "other") {
-        return `
-          Category: ${product.category || "N/A"}<br>
-          Status: ${product.availability || "N/A"}<br>
-          ${product.description || ""}
-        `;
-      }
-
-      return product.description || "No details available.";
+      return `
+        Category: ${product.category || "N/A"}<br>
+        Status: ${product.availability || "N/A"}<br>
+        ${product.description || ""}
+      `;
     }
 
     function renderProducts(filter = "all") {
@@ -1275,9 +1356,10 @@
         return;
       }
 
-      filteredProducts.forEach(product => {
+      filteredProducts.forEach((product, index) => {
         const card = document.createElement("div");
         card.className = "product-card";
+        card.style.animationDelay = `${index * 0.06}s`;
 
         card.innerHTML = `
           <div class="product-img">

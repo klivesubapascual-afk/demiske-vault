@@ -16,10 +16,10 @@
 
     :root {
       --red: #ff003c;
-      --red-soft: #ff3155;
+      --red2: #ff3155;
       --orange: #ff6a00;
-      --text-soft: #ffb8c2;
       --border: rgba(255, 45, 80, 0.35);
+      --soft: #ffb8c2;
     }
 
     body {
@@ -30,10 +30,60 @@
         linear-gradient(135deg, #060606, #120006, #000);
       color: white;
       padding-bottom: 80px;
+      overflow-x: hidden;
     }
 
     .hidden {
       display: none !important;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(0.94) translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @keyframes floatGlow {
+      0%, 100% {
+        transform: translateY(0);
+        box-shadow: 0 0 22px rgba(255, 0, 60, 0.35);
+      }
+      50% {
+        transform: translateY(-5px);
+        box-shadow: 0 0 35px rgba(255, 0, 60, 0.55);
+      }
+    }
+
+    @keyframes pulseDot {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.35);
+        opacity: 0.65;
+      }
     }
 
     .admin-login-screen {
@@ -48,6 +98,7 @@
       align-items: center;
       justify-content: center;
       padding: 18px;
+      animation: fadeIn 0.25s ease;
     }
 
     .admin-login-card {
@@ -60,6 +111,7 @@
         rgba(10, 10, 18, 0.95);
       border: 1px solid rgba(255, 70, 95, 0.4);
       box-shadow: 0 0 40px rgba(255, 0, 60, 0.32);
+      animation: popIn 0.35s ease;
     }
 
     .admin-login-logo {
@@ -69,20 +121,20 @@
       margin: 0 auto 16px;
       background:
         radial-gradient(circle at center, rgba(255, 255, 255, 0.2), transparent 40%),
-        linear-gradient(135deg, #ff003c, #220006, #000);
-      box-shadow: 0 0 25px rgba(255, 0, 60, 0.55);
+        linear-gradient(135deg, var(--red), #220006, #000);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 32px;
       font-weight: 900;
+      animation: floatGlow 3s ease-in-out infinite;
     }
 
     .admin-login-card h2 {
       text-align: center;
       font-size: 28px;
       margin-bottom: 8px;
-      background: linear-gradient(90deg, #ff003c, #ff6a00);
+      background: linear-gradient(90deg, var(--red), var(--orange));
       -webkit-background-clip: text;
       color: transparent;
     }
@@ -104,8 +156,17 @@
       font-size: 15px;
       font-weight: 900;
       color: white;
-      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      background: linear-gradient(135deg, var(--red), var(--orange));
       box-shadow: 0 0 20px rgba(255, 0, 60, 0.32);
+      transition: 0.22s ease;
+    }
+
+    .admin-login-btn:hover,
+    .quick-btn:hover,
+    .drawer-item:hover,
+    .modal-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
     }
 
     .admin-login-error {
@@ -128,6 +189,7 @@
       backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
       box-shadow: 0 0 25px rgba(255, 0, 60, 0.18);
+      animation: fadeIn 0.4s ease;
     }
 
     .topbar-inner {
@@ -148,6 +210,12 @@
       color: white;
       font-size: 25px;
       cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .menu-btn:hover {
+      transform: scale(1.06);
+      background: rgba(255, 0, 60, 0.16);
     }
 
     .brand {
@@ -163,19 +231,19 @@
       border-radius: 15px;
       background:
         radial-gradient(circle at center, rgba(255, 255, 255, 0.18), transparent 40%),
-        linear-gradient(135deg, #ff003c, #220006, #000);
-      box-shadow: 0 0 22px rgba(255, 0, 60, 0.55);
+        linear-gradient(135deg, var(--red), #220006, #000);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 23px;
       font-weight: 900;
+      animation: floatGlow 3.2s ease-in-out infinite;
     }
 
     .brand h1 {
       font-size: 25px;
       font-weight: 900;
-      background: linear-gradient(90deg, #ff003c, #ff6a00);
+      background: linear-gradient(90deg, var(--red), var(--orange));
       -webkit-background-clip: text;
       color: transparent;
     }
@@ -198,17 +266,38 @@
     }
 
     .nav-tab {
-      padding: 14px 8px;
+      padding: 11px 6px 10px;
       text-align: center;
       cursor: pointer;
       color: #ddd;
-      font-size: 23px;
       border-bottom: 3px solid transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: 0.2s ease;
+    }
+
+    .nav-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .nav-tab:hover {
+      background: rgba(255, 0, 60, 0.08);
+      transform: translateY(-1px);
     }
 
     .nav-tab.active {
       color: white;
-      border-bottom-color: var(--red-soft);
+      border-bottom-color: var(--red2);
       background: rgba(255, 0, 60, 0.14);
     }
 
@@ -221,6 +310,10 @@
       padding: 18px 16px;
     }
 
+    section {
+      animation: slideUp 0.35s ease;
+    }
+
     .hero-card,
     .panel-card {
       margin-top: 18px;
@@ -231,6 +324,7 @@
         linear-gradient(135deg, rgba(40, 0, 10, 0.88), rgba(10, 10, 18, 0.92));
       border: 1px solid var(--border);
       box-shadow: 0 0 34px rgba(255, 0, 60, 0.2);
+      animation: slideUp 0.45s ease;
     }
 
     .hero-card h2 {
@@ -264,10 +358,12 @@
       background: #00ff88;
       border-radius: 50%;
       box-shadow: 0 0 10px #00ff88;
+      animation: pulseDot 1.5s ease-in-out infinite;
     }
 
     .section-title {
       margin: 28px 0 14px;
+      animation: slideUp 0.4s ease;
     }
 
     .section-title h2 {
@@ -294,6 +390,12 @@
       border: 1px solid var(--border);
       background: rgba(255, 255, 255, 0.045);
       text-align: center;
+      transition: 0.22s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 24px rgba(255, 0, 60, 0.22);
     }
 
     .stat-card strong {
@@ -323,10 +425,11 @@
       border-radius: 18px;
       font-weight: 900;
       cursor: pointer;
+      transition: 0.22s ease;
     }
 
     .quick-btn.primary {
-      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      background: linear-gradient(135deg, var(--red), var(--orange));
       box-shadow: 0 0 20px rgba(255, 0, 60, 0.3);
       border: none;
     }
@@ -348,6 +451,14 @@
       border-radius: 20px;
       background: rgba(255, 255, 255, 0.055);
       border: 1px solid rgba(255, 70, 95, 0.28);
+      animation: popIn 0.3s ease both;
+      transition: 0.22s ease;
+    }
+
+    .notification-item:hover,
+    .saved-product-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 24px rgba(255, 0, 60, 0.18);
     }
 
     .notif-top {
@@ -364,7 +475,8 @@
       border-radius: 999px;
       font-size: 11px;
       font-weight: 900;
-      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      background: linear-gradient(135deg, var(--red), var(--orange));
+      margin-bottom: 10px;
     }
 
     .notif-date {
@@ -423,16 +535,19 @@
       color: white;
       font-size: 14px;
       outline: none;
+      transition: 0.2s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--red2);
+      box-shadow: 0 0 0 3px rgba(255, 49, 85, 0.16);
     }
 
     textarea {
       height: 95px;
       resize: none;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: #777;
     }
 
     .two-column {
@@ -460,14 +575,14 @@
       background: rgba(255, 255, 255, 0.045);
       text-align: center;
       cursor: pointer;
-      transition: 0.2s ease;
+      transition: 0.22s ease;
     }
 
     .type-card:hover,
     .type-option input:checked + .type-card {
       background: linear-gradient(135deg, rgba(255, 0, 60, 0.28), rgba(255, 106, 0, 0.12));
       box-shadow: 0 0 22px rgba(255, 0, 60, 0.25);
-      transform: translateY(-2px);
+      transform: translateY(-4px);
     }
 
     .type-icon {
@@ -493,6 +608,12 @@
       background: rgba(255, 20, 60, 0.06);
       cursor: pointer;
       margin-bottom: 12px;
+      transition: 0.22s ease;
+    }
+
+    .upload-box:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 20, 60, 0.12);
     }
 
     .upload-box input {
@@ -513,6 +634,7 @@
 
     .preview-item {
       position: relative;
+      animation: popIn 0.25s ease;
     }
 
     .preview-item img {
@@ -542,6 +664,7 @@
       background: rgba(14, 14, 20, 0.9);
       border: 1px solid rgba(255, 70, 95, 0.32);
       margin-top: 16px;
+      animation: popIn 0.35s ease;
     }
 
     .preview-img {
@@ -567,7 +690,7 @@
     }
 
     .preview-price {
-      color: #ffb8c2;
+      color: var(--soft);
       font-weight: 900;
       font-size: 20px;
       margin: 10px 0;
@@ -579,6 +702,7 @@
       background: rgba(0, 0, 0, 0.75);
       z-index: 500;
       display: none;
+      animation: fadeIn 0.2s ease;
     }
 
     .drawer-overlay.active {
@@ -620,7 +744,7 @@
 
     .drawer-header h2 {
       font-size: 23px;
-      background: linear-gradient(90deg, #ff003c, #ff6a00);
+      background: linear-gradient(90deg, var(--red), var(--orange));
       -webkit-background-clip: text;
       color: transparent;
     }
@@ -657,10 +781,11 @@
       text-align: left;
       font-weight: 800;
       cursor: pointer;
+      transition: 0.22s ease;
     }
 
     .drawer-item.primary {
-      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      background: linear-gradient(135deg, var(--red), var(--orange));
       border: none;
       box-shadow: 0 0 18px rgba(255, 0, 60, 0.3);
     }
@@ -686,6 +811,7 @@
       justify-content: center;
       padding: 18px;
       z-index: 999;
+      animation: fadeIn 0.18s ease;
     }
 
     .modal-overlay.active {
@@ -703,6 +829,7 @@
       border: 1px solid rgba(255, 75, 100, 0.45);
       box-shadow: 0 0 40px rgba(255, 0, 60, 0.38);
       text-align: center;
+      animation: popIn 0.25s ease;
     }
 
     .modal h2 {
@@ -725,7 +852,8 @@
       font-weight: 900;
       color: white;
       width: 100%;
-      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      background: linear-gradient(135deg, var(--red), var(--orange));
+      transition: 0.22s ease;
     }
 
     @media (max-width: 760px) {
@@ -761,15 +889,13 @@
 </head>
 
 <body>
-  <!-- ADMIN LOGIN SCREEN -->
+  <!-- ADMIN LOGIN -->
   <div class="admin-login-screen" id="adminLoginScreen">
     <div class="admin-login-card">
       <div class="admin-login-logo">A</div>
 
       <h2>Admin Login</h2>
-      <p>
-        Enter your admin credentials to access the DemiSke control panel.
-      </p>
+      <p>Enter your admin credentials to access the DemiSke control panel.</p>
 
       <div class="form-group">
         <label>Username</label>
@@ -805,7 +931,7 @@
 
     <button class="drawer-item primary" onclick="goDrawerPage('dashboard')">📊 Dashboard</button>
     <button class="drawer-item" onclick="goDrawerPage('notifications')">🔔 Notifications</button>
-    <button class="drawer-item" onclick="goDrawerPage('products')">🛒 Products</button>
+    <button class="drawer-item" onclick="goDrawerPage('products')">📦 Products</button>
     <button class="drawer-item" onclick="goDrawerPage('add')">➕ Add Product</button>
 
     <div class="drawer-section-title">Account</div>
@@ -832,16 +958,29 @@
         <h1>DemiSke Admin</h1>
       </div>
 
-      <div class="top-status">
-        ● Admin Online
-      </div>
+      <div class="top-status">● Admin Online</div>
     </div>
 
     <div class="nav-tabs">
-      <div class="nav-tab active" onclick="showPage('dashboard', this)">⌂</div>
-      <div class="nav-tab" onclick="showPage('notifications', this)">🔔</div>
-      <div class="nav-tab" onclick="showPage('products', this)">▣</div>
-      <div class="nav-tab" onclick="showPage('add', this)">＋</div>
+      <div class="nav-tab active" onclick="showPage('dashboard', this)">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Dashboard</span>
+      </div>
+
+      <div class="nav-tab" onclick="showPage('notifications', this)">
+        <span class="nav-icon">🔔</span>
+        <span class="nav-label">Alerts</span>
+      </div>
+
+      <div class="nav-tab" onclick="showPage('products', this)">
+        <span class="nav-icon">📦</span>
+        <span class="nav-label">Products</span>
+      </div>
+
+      <div class="nav-tab" onclick="showPage('add', this)">
+        <span class="nav-icon">➕</span>
+        <span class="nav-label">Add</span>
+      </div>
     </div>
   </div>
 
@@ -856,9 +995,7 @@
           </div>
 
           <h2>Manage Store.<br>Track Customers.</h2>
-          <p>
-            View orders, feedback, reports, and manage your account/key/service products.
-          </p>
+          <p>View orders, feedback, reports, and manage your account/key/service products.</p>
 
           <div class="dashboard-grid">
             <div class="stat-card">
@@ -966,7 +1103,7 @@
 
             <div id="previewGrid" class="preview-grid"></div>
 
-            <!-- ACCOUNT -->
+            <!-- ACCOUNT FIELDS -->
             <div id="accountFields" class="hidden">
               <div class="section-title">
                 <h2>Account Details</h2>
@@ -1007,7 +1144,7 @@
               </div>
             </div>
 
-            <!-- KEY -->
+            <!-- KEY FIELDS -->
             <div id="keyFields" class="hidden">
               <div class="section-title">
                 <h2>Key Details</h2>
@@ -1062,7 +1199,7 @@
               </div>
             </div>
 
-            <!-- OTHER -->
+            <!-- OTHER FIELDS -->
             <div id="otherFields" class="hidden">
               <div class="section-title">
                 <h2>Other Product Details</h2>
@@ -1139,19 +1276,8 @@
     const ADMIN_PASSWORD = "admin123";
 
     const adminForm = document.getElementById("adminForm");
-    const productTypeInputs = document.querySelectorAll("input[name='productType']");
     const productPictures = document.getElementById("productPictures");
     const previewGrid = document.getElementById("previewGrid");
-
-    const accountFields = document.getElementById("accountFields");
-    const keyFields = document.getElementById("keyFields");
-    const otherFields = document.getElementById("otherFields");
-
-    const livePreviewImage = document.getElementById("livePreviewImage");
-    const livePreviewType = document.getElementById("livePreviewType");
-    const livePreviewName = document.getElementById("livePreviewName");
-    const livePreviewPrice = document.getElementById("livePreviewPrice");
-    const livePreviewDetails = document.getElementById("livePreviewDetails");
 
     let selectedProductType = "";
     let selectedImages = [];
@@ -1159,8 +1285,6 @@
     function checkAdminLogin() {
       const isLoggedIn = localStorage.getItem("adminLoggedIn") === "true";
       const loginScreen = document.getElementById("adminLoginScreen");
-
-      if (!loginScreen) return;
 
       if (isLoggedIn) {
         loginScreen.classList.add("hidden");
@@ -1179,16 +1303,12 @@
 
         document.getElementById("adminUsername").value = "";
         document.getElementById("adminPassword").value = "";
-
         errorBox.style.display = "none";
 
         checkAdminLogin();
         loadAdminData();
 
-        showSuccess(
-          "Admin Logged In",
-          "Welcome back to your admin panel."
-        );
+        showSuccess("Admin Logged In", "Welcome back to your admin panel.");
       } else {
         errorBox.style.display = "block";
       }
@@ -1200,10 +1320,7 @@
       closeDrawer();
       checkAdminLogin();
 
-      showSuccess(
-        "Logged Out",
-        "Admin session has been logged out."
-      );
+      showSuccess("Logged Out", "Admin session has been logged out.");
     }
 
     function openDrawer() {
@@ -1238,7 +1355,11 @@
       }
 
       loadAdminData();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
     }
 
     function openCustomerSite() {
@@ -1251,8 +1372,8 @@
     }
 
     function getValue(id) {
-      const el = document.getElementById(id);
-      return el ? el.value.trim() : "";
+      const element = document.getElementById(id);
+      return element ? element.value.trim() : "";
     }
 
     function showSuccess(title, message) {
@@ -1270,17 +1391,25 @@
       document.getElementById(id).classList.remove("active");
     }
 
-    productTypeInputs.forEach(input => {
+    document.querySelectorAll("input[name='productType']").forEach(input => {
       input.addEventListener("change", function () {
         selectedProductType = this.value;
 
-        accountFields.classList.add("hidden");
-        keyFields.classList.add("hidden");
-        otherFields.classList.add("hidden");
+        document.getElementById("accountFields").classList.add("hidden");
+        document.getElementById("keyFields").classList.add("hidden");
+        document.getElementById("otherFields").classList.add("hidden");
 
-        if (selectedProductType === "account") accountFields.classList.remove("hidden");
-        if (selectedProductType === "key") keyFields.classList.remove("hidden");
-        if (selectedProductType === "other") otherFields.classList.remove("hidden");
+        if (selectedProductType === "account") {
+          document.getElementById("accountFields").classList.remove("hidden");
+        }
+
+        if (selectedProductType === "key") {
+          document.getElementById("keyFields").classList.remove("hidden");
+        }
+
+        if (selectedProductType === "other") {
+          document.getElementById("otherFields").classList.remove("hidden");
+        }
 
         updateLivePreview();
       });
@@ -1298,12 +1427,12 @@
       selectedImages.forEach((file, index) => {
         const reader = new FileReader();
 
-        reader.onload = function (e) {
+        reader.onload = function (event) {
           const item = document.createElement("div");
           item.className = "preview-item";
 
           item.innerHTML = `
-            <img src="${e.target.result}" alt="Product Image">
+            <img src="${event.target.result}" alt="Product Image">
             <button type="button" class="remove-img" onclick="removeImage(${index})">×</button>
           `;
 
@@ -1364,29 +1493,31 @@
         `;
       }
 
-      livePreviewType.innerText = type;
-      livePreviewName.innerText = name;
-      livePreviewPrice.innerText = "₱" + price;
-      livePreviewDetails.innerHTML = details;
+      document.getElementById("livePreviewType").innerText = type;
+      document.getElementById("livePreviewName").innerText = name;
+      document.getElementById("livePreviewPrice").innerText = "₱" + price;
+      document.getElementById("livePreviewDetails").innerHTML = details;
 
       if (selectedImages.length > 0) {
         const reader = new FileReader();
 
-        reader.onload = function (e) {
-          livePreviewImage.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        reader.onload = function (event) {
+          document.getElementById("livePreviewImage").innerHTML = `
+            <img src="${event.target.result}" alt="Preview">
+          `;
         };
 
         reader.readAsDataURL(selectedImages[0]);
       } else {
-        livePreviewImage.innerHTML = icon;
+        document.getElementById("livePreviewImage").innerHTML = icon;
       }
     }
 
     document.addEventListener("input", updateLivePreview);
     document.addEventListener("change", updateLivePreview);
 
-    adminForm.addEventListener("submit", function (e) {
-      e.preventDefault();
+    adminForm.addEventListener("submit", function (event) {
+      event.preventDefault();
 
       if (!selectedProductType) {
         showError("Please choose a product type first.");
@@ -1467,15 +1598,15 @@
 
       previewGrid.innerHTML = "";
 
-      accountFields.classList.add("hidden");
-      keyFields.classList.add("hidden");
-      otherFields.classList.add("hidden");
+      document.getElementById("accountFields").classList.add("hidden");
+      document.getElementById("keyFields").classList.add("hidden");
+      document.getElementById("otherFields").classList.add("hidden");
 
-      livePreviewType.innerText = "No Type Selected";
-      livePreviewName.innerText = "Product Name";
-      livePreviewPrice.innerText = "₱0";
-      livePreviewDetails.innerText = "Product details will appear here.";
-      livePreviewImage.innerHTML = "🔥";
+      document.getElementById("livePreviewType").innerText = "No Type Selected";
+      document.getElementById("livePreviewName").innerText = "Product Name";
+      document.getElementById("livePreviewPrice").innerText = "₱0";
+      document.getElementById("livePreviewDetails").innerText = "Product details will appear here.";
+      document.getElementById("livePreviewImage").innerHTML = "🔥";
     }
 
     function loadAdminData() {
@@ -1485,10 +1616,10 @@
       document.getElementById("totalNotifications").innerText = notifications.length;
       document.getElementById("totalProducts").innerText = products.length;
 
-      const orders = notifications.filter(n => n.notificationType === "New Order");
-      const reports = notifications.filter(n =>
-        n.notificationType === "Issue Report" ||
-        n.notificationType === "Feedback"
+      const orders = notifications.filter(item => item.notificationType === "New Order");
+      const reports = notifications.filter(item =>
+        item.notificationType === "Issue Report" ||
+        item.notificationType === "Feedback"
       );
 
       document.getElementById("totalOrders").innerText = orders.length;
@@ -1508,24 +1639,25 @@
 
       list.innerHTML = "";
 
-      notifications.forEach(notif => {
+      notifications.forEach((notification, index) => {
         const item = document.createElement("div");
         item.className = "notification-item";
+        item.style.animationDelay = `${index * 0.06}s`;
 
         item.innerHTML = `
           <div class="notif-top">
-            <span class="badge">${notif.notificationType || "Notification"}</span>
-            <span class="notif-date">${notif.date || "No date"}</span>
+            <span class="badge">${notification.notificationType || "Notification"}</span>
+            <span class="notif-date">${notification.date || "No date"}</span>
           </div>
 
-          <h3>${notif.title || "Untitled Notification"}</h3>
-          <p>${notif.message || "No message provided."}</p>
+          <h3>${notification.title || "Untitled Notification"}</h3>
+          <p>${notification.message || "No message provided."}</p>
 
-          ${notif.category ? `<div class="small-info"><strong>Category:</strong> ${notif.category}</div>` : ""}
-          ${notif.customerName ? `<div class="small-info"><strong>Customer:</strong> ${notif.customerName}</div>` : ""}
-          ${notif.contact ? `<div class="small-info"><strong>Contact:</strong> ${notif.contact}</div>` : ""}
-          ${notif.productName ? `<div class="small-info"><strong>Product:</strong> ${notif.productName}</div>` : ""}
-          ${notif.price ? `<div class="small-info"><strong>Price:</strong> ₱${notif.price}</div>` : ""}
+          ${notification.category ? `<div class="small-info"><strong>Category:</strong> ${notification.category}</div>` : ""}
+          ${notification.customerName ? `<div class="small-info"><strong>Customer:</strong> ${notification.customerName}</div>` : ""}
+          ${notification.contact ? `<div class="small-info"><strong>Contact:</strong> ${notification.contact}</div>` : ""}
+          ${notification.productName ? `<div class="small-info"><strong>Product:</strong> ${notification.productName}</div>` : ""}
+          ${notification.price ? `<div class="small-info"><strong>Price:</strong> ₱${notification.price}</div>` : ""}
         `;
 
         list.appendChild(item);
@@ -1542,9 +1674,10 @@
 
       list.innerHTML = "";
 
-      products.forEach(product => {
+      products.forEach((product, index) => {
         const item = document.createElement("div");
         item.className = "saved-product-item";
+        item.style.animationDelay = `${index * 0.06}s`;
 
         item.innerHTML = `
           <div class="notif-top">
