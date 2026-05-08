@@ -787,6 +787,13 @@
       z-index: 500 !important;
     }
 
+  
+    .type-card.active {
+      background: linear-gradient(135deg, rgba(255, 0, 60, 0.35), rgba(255, 106, 0, 0.18)) !important;
+      box-shadow: 0 0 22px rgba(255, 0, 60, 0.35) !important;
+      transform: translateY(-3px);
+    }
+
   </style>
 </head>
 
@@ -875,32 +882,23 @@
       <div class="panel">
         <form id="adminForm">
           <div class="type-grid">
-            <label class="type-option">
-              <input type="radio" name="productType" value="account" />
-              <div class="type-card">
-                <div class="type-icon">🎮</div>
-                <strong>Account</strong>
-                <span>Game accounts</span>
-              </div>
-            </label>
+            <button type="button" class="type-card" onclick="selectProductType('account', this)">
+              <div class="type-icon">🎮</div>
+              <strong>Account</strong>
+              <span>Game accounts</span>
+            </button>
 
-            <label class="type-option">
-              <input type="radio" name="productType" value="key" />
-              <div class="type-card">
-                <div class="type-icon">🔑</div>
-                <strong>Key</strong>
-                <span>VIP keys</span>
-              </div>
-            </label>
+            <button type="button" class="type-card" onclick="selectProductType('key', this)">
+              <div class="type-icon">🔑</div>
+              <strong>Key</strong>
+              <span>VIP keys</span>
+            </button>
 
-            <label class="type-option">
-              <input type="radio" name="productType" value="other" />
-              <div class="type-card">
-                <div class="type-icon">📦</div>
-                <strong>Service</strong>
-                <span>Others</span>
-              </div>
-            </label>
+            <button type="button" class="type-card" onclick="selectProductType('other', this)">
+              <div class="type-icon">📦</div>
+              <strong>Service</strong>
+              <span>Others</span>
+            </button>
           </div>
 
           <div class="upload-box" onclick="openImagePicker()">
@@ -1876,6 +1874,49 @@
   } else {
     setupTypeButtons();
   }
+})();
+</script>
+
+
+<script id="hardTypeButtonFix">
+(function () {
+  window.selectProductType = function(type, button) {
+    selectedProductType = type;
+    window.selectedProductType = type;
+
+    document.querySelectorAll(".type-card").forEach(function(card) {
+      card.classList.remove("active");
+    });
+
+    if (button) {
+      button.classList.add("active");
+    }
+
+    document.getElementById("accountFields").classList.add("hidden");
+    document.getElementById("keyFields").classList.add("hidden");
+    document.getElementById("otherFields").classList.add("hidden");
+
+    if (type === "account") {
+      document.getElementById("accountFields").classList.remove("hidden");
+    }
+
+    if (type === "key") {
+      document.getElementById("keyFields").classList.remove("hidden");
+    }
+
+    if (type === "other") {
+      document.getElementById("otherFields").classList.remove("hidden");
+    }
+
+    if (typeof updateLivePreview === "function") {
+      updateLivePreview();
+    }
+
+    const previewType = document.getElementById("livePreviewType");
+    if (previewType) {
+      previewType.innerText = type === "other" ? "SERVICE" : type.toUpperCase();
+    }
+  };
 })();
 </script>
 
