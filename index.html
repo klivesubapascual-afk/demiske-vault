@@ -14,152 +14,314 @@
       font-family: Arial, sans-serif;
     }
 
+    :root {
+      --bg-main: #050505;
+      --bg-card: rgba(18, 18, 24, 0.82);
+      --bg-card-soft: rgba(255, 255, 255, 0.055);
+      --red: #ff003c;
+      --red-soft: #ff3155;
+      --orange: #ff6a00;
+      --text-soft: #ffb8c2;
+      --border: rgba(255, 45, 80, 0.35);
+      --shadow: rgba(255, 0, 60, 0.35);
+    }
+
     body {
       min-height: 100vh;
       background:
         radial-gradient(circle at top left, rgba(255, 0, 60, 0.28), transparent 35%),
-        radial-gradient(circle at bottom right, rgba(255, 106, 0, 0.22), transparent 35%),
-        linear-gradient(135deg, #090006, #160008, #050505);
+        radial-gradient(circle at bottom right, rgba(255, 70, 0, 0.22), transparent 35%),
+        linear-gradient(135deg, #060606, #120006, #000);
       color: white;
-      padding: 16px;
+      padding-bottom: 80px;
     }
 
-    .container {
+    .app {
       max-width: 1100px;
       margin: auto;
     }
 
-    .hero {
-      text-align: center;
-      padding: 30px 16px;
-      margin-bottom: 22px;
-      border-radius: 28px;
-      border: 1px solid rgba(255, 70, 95, 0.35);
-      background: rgba(8, 8, 16, 0.86);
-      box-shadow: 0 0 30px rgba(255, 0, 60, 0.22);
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, 0.9);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 0 25px rgba(255, 0, 60, 0.18);
     }
 
-    .hero h1 {
-      font-size: 40px;
+    .topbar-inner {
+      max-width: 1100px;
+      margin: auto;
+      padding: 18px 16px 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .menu-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: none;
+      background: rgba(255, 255, 255, 0.06);
+      color: white;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.18), transparent 40%),
+        linear-gradient(135deg, #ff003c, #220006, #000);
+      box-shadow: 0 0 22px rgba(255, 0, 60, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 23px;
       font-weight: 900;
-      background: linear-gradient(90deg, #ff1744, #ff6a00, #ff003c);
+    }
+
+    .brand h1 {
+      font-size: 25px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #ff003c, #ff6a00);
       -webkit-background-clip: text;
       color: transparent;
-      margin-bottom: 10px;
     }
 
-    .hero p {
-      color: #ffc4cc;
-      font-size: 15px;
-      line-height: 1.6;
+    .auth-actions {
+      display: flex;
+      gap: 8px;
     }
 
-    .section-title {
-      font-size: 20px;
-      font-weight: 900;
-      margin: 24px 0 14px;
-      color: #ff9aaa;
+    .auth-btn {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.06);
+      color: white;
+      padding: 11px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
     }
 
-    .type-grid {
+    .auth-btn.primary {
+      border: none;
+      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      box-shadow: 0 0 20px rgba(255, 0, 60, 0.35);
+    }
+
+    .nav-tabs {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
+      grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .nav-tab {
+      padding: 14px 8px;
+      text-align: center;
+      cursor: pointer;
+      color: #ddd;
+      font-size: 24px;
+      border-bottom: 3px solid transparent;
+    }
+
+    .nav-tab.active {
+      color: white;
+      border-bottom-color: var(--red-soft);
+      background: rgba(255, 0, 60, 0.14);
+      box-shadow: inset 0 -12px 20px rgba(255, 0, 60, 0.08);
+    }
+
+    .content {
+      padding: 18px 16px;
+    }
+
+    .hero-card {
+      margin-top: 18px;
+      padding: 24px;
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at top left, rgba(255, 0, 60, 0.28), transparent 40%),
+        linear-gradient(135deg, rgba(40, 0, 10, 0.9), rgba(10, 10, 18, 0.92));
+      border: 1px solid var(--border);
+      box-shadow: 0 0 34px rgba(255, 0, 60, 0.22);
+    }
+
+    .trust-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 80, 100, 0.35);
+      color: #ffd0d6;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      background: #00ff88;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #00ff88;
+    }
+
+    .hero-card h2 {
+      font-size: 42px;
+      line-height: 1.08;
+      margin-bottom: 14px;
+    }
+
+    .hero-card p {
+      color: #ffc2cb;
+      font-size: 17px;
+      line-height: 1.5;
       margin-bottom: 20px;
     }
 
-    .type-card {
-      border-radius: 22px;
-      padding: 20px 14px;
-      text-align: center;
-      cursor: pointer;
-      border: 1px solid rgba(255, 70, 95, 0.35);
-      background: rgba(255, 255, 255, 0.045);
-      transition: 0.2s ease;
-    }
-
-    .type-card:hover,
-    .type-card.active {
-      transform: translateY(-2px);
-      background: linear-gradient(135deg, rgba(255, 0, 60, 0.32), rgba(255, 106, 0, 0.15));
-      box-shadow: 0 0 20px rgba(255, 0, 60, 0.32);
-      border-color: #ff3155;
-    }
-
-    .type-icon {
-      font-size: 34px;
-      margin-bottom: 8px;
-    }
-
-    .type-card strong {
-      display: block;
+    .hero-btn {
+      width: 100%;
+      border: none;
+      padding: 17px;
+      border-radius: 19px;
+      background: linear-gradient(135deg, #ff003c, #ff3b30, #ff6a00);
+      color: white;
       font-size: 16px;
+      font-weight: 900;
+      box-shadow: 0 0 24px rgba(255, 0, 60, 0.35);
+      cursor: pointer;
+    }
+
+    .hero-image {
+      margin-top: 22px;
+      height: 210px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at center, rgba(255, 0, 60, 0.45), transparent 40%),
+        linear-gradient(135deg, #32000c, #0a0a0f);
+      border: 1px solid rgba(255, 70, 95, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 70px;
+      box-shadow: inset 0 0 35px rgba(255, 0, 60, 0.15);
+    }
+
+    .section-title {
+      margin: 28px 0 14px;
+    }
+
+    .section-title h2 {
+      font-size: 27px;
       margin-bottom: 6px;
     }
 
-    .type-card span {
-      font-size: 12px;
-      color: #ffbec7;
-      line-height: 1.4;
-    }
-
-    .top-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 22px;
-    }
-
-    .action-btn {
-      border: none;
-      cursor: pointer;
-      border-radius: 18px;
-      padding: 15px;
+    .section-title p {
+      color: #bdbdbd;
       font-size: 15px;
-      font-weight: 900;
-      color: white;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .category-card {
+      padding: 18px 12px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.045);
+      text-align: center;
+      cursor: pointer;
       transition: 0.2s ease;
     }
 
-    .feedback-btn {
-      background: linear-gradient(135deg, #ff003c, #ff6a00);
-      box-shadow: 0 0 18px rgba(255, 0, 60, 0.28);
-    }
-
-    .report-btn {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 70, 95, 0.3);
-      color: #ffb8c1;
-    }
-
-    .action-btn:hover {
+    .category-card.active,
+    .category-card:hover {
+      background: linear-gradient(135deg, rgba(255, 0, 60, 0.28), rgba(255, 106, 0, 0.12));
+      box-shadow: 0 0 22px rgba(255, 0, 60, 0.25);
       transform: translateY(-2px);
+    }
+
+    .category-card .icon {
+      font-size: 31px;
+      margin-bottom: 8px;
+    }
+
+    .category-card strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .category-card span {
+      color: #ffbdc6;
+      font-size: 12px;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .quick-btn {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.055);
+      color: white;
+      padding: 16px;
+      border-radius: 18px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .quick-btn.primary {
+      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      box-shadow: 0 0 20px rgba(255, 0, 60, 0.3);
+      border: none;
     }
 
     .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
-      gap: 16px;
+      gap: 15px;
+      margin-top: 14px;
     }
 
     .product-card {
       overflow: hidden;
       border-radius: 24px;
+      background: rgba(14, 14, 20, 0.9);
       border: 1px solid rgba(255, 70, 95, 0.32);
-      background: rgba(8, 8, 16, 0.88);
-      box-shadow: 0 0 18px rgba(255, 0, 60, 0.14);
+      box-shadow: 0 0 22px rgba(255, 0, 60, 0.12);
     }
 
     .product-img {
-      height: 170px;
+      height: 165px;
       background:
-        radial-gradient(circle at center, rgba(255, 0, 60, 0.3), transparent 40%),
-        linear-gradient(135deg, #22000a, #050505);
+        radial-gradient(circle at center, rgba(255, 0, 60, 0.38), transparent 42%),
+        linear-gradient(135deg, #2b000b, #050505);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 42px;
-      color: #ffc4cc;
+      font-size: 54px;
     }
 
     .product-body {
@@ -170,9 +332,9 @@
       display: inline-block;
       padding: 6px 10px;
       border-radius: 999px;
-      background: linear-gradient(135deg, #ff003c, #ff6a00);
       font-size: 11px;
       font-weight: 900;
+      background: linear-gradient(135deg, #ff003c, #ff6a00);
       margin-bottom: 10px;
     }
 
@@ -182,46 +344,94 @@
     }
 
     .price {
-      color: #ffb3bd;
-      font-size: 20px;
+      color: #ffb8c2;
       font-weight: 900;
+      font-size: 20px;
       margin-bottom: 10px;
     }
 
     .details {
-      color: #cfcfcf;
+      color: #d2d2d2;
       font-size: 13px;
-      line-height: 1.6;
+      line-height: 1.55;
       margin-bottom: 14px;
     }
 
     .buy-btn {
       width: 100%;
       border: none;
-      cursor: pointer;
-      border-radius: 16px;
       padding: 14px;
-      font-size: 15px;
-      font-weight: 900;
+      border-radius: 16px;
       color: white;
-      background: linear-gradient(135deg, #ff003c, #ff3b30, #ff7a00);
-      box-shadow: 0 0 18px rgba(255, 0, 60, 0.28);
+      background: linear-gradient(135deg, #ff003c, #ff3b30, #ff6a00);
+      font-weight: 900;
+      cursor: pointer;
     }
 
     .empty-state {
-      text-align: center;
-      padding: 35px 15px;
-      color: #ffc4cc;
-      border-radius: 22px;
-      border: 1px solid rgba(255, 70, 95, 0.25);
-      background: rgba(255, 255, 255, 0.04);
       grid-column: 1 / -1;
+      text-align: center;
+      padding: 34px 14px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: #ffc4cc;
+    }
+
+    .status-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .status-item {
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 70, 95, 0.28);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .status-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #ff003c, #240009);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+    }
+
+    .status-info {
+      flex: 1;
+    }
+
+    .status-info strong {
+      display: block;
+      font-size: 18px;
+    }
+
+    .status-info span {
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    .status-tag {
+      color: #00ff88;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .hidden {
+      display: none;
     }
 
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.78);
       display: none;
       align-items: center;
       justify-content: center;
@@ -243,19 +453,6 @@
         #111118;
       border: 1px solid rgba(255, 75, 100, 0.45);
       box-shadow: 0 0 40px rgba(255, 0, 60, 0.38);
-      animation: popup 0.22s ease;
-    }
-
-    @keyframes popup {
-      from {
-        opacity: 0;
-        transform: scale(0.94) translateY(12px);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
     }
 
     .modal h2 {
@@ -265,9 +462,9 @@
 
     .modal p {
       color: #ffc4cc;
-      font-size: 14px;
       line-height: 1.5;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
+      font-size: 14px;
     }
 
     .form-group {
@@ -300,11 +497,6 @@
       resize: none;
     }
 
-    input::placeholder,
-    textarea::placeholder {
-      color: #777;
-    }
-
     .modal-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -330,16 +522,61 @@
       color: #ffb8c1;
     }
 
-    @media (max-width: 750px) {
-      .hero h1 {
-        font-size: 31px;
+    @media (max-width: 720px) {
+      .auth-btn {
+        padding: 10px 12px;
+        font-size: 13px;
       }
 
-      .type-grid {
+      .brand h1 {
+        font-size: 22px;
+      }
+
+      .hero-card h2 {
+        font-size: 38px;
+      }
+
+      .category-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .quick-actions {
         grid-template-columns: 1fr;
       }
+    }
 
-      .top-actions {
+    @media (max-width: 430px) {
+      .topbar-inner {
+        gap: 9px;
+      }
+
+      .menu-btn {
+        width: 40px;
+      }
+
+      .logo {
+        width: 43px;
+        height: 43px;
+      }
+
+      .brand h1 {
+        font-size: 20px;
+      }
+
+      .auth-actions {
+        gap: 5px;
+      }
+
+      .auth-btn {
+        padding: 9px 10px;
+        font-size: 12px;
+      }
+
+      .hero-card h2 {
+        font-size: 34px;
+      }
+
+      .category-grid {
         grid-template-columns: 1fr;
       }
 
@@ -351,55 +588,155 @@
 </head>
 
 <body>
-  <div class="container">
-    <div class="hero">
-      <h1>DemiSke Store</h1>
-      <p>
-        Choose what you want to buy. Browse accounts, keys, and other services.
-      </p>
-    </div>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <button class="menu-btn">☰</button>
 
-    <div class="section-title">What do you want to buy?</div>
-
-    <div class="type-grid">
-      <div class="type-card active" onclick="filterProducts('all', this)">
-        <div class="type-icon">🔥</div>
-        <strong>All Products</strong>
-        <span>Show everything available</span>
+      <div class="brand">
+        <div class="logo">D</div>
+        <h1>DemiSke</h1>
       </div>
 
-      <div class="type-card" onclick="filterProducts('account', this)">
-        <div class="type-icon">🎮</div>
-        <strong>Accounts</strong>
-        <span>Game accounts, UID, level, region</span>
-      </div>
-
-      <div class="type-card" onclick="filterProducts('key', this)">
-        <div class="type-icon">🔑</div>
-        <strong>Keys</strong>
-        <span>VIP keys, license, duration</span>
-      </div>
-
-      <div class="type-card" onclick="filterProducts('other', this)">
-        <div class="type-icon">📦</div>
-        <strong>Others</strong>
-        <span>Services, top-up, bundles, custom</span>
+      <div class="auth-actions">
+        <button class="auth-btn">Login</button>
+        <button class="auth-btn primary">Register</button>
       </div>
     </div>
 
-    <div class="top-actions">
-      <button class="action-btn feedback-btn" onclick="openFeedbackModal()">
-        Send Feedback
-      </button>
-
-      <button class="action-btn report-btn" onclick="openReportModal()">
-        Report an Issue
-      </button>
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="showPage('home', this)">⌂</div>
+      <div class="nav-tab" onclick="showPage('products', this)">▣</div>
+      <div class="nav-tab" onclick="showPage('rewards', this)">🎁</div>
+      <div class="nav-tab" onclick="showPage('status', this)">⌁</div>
+      <div class="nav-tab" onclick="openReportModal()">▱</div>
     </div>
+  </div>
 
-    <div class="section-title" id="productTitle">Available Products</div>
+  <div class="app">
+    <div class="content">
+      <!-- HOME -->
+      <section id="homePage">
+        <div class="hero-card">
+          <div class="trust-pill">
+            <span class="dot"></span>
+            Trusted by customers worldwide
+          </div>
 
-    <div class="products-grid" id="productsGrid"></div>
+          <h2>Buy Fast.<br>Play Better.</h2>
+
+          <p>
+            Browse accounts, VIP keys, and gaming services with a clean and secure order flow.
+          </p>
+
+          <button class="hero-btn" onclick="scrollToProducts()">View featured products</button>
+
+          <div class="hero-image">🔥</div>
+        </div>
+
+        <div class="section-title">
+          <h2>What do you want to buy?</h2>
+          <p>Select a category below.</p>
+        </div>
+
+        <div class="category-grid">
+          <div class="category-card active" onclick="filterProducts('all', this)">
+            <div class="icon">🔥</div>
+            <strong>All</strong>
+            <span>Everything</span>
+          </div>
+
+          <div class="category-card" onclick="filterProducts('account', this)">
+            <div class="icon">🎮</div>
+            <strong>Accounts</strong>
+            <span>Game accounts</span>
+          </div>
+
+          <div class="category-card" onclick="filterProducts('key', this)">
+            <div class="icon">🔑</div>
+            <strong>Keys</strong>
+            <span>VIP keys</span>
+          </div>
+
+          <div class="category-card" onclick="filterProducts('other', this)">
+            <div class="icon">📦</div>
+            <strong>Others</strong>
+            <span>Services</span>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <button class="quick-btn primary" onclick="openFeedbackModal()">Send Feedback</button>
+          <button class="quick-btn" onclick="openReportModal()">Report an Issue</button>
+        </div>
+      </section>
+
+      <!-- PRODUCTS -->
+      <section id="productsPage">
+        <div class="section-title" id="productsSection">
+          <h2 id="productTitle">Featured Products</h2>
+          <p>Choose a product and submit your order.</p>
+        </div>
+
+        <div class="products-grid" id="productsGrid"></div>
+      </section>
+
+      <!-- REWARDS -->
+      <section id="rewardsPage" class="hidden">
+        <div class="section-title">
+          <h2>Rewards</h2>
+          <p>Reward system placeholder for future promos.</p>
+        </div>
+
+        <div class="hero-card">
+          <div class="trust-pill">
+            <span class="dot"></span>
+            Coming Soon
+          </div>
+
+          <h2>Earn perks<br>from orders.</h2>
+          <p>
+            You can use this section later for vouchers, giveaways, and loyalty rewards.
+          </p>
+        </div>
+      </section>
+
+      <!-- STATUS -->
+      <section id="statusPage" class="hidden">
+        <div class="section-title">
+          <h2>Product Status</h2>
+          <p>Check product availability by category.</p>
+        </div>
+
+        <div class="status-list">
+          <div class="status-item">
+            <div class="status-icon">🎮</div>
+            <div class="status-info">
+              <strong>Accounts</strong>
+              <span>Game account listings</span>
+            </div>
+            <div class="status-tag">Online</div>
+          </div>
+
+          <div class="status-item">
+            <div class="status-icon">🔑</div>
+            <div class="status-info">
+              <strong>VIP Keys</strong>
+              <span>Keys and licenses</span>
+            </div>
+            <div class="status-tag">Online</div>
+          </div>
+
+          <div class="status-item">
+            <div class="status-icon">📦</div>
+            <div class="status-info">
+              <strong>Other Services</strong>
+              <span>Custom service listings</span>
+            </div>
+            <div class="status-tag">Online</div>
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
 
   <!-- BUY MODAL -->
@@ -656,18 +993,59 @@
     function filterProducts(type, element) {
       currentFilter = type;
 
-      document.querySelectorAll(".type-card").forEach(card => {
+      document.querySelectorAll(".category-card").forEach(card => {
         card.classList.remove("active");
       });
 
       element.classList.add("active");
 
-      if (type === "all") productTitle.innerText = "Available Products";
+      if (type === "all") productTitle.innerText = "Featured Products";
       if (type === "account") productTitle.innerText = "Available Accounts";
       if (type === "key") productTitle.innerText = "Available Keys";
       if (type === "other") productTitle.innerText = "Other Products / Services";
 
       renderProducts(type);
+      showPage("products");
+    }
+
+    function showPage(page, tabElement = null) {
+      document.getElementById("homePage").classList.add("hidden");
+      document.getElementById("productsPage").classList.add("hidden");
+      document.getElementById("rewardsPage").classList.add("hidden");
+      document.getElementById("statusPage").classList.add("hidden");
+
+      if (page === "home") {
+        document.getElementById("homePage").classList.remove("hidden");
+        document.getElementById("productsPage").classList.remove("hidden");
+      }
+
+      if (page === "products") {
+        document.getElementById("productsPage").classList.remove("hidden");
+      }
+
+      if (page === "rewards") {
+        document.getElementById("rewardsPage").classList.remove("hidden");
+      }
+
+      if (page === "status") {
+        document.getElementById("statusPage").classList.remove("hidden");
+      }
+
+      if (tabElement) {
+        document.querySelectorAll(".nav-tab").forEach(tab => {
+          tab.classList.remove("active");
+        });
+
+        tabElement.classList.add("active");
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function scrollToProducts() {
+      document.getElementById("productsSection").scrollIntoView({
+        behavior: "smooth"
+      });
     }
 
     function openBuyModal(productId) {
