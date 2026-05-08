@@ -1094,8 +1094,8 @@
               </label>
             </div>
 
-            <label class="upload-box" for="productPictures">
-              <input type="file" id="productPictures" multiple accept="image/*" />
+            <label class="upload-box" for="productPictures" onclick="document.getElementById('productPictures').click()">
+              <input type="file" id="productPictures" multiple accept="image/*" onclick="event.stopPropagation()" />
               <div class="upload-icon">📸</div>
               <strong>Tap to upload pictures</strong>
               <span style="color:#ffb8c2; font-size:13px;">Multiple images allowed</span>
