@@ -36,6 +36,90 @@
       display: none !important;
     }
 
+    .admin-login-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background:
+        radial-gradient(circle at top left, rgba(255, 0, 60, 0.35), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(255, 70, 0, 0.22), transparent 35%),
+        linear-gradient(135deg, #060606, #120006, #000);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .admin-login-card {
+      width: 100%;
+      max-width: 420px;
+      padding: 26px;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at top, rgba(255, 0, 60, 0.22), transparent 45%),
+        rgba(10, 10, 18, 0.95);
+      border: 1px solid rgba(255, 70, 95, 0.4);
+      box-shadow: 0 0 40px rgba(255, 0, 60, 0.32);
+    }
+
+    .admin-login-logo {
+      width: 70px;
+      height: 70px;
+      border-radius: 22px;
+      margin: 0 auto 16px;
+      background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.2), transparent 40%),
+        linear-gradient(135deg, #ff003c, #220006, #000);
+      box-shadow: 0 0 25px rgba(255, 0, 60, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 900;
+    }
+
+    .admin-login-card h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #ff003c, #ff6a00);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .admin-login-card p {
+      text-align: center;
+      color: #ffc4cc;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    .admin-login-btn {
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 15px;
+      font-size: 15px;
+      font-weight: 900;
+      color: white;
+      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      box-shadow: 0 0 20px rgba(255, 0, 60, 0.32);
+    }
+
+    .admin-login-error {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255, 0, 60, 0.12);
+      border: 1px solid rgba(255, 70, 95, 0.35);
+      color: #ffc4cc;
+      font-size: 13px;
+      text-align: center;
+    }
+
     .topbar {
       position: sticky;
       top: 0;
@@ -581,6 +665,11 @@
       box-shadow: 0 0 18px rgba(255, 0, 60, 0.3);
     }
 
+    .drawer-item.danger {
+      background: rgba(255, 0, 60, 0.18);
+      border: 1px solid rgba(255, 70, 95, 0.35);
+    }
+
     .drawer-small {
       color: #aaa;
       font-size: 12px;
@@ -672,6 +761,36 @@
 </head>
 
 <body>
+  <!-- ADMIN LOGIN SCREEN -->
+  <div class="admin-login-screen" id="adminLoginScreen">
+    <div class="admin-login-card">
+      <div class="admin-login-logo">A</div>
+
+      <h2>Admin Login</h2>
+      <p>
+        Enter your admin credentials to access the DemiSke control panel.
+      </p>
+
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="adminUsername" placeholder="Enter admin username" />
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="adminPassword" placeholder="Enter admin password" />
+      </div>
+
+      <button class="admin-login-btn" onclick="adminLogin()">
+        Login to Admin Panel
+      </button>
+
+      <div class="admin-login-error" id="adminLoginError">
+        Wrong username or password.
+      </div>
+    </div>
+  </div>
+
   <!-- SIDE MENU -->
   <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 
@@ -688,6 +807,10 @@
     <button class="drawer-item" onclick="goDrawerPage('notifications')">🔔 Notifications</button>
     <button class="drawer-item" onclick="goDrawerPage('products')">🛒 Products</button>
     <button class="drawer-item" onclick="goDrawerPage('add')">➕ Add Product</button>
+
+    <div class="drawer-section-title">Account</div>
+
+    <button class="drawer-item danger" onclick="adminLogout()">🚪 Log Out</button>
 
     <div class="drawer-section-title">Website</div>
 
@@ -1012,6 +1135,9 @@
   </div>
 
   <script>
+    const ADMIN_USERNAME = "admin";
+    const ADMIN_PASSWORD = "admin123";
+
     const adminForm = document.getElementById("adminForm");
     const productTypeInputs = document.querySelectorAll("input[name='productType']");
     const productPictures = document.getElementById("productPictures");
@@ -1029,6 +1155,56 @@
 
     let selectedProductType = "";
     let selectedImages = [];
+
+    function checkAdminLogin() {
+      const isLoggedIn = localStorage.getItem("adminLoggedIn") === "true";
+      const loginScreen = document.getElementById("adminLoginScreen");
+
+      if (!loginScreen) return;
+
+      if (isLoggedIn) {
+        loginScreen.classList.add("hidden");
+      } else {
+        loginScreen.classList.remove("hidden");
+      }
+    }
+
+    function adminLogin() {
+      const username = document.getElementById("adminUsername").value.trim();
+      const password = document.getElementById("adminPassword").value.trim();
+      const errorBox = document.getElementById("adminLoginError");
+
+      if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+        localStorage.setItem("adminLoggedIn", "true");
+
+        document.getElementById("adminUsername").value = "";
+        document.getElementById("adminPassword").value = "";
+
+        errorBox.style.display = "none";
+
+        checkAdminLogin();
+        loadAdminData();
+
+        showSuccess(
+          "Admin Logged In",
+          "Welcome back to your admin panel."
+        );
+      } else {
+        errorBox.style.display = "block";
+      }
+    }
+
+    function adminLogout() {
+      localStorage.removeItem("adminLoggedIn");
+
+      closeDrawer();
+      checkAdminLogin();
+
+      showSuccess(
+        "Logged Out",
+        "Admin session has been logged out."
+      );
+    }
 
     function openDrawer() {
       document.getElementById("sideDrawer").classList.add("active");
@@ -1426,6 +1602,7 @@
       showSuccess("Cleared", "All products have been cleared.");
     }
 
+    checkAdminLogin();
     loadAdminData();
   </script>
 </body>
