@@ -1,1247 +1,1028 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>DemiSke Vault</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        :root {
-            --red: #ff1e1e;
-            --deep-red: #7a0000;
-            --orange: #ff6a00;
-            --gold: #ffcc66;
-            --soft-red: #ffd0d0;
-            --card: rgba(22, 8, 10, 0.88);
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background:
-                radial-gradient(circle at 50% 0%, rgba(255, 0, 0, 0.32), transparent 34%),
-                radial-gradient(circle at 100% 25%, rgba(255, 106, 0, 0.13), transparent 30%),
-                linear-gradient(rgba(7, 3, 6, 0.88), rgba(2, 2, 7, 0.98)),
-                url("bg.jpg");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            background:
-                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-            background-size: 34px 34px;
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.75), transparent);
-            z-index: 0;
-        }
-
-        .customer-login-screen {
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 22px;
-            background:
-                radial-gradient(circle at top, rgba(255, 0, 0, 0.30), transparent 35%),
-                linear-gradient(rgba(5, 2, 2, 0.92), rgba(5, 5, 10, 0.98)),
-                url("bg.jpg");
-            background-size: cover;
-            background-position: center;
-        }
-
-        .customer-login-card {
-            width: 100%;
-            max-width: 390px;
-            padding: 26px 22px;
-            border-radius: 28px;
-            background: rgba(18, 8, 8, 0.94);
-            border: 1px solid rgba(255, 40, 40, 0.50);
-            box-shadow:
-                0 0 35px rgba(255, 0, 0, 0.35),
-                inset 0 0 22px rgba(255, 0, 0, 0.12);
-            backdrop-filter: blur(14px);
-            text-align: center;
-        }
-
-        .login-logo {
-            width: 72px;
-            height: 72px;
-            margin: 0 auto 15px;
-            border-radius: 22px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 30px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #ff1e1e, #7a0000, #ff6a00);
-            box-shadow: 0 0 28px rgba(255, 0, 0, 0.50);
-        }
-
-        .customer-login-card h2 {
-            margin: 0 0 8px;
-            font-size: 32px;
-            color: white;
-            text-shadow:
-                0 0 8px #ff0000,
-                0 0 18px #ff3b3b;
-        }
-
-        .customer-login-card p {
-            color: var(--soft-red);
-            margin-bottom: 15px;
-        }
-
-        .auth-tabs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .auth-tab {
-            background: rgba(255, 255, 255, 0.12);
-            box-shadow: none;
-        }
-
-        .auth-tab.active {
-            background: linear-gradient(135deg, #ff1e1e, #8b0000, #ff6a00);
-            box-shadow:
-                0 0 15px rgba(255, 0, 0, 0.50),
-                0 0 25px rgba(255, 106, 0, 0.25);
-        }
-
-        label {
-            display: block;
-            margin: 12px 0 6px;
-            color: #ffb3b3;
-            font-size: 14px;
-            font-weight: bold;
-            text-align: left;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 60, 60, 0.45);
-            background: rgba(0, 0, 0, 0.45);
-            color: white;
-            outline: none;
-            font-size: 15px;
-        }
-
-        .remember-line {
-            display: flex !important;
-            align-items: center;
-            gap: 8px;
-            margin-top: 12px !important;
-            color: #ffd0d0 !important;
-        }
-
-        .remember-line input {
-            width: auto;
-        }
-
-        .auth-error {
-            display: none;
-            color: #ff6b6b !important;
-            font-size: 14px;
-            margin-top: 12px;
-        }
-
-        .auth-success {
-            display: none;
-            color: #8dffb3 !important;
-            font-size: 14px;
-            margin-top: 12px;
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
-            padding: 24px 16px 42px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .top-box {
-            width: 100%;
-            max-width: 500px;
-            margin-bottom: 18px;
-            padding: 22px;
-            border-radius: 28px;
-            background:
-                linear-gradient(155deg, rgba(34, 4, 6, 0.90), rgba(8, 8, 14, 0.86)),
-                radial-gradient(circle at top, rgba(255, 0, 0, 0.18), transparent 45%);
-            border: 1px solid rgba(255, 60, 60, 0.42);
-            box-shadow:
-                0 0 28px rgba(255, 0, 0, 0.25),
-                inset 0 0 18px rgba(255, 0, 0, 0.08);
-            backdrop-filter: blur(10px);
-        }
-
-        h1 {
-            margin: 0 0 8px;
-            font-size: 40px;
-            color: #ffffff;
-            letter-spacing: 0.8px;
-            text-shadow:
-                0 0 8px #ff0000,
-                0 0 18px #ff3b3b,
-                0 0 35px #7a0000;
-        }
-
-        .subtitle {
-            color: #f0d0d0;
-            margin: 0 0 8px;
-            font-size: 14px;
-        }
-
-        .telegram {
-            color: #ff4b4b;
-            font-weight: bold;
-            margin: 6px 0;
-            text-shadow: 0 0 12px #ff0000;
-        }
-
-        .customer-pill {
-            margin: 14px auto 0;
-            padding: 10px 14px;
-            border-radius: 999px;
-            background: rgba(0, 0, 0, 0.38);
-            border: 1px solid rgba(255, 60, 60, 0.30);
-            color: #ffd0d0;
-            font-size: 13px;
-            max-width: 300px;
-        }
-
-        .hero-panel {
-            width: 100%;
-            max-width: 500px;
-            margin-bottom: 16px;
-            padding: 16px;
-            border-radius: 24px;
-            background:
-                linear-gradient(145deg, rgba(255, 0, 0, 0.12), rgba(0, 0, 0, 0.48));
-            border: 1px solid rgba(255, 65, 65, 0.30);
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.14);
-            text-align: left;
-        }
-
-        .hero-panel h2 {
-            margin: 0 0 8px;
-            font-size: 20px;
-            text-shadow: 0 0 12px #ff0000;
-        }
-
-        .hero-panel p {
-            margin: 0;
-            color: #f1d4d4;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .stats-row {
-            width: 100%;
-            max-width: 500px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-
-        .stat-card {
-            padding: 12px 8px;
-            border-radius: 18px;
-            background: rgba(15, 8, 10, 0.82);
-            border: 1px solid rgba(255, 60, 60, 0.22);
-            box-shadow: inset 0 0 14px rgba(255, 0, 0, 0.08);
-        }
-
-        .stat-card strong {
-            display: block;
-            font-size: 15px;
-            color: white;
-        }
-
-        .stat-card span {
-            display: block;
-            margin-top: 3px;
-            color: #ffb3b3;
-            font-size: 11px;
-        }
-
-        .menu-shell {
-            width: 100%;
-            max-width: 500px;
-            padding: 18px;
-            border-radius: 30px;
-            background:
-                linear-gradient(155deg, rgba(22, 8, 10, 0.90), rgba(5, 5, 12, 0.92)),
-                radial-gradient(circle at top right, rgba(255, 0, 0, 0.18), transparent 45%);
-            border: 1px solid rgba(255, 60, 60, 0.32);
-            box-shadow:
-                0 0 26px rgba(255, 0, 0, 0.16),
-                inset 0 0 20px rgba(255, 0, 0, 0.08);
-            backdrop-filter: blur(10px);
-        }
-
-        .menu-title {
-            margin: 0 0 12px;
-            text-align: left;
-        }
-
-        .menu-title h2 {
-            margin: 0;
-            font-size: 24px;
-            text-shadow: 0 0 14px rgba(255, 0, 0, 0.85);
-        }
-
-        .menu-title p {
-            margin: 6px 0 0;
-            font-size: 13px;
-            color: #ffd0d0;
-        }
-
-        .menu {
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-
-        .level-btn {
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-            margin: 0;
-            padding: 18px 16px;
-            border-radius: 22px;
-            border: 1px solid rgba(255, 75, 75, 0.24);
-            background:
-                linear-gradient(135deg, rgba(84, 7, 7, 0.98), rgba(15, 15, 24, 0.98)),
-                radial-gradient(circle at right, rgba(255, 106, 0, 0.18), transparent 45%);
-            color: #ffffff;
-            text-align: left;
-            cursor: pointer;
-            box-shadow:
-                0 10px 22px rgba(0, 0, 0, 0.35),
-                0 0 18px rgba(255, 0, 0, 0.16);
-        }
-
-        .level-btn::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -70%;
-            width: 55%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
-            transform: skewX(-20deg);
-        }
-
-        .level-btn:active {
-            transform: scale(0.98);
-        }
-
-        .level-main {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .level-name {
-            font-size: 21px;
-            font-weight: 900;
-            letter-spacing: 0.3px;
-        }
-
-        .level-badge {
-            padding: 7px 10px;
-            border-radius: 999px;
-            background: rgba(255, 106, 0, 0.18);
-            border: 1px solid rgba(255, 180, 80, 0.30);
-            color: #ffcc66;
-            font-size: 11px;
-            font-weight: 900;
-            white-space: nowrap;
-        }
-
-        .level-sub {
-            display: block;
-            margin-top: 8px;
-            color: #ffd0d0;
-            font-size: 13px;
-            line-height: 1.4;
-        }
-
-        .cta-text {
-            display: inline-block !important;
-            margin-top: 11px !important;
-            padding: 9px 14px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #ff1e1e, #8b0000, #ff6a00);
-            color: #ffffff !important;
-            font-size: 12px !important;
-            font-weight: 900 !important;
-            box-shadow:
-                0 0 12px rgba(255, 0, 0, 0.55),
-                0 0 22px rgba(255, 106, 0, 0.25);
-        }
-
-        .account-list {
-            display: none;
-            width: 100%;
-            max-width: 500px;
-            margin-top: 18px;
-            padding: 18px;
-            border-radius: 28px;
-            background:
-                linear-gradient(155deg, rgba(18, 8, 10, 0.94), rgba(6, 6, 12, 0.95)),
-                radial-gradient(circle at top, rgba(255, 0, 0, 0.16), transparent 45%);
-            border: 1px solid rgba(255, 60, 60, 0.35);
-            box-shadow: 0 0 24px rgba(255, 0, 0, 0.18);
-            backdrop-filter: blur(10px);
-        }
-
-        .account-list h2 {
-            margin: 0 0 12px;
-            font-size: 24px;
-            text-shadow: 0 0 12px #ff0000;
-        }
-
-        .account-item {
-            width: 100%;
-            margin: 11px 0;
-            padding: 15px;
-            border-radius: 20px;
-            background:
-                linear-gradient(145deg, rgba(60, 14, 14, 0.96), rgba(10, 10, 18, 0.96));
-            border: 1px solid rgba(255, 60, 60, 0.20);
-            color: white;
-            text-align: left;
-            cursor: pointer;
-            box-shadow:
-                0 8px 18px rgba(0,0,0,0.25),
-                inset 0 0 16px rgba(255, 0, 0, 0.06);
-        }
-
-        .account-item strong {
-            display: block;
-            font-size: 17px;
-            color: white;
-        }
-
-        .account-item span {
-            display: block;
-            margin-top: 5px;
-            color: #ffd0d0;
-            font-size: 13px;
-        }
-
-        .pick-cta {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 7px 11px;
-            border-radius: 999px;
-            background: rgba(255, 0, 0, 0.24);
-            border: 1px solid rgba(255, 80, 80, 0.25);
-            color: #ffffff;
-            font-size: 12px;
-            font-weight: 900;
-        }
-
-        .note {
-            width: 100%;
-            max-width: 500px;
-            margin-top: 18px;
-            padding: 15px;
-            border-radius: 18px;
-            background: rgba(0, 0, 0, 0.45);
-            border: 1px solid rgba(255, 60, 60, 0.25);
-            font-size: 13px;
-            color: #cccccc;
-            line-height: 1.5;
-        }
-
-        .popup-bg {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(circle at top, rgba(255, 0, 0, 0.25), transparent 35%),
-                radial-gradient(circle at bottom, rgba(255, 106, 0, 0.12), transparent 40%),
-                rgba(0, 0, 0, 0.90);
-            backdrop-filter: blur(7px);
-            justify-content: center;
-            align-items: center;
-            padding: 18px;
-            z-index: 999;
-        }
-
-        .popup {
-            position: relative;
-            width: 100%;
-            max-width: 440px;
-            max-height: 92vh;
-            overflow-y: auto;
-            background:
-                linear-gradient(155deg, rgba(28, 0, 0, 0.98), rgba(7, 7, 13, 0.98)),
-                radial-gradient(circle at top, rgba(255, 0, 0, 0.22), transparent 48%);
-            border: 1px solid rgba(255, 55, 55, 0.70);
-            border-radius: 30px;
-            padding: 22px;
-            box-shadow:
-                0 0 26px rgba(255, 0, 0, 0.45),
-                0 0 60px rgba(255, 106, 0, 0.18),
-                inset 0 0 22px rgba(255, 0, 0, 0.10);
-            backdrop-filter: blur(14px);
-        }
-
-        .popup h2 {
-            margin: 0 0 14px;
-            font-size: 28px;
-            color: #ffffff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow:
-                0 0 8px #ff0000,
-                0 0 18px #ff3b3b,
-                0 0 32px #7a0000;
-        }
-
-        .popup p {
-            color: #f3d8d8;
-            line-height: 1.5;
-        }
-
-        .image-slider {
-            width: 100%;
-            padding: 10px;
-            border-radius: 24px;
-            background:
-                linear-gradient(145deg, rgba(255, 0, 0, 0.14), rgba(0, 0, 0, 0.58));
-            border: 1px solid rgba(255, 65, 65, 0.42);
-            box-shadow:
-                inset 0 0 20px rgba(255, 0, 0, 0.12),
-                0 0 18px rgba(255, 0, 0, 0.16);
-        }
-
-        .account-img {
-            width: 100%;
-            height: 265px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 45, 45, 0.75);
-            margin: 0 0 12px;
-            background: rgba(0, 0, 0, 0.55);
-            object-fit: cover;
-            box-shadow:
-                0 0 16px rgba(255, 0, 0, 0.38),
-                inset 0 0 20px rgba(255, 0, 0, 0.10);
-        }
-
-        .slider-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .slider-controls button {
-            margin-top: 0;
-            padding: 11px;
-            font-size: 13px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #4b0505, #b60000);
-            box-shadow: 0 0 14px rgba(255, 0, 0, 0.30);
-        }
-
-        #imageCounter {
-            margin: 10px 0 0;
-            color: #ffb3b3;
-            font-size: 13px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .info-box,
-        .gcash-box {
-            background:
-                linear-gradient(145deg, rgba(40, 0, 0, 0.82), rgba(0, 0, 0, 0.58));
-            border: 1px solid rgba(255, 65, 65, 0.45);
-            border-radius: 22px;
-            padding: 16px;
-            margin: 16px 0;
-            text-align: left;
-            box-shadow:
-                inset 0 0 18px rgba(255, 0, 0, 0.10),
-                0 0 16px rgba(255, 0, 0, 0.10);
-        }
-
-        .info-box p,
-        .gcash-box p {
-            margin: 9px 0;
-            color: #f5dcdc;
-            font-size: 14px;
-        }
-
-        .info-box strong,
-        .gcash-box strong {
-            color: #ff4b4b;
-            text-shadow: 0 0 8px rgba(255, 0, 0, 0.45);
-        }
-
-        #infoPrice,
-        #paymentAmount {
-            color: #ffcc66;
-            font-size: 18px;
-            font-weight: 900;
-            text-shadow: 0 0 10px rgba(255, 180, 0, 0.45);
-        }
-
-        button,
-        .telegram-btn {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            border-radius: 15px;
-            border: none;
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            font-size: 15px;
-            background: linear-gradient(135deg, #ff1e1e, #8b0000, #ff6a00);
-            box-shadow:
-                0 0 16px rgba(255, 0, 0, 0.52),
-                0 0 32px rgba(255, 106, 0, 0.24);
-            cursor: pointer;
-            margin-top: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
-
-        button:active,
-        .telegram-btn:active {
-            transform: scale(0.97);
-        }
-
-        .close-btn {
-            background: rgba(255, 255, 255, 0.10);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            box-shadow: none;
-            text-transform: none;
-        }
-
-        .back-btn {
-            background: rgba(120, 0, 0, 0.60);
-            border: 1px solid rgba(255, 60, 60, 0.34);
-            box-shadow: none;
-        }
-
-        .seller-option {
-            padding: 16px;
-            margin: 12px 0;
-            border-radius: 20px;
-            background:
-                linear-gradient(145deg, rgba(255, 0, 0, 0.16), rgba(0, 0, 0, 0.55));
-            border: 1px solid rgba(255, 60, 60, 0.38);
-            box-shadow: 0 0 18px rgba(255, 0, 0, 0.15);
-            text-align: left;
-        }
-
-        .seller-option h3 {
-            margin: 0 0 6px;
-            color: white;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
-        }
-
-        .seller-option p {
-            margin: 4px 0 10px;
-            color: #ffd0d0;
-            font-size: 13px;
-        }
-
-        .telegram-btn {
-            text-align: center;
-            margin-top: 14px;
-        }
-
-        .status-text {
-            margin-top: 12px;
-            color: #ffd0d0;
-            font-size: 14px;
-            line-height: 1.5;
-            text-align: center;
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 32px;
-            }
-
-            .level-name {
-                font-size: 19px;
-            }
-
-            .account-img {
-                height: 235px;
-            }
-
-            .popup {
-                max-width: 94vw;
-                padding: 20px;
-            }
-
-            .popup h2 {
-                font-size: 24px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>DemiSke Admin Panel</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(255, 0, 60, 0.35), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(255, 90, 0, 0.28), transparent 35%),
+        linear-gradient(135deg, #100006, #1a0008, #050505);
+      color: white;
+      padding: 18px;
+    }
+
+    .admin-wrapper {
+      max-width: 760px;
+      margin: auto;
+    }
+
+    .admin-card {
+      background: rgba(8, 8, 16, 0.9);
+      border: 1px solid rgba(255, 70, 95, 0.4);
+      border-radius: 28px;
+      padding: 25px;
+      box-shadow:
+        0 0 30px rgba(255, 0, 60, 0.28),
+        inset 0 0 18px rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .header h1 {
+      font-size: 38px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #ff1744, #ff6a00, #ff003c);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 25px rgba(255, 0, 70, 0.4);
+    }
+
+    .header p {
+      margin-top: 10px;
+      color: #ffc4cc;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ff8d9d;
+      margin: 26px 0 14px;
+    }
+
+    .form-group {
+      margin-bottom: 17px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #ffa0ae;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 60, 95, 0.45);
+      background: rgba(4, 4, 12, 0.95);
+      color: white;
+      font-size: 15px;
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #ff3155;
+      box-shadow: 0 0 0 3px rgba(255, 49, 85, 0.18);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #777;
+    }
+
+    textarea {
+      height: 95px;
+      resize: none;
+    }
+
+    .helper-text {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 7px;
+      line-height: 1.4;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .type-option {
+      position: relative;
+    }
+
+    .type-option input {
+      display: none;
+    }
+
+    .type-card {
+      min-height: 115px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 70, 95, 0.35);
+      background: rgba(255, 255, 255, 0.045);
+      padding: 16px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .type-card:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 40, 70, 0.1);
+    }
+
+    .type-icon {
+      font-size: 31px;
+      margin-bottom: 8px;
+    }
+
+    .type-card strong {
+      display: block;
+      font-size: 15px;
+      color: white;
+      margin-bottom: 5px;
+    }
+
+    .type-card span {
+      font-size: 11px;
+      color: #ffbec7;
+      line-height: 1.3;
+    }
+
+    .type-option input:checked + .type-card {
+      border-color: #ff3155;
+      background: linear-gradient(135deg, rgba(255, 0, 60, 0.32), rgba(255, 106, 0, 0.16));
+      box-shadow: 0 0 20px rgba(255, 0, 60, 0.35);
+    }
+
+    .upload-box {
+      border: 2px dashed rgba(255, 65, 95, 0.65);
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      background: rgba(255, 20, 60, 0.06);
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .upload-box:hover {
+      background: rgba(255, 20, 60, 0.13);
+      transform: scale(1.01);
+    }
+
+    .upload-box input {
+      display: none;
+    }
+
+    .upload-icon {
+      font-size: 38px;
+      margin-bottom: 8px;
+    }
+
+    .upload-box strong {
+      display: block;
+      font-size: 16px;
+      color: white;
+    }
+
+    .upload-box span {
+      display: block;
+      margin-top: 6px;
+      font-size: 13px;
+      color: #ffb6c1;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .preview-item {
+      position: relative;
+    }
+
+    .preview-grid img {
+      width: 100%;
+      height: 95px;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 80, 100, 0.5);
+      box-shadow: 0 0 12px rgba(255, 0, 60, 0.25);
+    }
+
+    .remove-img {
+      position: absolute;
+      top: -7px;
+      right: -7px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: none;
+      background: #ff1744;
+      color: white;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .product-preview {
+      margin-top: 24px;
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 70, 95, 0.32);
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .product-preview h3 {
+      color: #ff8d9d;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+
+    .preview-card {
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(5, 5, 12, 0.94);
+      border: 1px solid rgba(255, 60, 95, 0.35);
+    }
+
+    .preview-card-img {
+      width: 100%;
+      height: 190px;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #aaa;
+      font-size: 14px;
+      overflow: hidden;
+    }
+
+    .preview-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-card-body {
+      padding: 16px;
+    }
+
+    .preview-badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .preview-card-body h4 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .preview-price {
+      color: #ffb0ba;
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .preview-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .preview-info div {
+      background: rgba(255, 255, 255, 0.045);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 12px;
+      color: #ddd;
+    }
+
+    .preview-desc {
+      color: #bdbdbd;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 900;
+      transition: 0.2s ease;
+    }
+
+    .save-btn {
+      color: white;
+      background: linear-gradient(135deg, #ff003c, #ff3b30, #ff7a00);
+      box-shadow: 0 0 22px rgba(255, 0, 60, 0.35);
+    }
+
+    .save-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(255, 0, 60, 0.55);
+    }
+
+    .clear-btn {
+      color: #ffb5bf;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .clear-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 999;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 395px;
+      background:
+        radial-gradient(circle at top, rgba(255, 0, 60, 0.25), transparent 45%),
+        #111118;
+      border: 1px solid rgba(255, 75, 100, 0.45);
+      border-radius: 26px;
+      padding: 28px;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(255, 0, 60, 0.4);
+      animation: popup 0.25s ease;
+    }
+
+    @keyframes popup {
+      from {
+        opacity: 0;
+        transform: scale(0.92) translateY(15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal-icon {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ff003c, #ff7a00);
+      font-size: 34px;
+      box-shadow: 0 0 24px rgba(255, 0, 60, 0.5);
+    }
+
+    .modal h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .modal p {
+      color: #ffc4cc;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    .modal button {
+      width: 100%;
+      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 14px;
+      }
+
+      .admin-card {
+        padding: 22px 18px;
+        border-radius: 24px;
+      }
+
+      .header h1 {
+        font-size: 31px;
+      }
+
+      .type-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-info {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="admin-wrapper">
+    <div class="admin-card">
+      <div class="header">
+        <h1>DemiSke Admin</h1>
+        <p>
+          Add products easily. Choose if you are selling an account, key, or other service.
+        </p>
+      </div>
 
-    <div class="customer-login-screen" id="customerLoginScreen">
-        <div class="customer-login-card">
-            <div class="login-logo">DS</div>
+      <form id="adminForm">
+        <div class="section-title">Choose Product Type</div>
 
-            <h2>DemiSke Vault</h2>
-            <p id="customerAuthText">Login to access the shop</p>
-
-            <div class="auth-tabs">
-                <button class="auth-tab active" id="loginTab" onclick="setCustomerMode('login')">Login</button>
-                <button class="auth-tab" id="registerTab" onclick="setCustomerMode('register')">Register</button>
+        <div class="type-grid">
+          <label class="type-option">
+            <input type="radio" name="productType" value="account" />
+            <div class="type-card">
+              <div class="type-icon">🎮</div>
+              <strong>Account</strong>
+              <span>Game accounts, UID, level, region</span>
             </div>
+          </label>
 
-            <label>Username</label>
-            <input type="text" id="customerUsername" placeholder="Enter username">
-
-            <label>Password</label>
-            <input type="password" id="customerPassword" placeholder="Enter password">
-
-            <div id="customerConfirmBox" style="display:none;">
-                <label>Confirm Password</label>
-                <input type="password" id="customerConfirmPassword" placeholder="Confirm password">
+          <label class="type-option">
+            <input type="radio" name="productType" value="key" />
+            <div class="type-card">
+              <div class="type-icon">🔑</div>
+              <strong>Key</strong>
+              <span>VIP keys, license, duration</span>
             </div>
+          </label>
 
-            <label class="remember-line" id="rememberLine">
-                <input type="checkbox" id="customerRemember">
-                Remember me
-            </label>
-
-            <button id="customerAuthButton" onclick="customerLogin()">Login</button>
-
-            <p class="auth-error" id="customerAuthError"></p>
-            <p class="auth-success" id="customerAuthSuccess"></p>
+          <label class="type-option">
+            <input type="radio" name="productType" value="other" />
+            <div class="type-card">
+              <div class="type-icon">📦</div>
+              <strong>Other</strong>
+              <span>Services, bundles, top-up, custom</span>
+            </div>
+          </label>
         </div>
+
+        <div class="helper-text">
+          Select one type first. The form will automatically change based on your choice.
+        </div>
+
+        <div class="section-title">Product Pictures</div>
+
+        <label class="upload-box" for="productPictures">
+          <input type="file" id="productPictures" multiple accept="image/*" />
+          <div class="upload-icon">📸</div>
+          <strong>Tap to upload pictures</strong>
+          <span>Multiple images allowed</span>
+        </label>
+
+        <div id="previewGrid" class="preview-grid"></div>
+
+        <!-- ACCOUNT FIELDS -->
+        <div id="accountFields" class="hidden">
+          <div class="section-title">Account Details</div>
+
+          <div class="form-group">
+            <label>Account Name</label>
+            <input type="text" id="accountName" placeholder="Example: KhunICE Account" />
+          </div>
+
+          <div class="two-column">
+            <div class="form-group">
+              <label>Level</label>
+              <input type="text" id="accountLevel" placeholder="Example: Level 184" />
+            </div>
+
+            <div class="form-group">
+              <label>Price</label>
+              <input type="number" id="accountPrice" placeholder="Example: 550" />
+            </div>
+          </div>
+
+          <div class="two-column">
+            <div class="form-group">
+              <label>UID</label>
+              <input type="text" id="accountUid" placeholder="Example: 361673204" />
+            </div>
+
+            <div class="form-group">
+              <label>Region</label>
+              <input type="text" id="accountRegion" placeholder="Example: TH" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Nickname</label>
+            <input type="text" id="accountNickname" placeholder="Example: DemiSke Buyer" />
+          </div>
+
+          <div class="form-group">
+            <label>Budget Category</label>
+            <select id="accountCategory">
+              <option value="">Select category</option>
+              <option value="150-200">₱150 - ₱200</option>
+              <option value="201-500">₱201 - ₱500</option>
+              <option value="501-1000">₱501 - ₱1000</option>
+              <option value="1001-2000">₱1001 - ₱2000</option>
+              <option value="2000+">₱2000+</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="accountDescription" placeholder="Add skins, rare items, login type, or other notes..."></textarea>
+          </div>
+        </div>
+
+        <!-- KEY FIELDS -->
+        <div id="keyFields" class="hidden">
+          <div class="section-title">Key Details</div>
+
+          <div class="form-group">
+            <label>Key Name</label>
+            <input type="text" id="keyName" placeholder="Example: Astrix VIP Key" />
+          </div>
+
+          <div class="two-column">
+            <div class="form-group">
+              <label>Duration</label>
+              <select id="keyDuration">
+                <option value="">Select duration</option>
+                <option value="1 Day">1 Day</option>
+                <option value="3 Days">3 Days</option>
+                <option value="7 Days">7 Days</option>
+                <option value="14 Days">14 Days</option>
+                <option value="30 Days">30 Days</option>
+                <option value="Lifetime">Lifetime</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Price</label>
+              <input type="number" id="keyPrice" placeholder="Example: 250" />
+            </div>
+          </div>
+
+          <div class="two-column">
+            <div class="form-group">
+              <label>Game / Product</label>
+              <input type="text" id="keyGame" placeholder="Example: PUBGM / MLBB / CODM" />
+            </div>
+
+            <div class="form-group">
+              <label>Platform</label>
+              <select id="keyPlatform">
+                <option value="">Select platform</option>
+                <option value="Android">Android</option>
+                <option value="iOS">iOS</option>
+                <option value="PC">PC</option>
+                <option value="Android / iOS">Android / iOS</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="two-column">
+            <div class="form-group">
+              <label>Server</label>
+              <input type="text" id="keyServer" placeholder="Example: Global / KR / VNG" />
+            </div>
+
+            <div class="form-group">
+              <label>Stock</label>
+              <input type="number" id="keyStock" placeholder="Example: 10" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="keyDescription" placeholder="Add key features, supported version, rules, or notes..."></textarea>
+          </div>
+        </div>
+
+        <!-- OTHER FIELDS -->
+        <div id="otherFields" class="hidden">
+          <div class="section-title">Other Product Details</div>
+
+          <div class="form-group">
+            <label>Item / Service Name</label>
+            <input type="text" id="otherName" placeholder="Example: Boosting Service" />
+          </div>
+
+          <div class="two-column">
+            <div class="form-group">
+              <label>Price</label>
+              <input type="number" id="otherPrice" placeholder="Example: 999" />
+            </div>
+
+            <div class="form-group">
+              <label>Category</label>
+              <input type="text" id="otherCategory" placeholder="Example: Service / Top-up / Bundle" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Availability</label>
+            <select id="otherAvailability">
+              <option value="">Select availability</option>
+              <option value="Available">Available</option>
+              <option value="Limited">Limited</option>
+              <option value="Sold Out">Sold Out</option>
+              <option value="Pre-order">Pre-order</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="otherDescription" placeholder="Write details, inclusions, rules, or delivery time..."></textarea>
+          </div>
+        </div>
+
+        <div class="product-preview">
+          <h3>Live Product Preview</h3>
+
+          <div class="preview-card">
+            <div class="preview-card-img" id="livePreviewImage">
+              No image selected
+            </div>
+
+            <div class="preview-card-body">
+              <div class="preview-badge" id="livePreviewType">No Type Selected</div>
+
+              <h4 id="livePreviewName">Product Name</h4>
+
+              <div class="preview-price" id="livePreviewPrice">₱0</div>
+
+              <div class="preview-info" id="livePreviewInfo">
+                <div>Choose product type first</div>
+              </div>
+
+              <p class="preview-desc" id="livePreviewDescription">
+                Product description will appear here.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button type="submit" class="save-btn">Save Product</button>
+          <button type="button" class="clear-btn" onclick="clearForm()">Clear Form</button>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <div class="container">
-        <div class="top-box">
-            <h1>DemiSke Vault</h1>
-            <p class="subtitle">Premium Accounts • Fast Transaction • Trusted Seller</p>
-            <p class="telegram">Telegram: @Demixyloadmin</p>
-
-            <div class="customer-pill">
-                Logged in as: <span id="currentCustomerName">Customer</span>
-            </div>
-
-            <button onclick="customerLogout()" class="close-btn">Logout</button>
-        </div>
-
-        <div class="hero-panel">
-            <h2>🔥 Premium Gaming Accounts</h2>
-            <p>Choose your level range, view the full account details, then message your selected seller directly on Telegram.</p>
-        </div>
-
-        <div class="stats-row">
-            <div class="stat-card">
-                <strong>Fast</strong>
-                <span>Transaction</span>
-            </div>
-            <div class="stat-card">
-                <strong>Trusted</strong>
-                <span>Sellers</span>
-            </div>
-            <div class="stat-card">
-                <strong>Secure</strong>
-                <span>Manual Deal</span>
-            </div>
-        </div>
-
-        <div class="menu-shell">
-            <div class="menu-title">
-                <h2>Choose Account Level</h2>
-                <p>Tap a level range below to view available accounts.</p>
-            </div>
-
-            <div class="menu">
-                <button class="level-btn" onclick="showAccounts('level_1_50')">
-                    <div class="level-main">
-                        <span class="level-name">Level 1-50</span>
-                        <span class="level-badge">STARTER</span>
-                    </div>
-                    <span class="level-sub">Entry-level accounts for quick start buyers.</span>
-                    <span class="cta-text">View Accounts →</span>
-                </button>
-
-                <button class="level-btn" onclick="showAccounts('level_50_100')">
-                    <div class="level-main">
-                        <span class="level-name">Level 50-100</span>
-                        <span class="level-badge">BOOSTED</span>
-                    </div>
-                    <span class="level-sub">Better progress and stronger profile value.</span>
-                    <span class="cta-text">View Accounts →</span>
-                </button>
-
-                <button class="level-btn" onclick="showAccounts('level_100_150')">
-                    <div class="level-main">
-                        <span class="level-name">Level 100-150</span>
-                        <span class="level-badge">PRO</span>
-                    </div>
-                    <span class="level-sub">Solid accounts for serious players.</span>
-                    <span class="cta-text">View Accounts →</span>
-                </button>
-
-                <button class="level-btn" onclick="showAccounts('level_150_200')">
-                    <div class="level-main">
-                        <span class="level-name">Level 150-200</span>
-                        <span class="level-badge">ELITE</span>
-                    </div>
-                    <span class="level-sub">High-value accounts with stronger progress.</span>
-                    <span class="cta-text">View Accounts →</span>
-                </button>
-
-                <button class="level-btn" onclick="showAccounts('level_200_250')">
-                    <div class="level-main">
-                        <span class="level-name">Level 200-250</span>
-                        <span class="level-badge">PREMIUM</span>
-                    </div>
-                    <span class="level-sub">Premium-level accounts for collectors.</span>
-                    <span class="cta-text">View Accounts →</span>
-                </button>
-
-                <button class="level-btn" onclick="showAccounts('level_250_300')">
-                    <div class="level-main">
-                        <span class="level-name">Level 250-300</span>
-                        <span class="level-badge">RARE</span>
-                    </div>
-                    <span class="level-sub">Rare account range with strong history.</span>
-                    <span class="cta-text">View Accounts →</span>
-                </button>
-
-                <button class="level-btn" onclick="showAccounts('level_300_400')">
-                    <div class="level-main">
-                        <span class="level-name">Level 300-400</span>
-                        <span class="level-badge">LEGEND</span>
-                    </div>
-                    <span class="level-sub">Legendary range for high-tier buyers.</span>
-                    <span class="cta-text">View Accounts →</span>
-                </button>
-
-                <button class="level-btn" onclick="showAccounts('level_400_500')">
-                    <div class="level-main">
-                        <span class="level-name">Level 400-500</span>
-                        <span class="level-badge">MYTHIC</span>
-                    </div>
-                    <span class="level-sub">Top-tier range for premium collectors.</span>
-                    <span class="cta-text">View Accounts →</span>
-                </button>
-            </div>
-        </div>
-
-        <div class="account-list" id="accountList">
-            <h2 id="accountListTitle">Available Accounts</h2>
-            <div id="accountItems"></div>
-        </div>
-
-        <div class="note">
-            Choose a level, view the account details, then message the selected seller directly on Telegram.
-        </div>
+  <!-- SUCCESS MODAL -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal">
+      <div class="modal-icon">✓</div>
+      <h2>Product Saved</h2>
+      <p>
+        Your product details have been saved successfully.
+        You can now add another product.
+      </p>
+      <button onclick="closeModal()">Done</button>
     </div>
+  </div>
 
-    <div class="popup-bg" id="accountPopup">
-        <div class="popup">
-            <h2>Account Details</h2>
-
-            <div class="image-slider">
-                <img id="accountImage" class="account-img" src="" alt="Account Picture">
-
-                <div class="slider-controls">
-                    <button type="button" onclick="prevAccountImage()">← Previous</button>
-                    <button type="button" onclick="nextAccountImage()">Next →</button>
-                </div>
-
-                <p id="imageCounter" class="status-text"></p>
-            </div>
-
-            <div class="info-box">
-                <p><strong>Account:</strong> <span id="infoAccount"></span></p>
-                <p><strong>Level:</strong> <span id="infoLevel"></span></p>
-                <p><strong>Price:</strong> ₱<span id="infoPrice"></span></p>
-                <p><strong>Nickname:</strong> <span id="infoNickname"></span></p>
-                <p><strong>Region:</strong> <span id="infoRegion"></span></p>
-                <p><strong>UID:</strong> <span id="infoUid"></span></p>
-                <p><strong>Details:</strong> <span id="infoDetails"></span></p>
-            </div>
-
-            <button onclick="openSellerPopup()">Choose Seller & Buy Now</button>
-            <button class="close-btn" onclick="closePopups()">Cancel</button>
-        </div>
+  <!-- ERROR MODAL -->
+  <div class="modal-overlay" id="errorModal">
+    <div class="modal">
+      <div class="modal-icon">!</div>
+      <h2>Missing Details</h2>
+      <p id="errorText">
+        Please complete the required fields.
+      </p>
+      <button onclick="closeErrorModal()">Okay</button>
     </div>
+  </div>
 
-    <div class="popup-bg" id="sellerPopup">
-        <div class="popup">
-            <h2>Choose Seller</h2>
-            <p>Select which seller you want to buy from. Each seller has a separate GCash account.</p>
+  <script>
+    const adminForm = document.getElementById("adminForm");
 
-            <div class="seller-option">
-                <h3>🔥 Demi</h3>
-                <p>Fast transaction • Main seller</p>
-                <button onclick="openGcash('Demi')">Buy from Demi</button>
-            </div>
+    const productTypeInputs = document.querySelectorAll("input[name='productType']");
 
-            <div class="seller-option">
-                <h3>⚡ SKE</h3>
-                <p>Alternative seller • Direct payment</p>
-                <button onclick="openGcash('SKE')">Buy from SKE</button>
-            </div>
+    const productPictures = document.getElementById("productPictures");
+    const previewGrid = document.getElementById("previewGrid");
 
-            <button class="back-btn" onclick="backToAccount()">Back to Account</button>
-            <button class="close-btn" onclick="closePopups()">Cancel</button>
-        </div>
-    </div>
+    const accountFields = document.getElementById("accountFields");
+    const keyFields = document.getElementById("keyFields");
+    const otherFields = document.getElementById("otherFields");
 
-    <div class="popup-bg" id="gcashPopup">
-        <div class="popup">
-            <h2>GCash Payment</h2>
+    const successModal = document.getElementById("successModal");
+    const errorModal = document.getElementById("errorModal");
+    const errorText = document.getElementById("errorText");
 
-            <div class="gcash-box">
-                <p><strong>Selected Account:</strong> <span id="gcashAccount"></span></p>
-                <p><strong>Seller:</strong> <span id="gcashSeller"></span></p>
-                <p><strong>GCash Name:</strong> <span id="gcashName">Select seller first</span></p>
-                <p><strong>GCash Number:</strong> <span id="gcashNumber">Select seller first</span></p>
-                <p><strong>Amount:</strong> ₱<span id="paymentAmount"></span></p>
-            </div>
+    const livePreviewImage = document.getElementById("livePreviewImage");
+    const livePreviewType = document.getElementById("livePreviewType");
+    const livePreviewName = document.getElementById("livePreviewName");
+    const livePreviewPrice = document.getElementById("livePreviewPrice");
+    const livePreviewInfo = document.getElementById("livePreviewInfo");
+    const livePreviewDescription = document.getElementById("livePreviewDescription");
 
-            <div class="info-box">
-                <p><strong>Step 1:</strong> Send the exact amount to the GCash shown above.</p>
-                <p><strong>Step 2:</strong> Take a screenshot of your payment.</p>
-                <p><strong>Step 3:</strong> Tap the button below and send your payment proof directly to the seller.</p>
-                <p><strong>Step 4:</strong> Wait for the seller to confirm and deliver your account.</p>
-            </div>
+    let selectedProductType = "";
+    let selectedImages = [];
 
-            <a class="telegram-btn" id="sellerDmBtn" href="#" target="_blank">
-                Message Seller on Telegram
-            </a>
+    productTypeInputs.forEach(input => {
+      input.addEventListener("change", function () {
+        selectedProductType = this.value;
 
-            <button class="back-btn" onclick="backToSeller()">Back to Seller Choice</button>
-            <button class="close-btn" onclick="closePopups()">Close</button>
-        </div>
-    </div>
+        accountFields.classList.add("hidden");
+        keyFields.classList.add("hidden");
+        otherFields.classList.add("hidden");
 
-    <script>
-        const SUPABASE_URL = "https://ikryvpvjbgplhnkcgtit.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_PVjsZN2CLSI8N_2fgU5ICg_J5Lc0XAr";
-
-        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        let selectedAccount = null;
-        let selectedSeller = "";
-        let customerMode = "login";
-
-        let accountImages = [];
-        let currentImageIndex = 0;
-
-        function setCustomerMode(mode) {
-            customerMode = mode;
-
-            document.getElementById("customerAuthError").style.display = "none";
-            document.getElementById("customerAuthSuccess").style.display = "none";
-
-            if (mode === "login") {
-                document.getElementById("customerAuthText").innerText = "Login to access the shop";
-                document.getElementById("customerConfirmBox").style.display = "none";
-                document.getElementById("rememberLine").style.display = "flex";
-                document.getElementById("customerAuthButton").innerText = "Login";
-                document.getElementById("customerAuthButton").setAttribute("onclick", "customerLogin()");
-
-                document.getElementById("loginTab").classList.add("active");
-                document.getElementById("registerTab").classList.remove("active");
-            } else {
-                document.getElementById("customerAuthText").innerText = "Create customer account";
-                document.getElementById("customerConfirmBox").style.display = "block";
-                document.getElementById("rememberLine").style.display = "none";
-                document.getElementById("customerAuthButton").innerText = "Register";
-                document.getElementById("customerAuthButton").setAttribute("onclick", "customerRegister()");
-
-                document.getElementById("registerTab").classList.add("active");
-                document.getElementById("loginTab").classList.remove("active");
-            }
+        if (selectedProductType === "account") {
+          accountFields.classList.remove("hidden");
         }
 
-        function customerRegister() {
-            const username = document.getElementById("customerUsername").value.trim();
-            const password = document.getElementById("customerPassword").value.trim();
-            const confirmPassword = document.getElementById("customerConfirmPassword").value.trim();
-
-            if (!username || !password || !confirmPassword) {
-                showCustomerError("Please complete all fields.");
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                showCustomerError("Passwords do not match.");
-                return;
-            }
-
-            localStorage.setItem("customerUsername", username);
-            localStorage.setItem("customerPassword", password);
-
-            document.getElementById("customerAuthError").style.display = "none";
-            document.getElementById("customerAuthSuccess").innerText = "Registered successfully. You can now login.";
-            document.getElementById("customerAuthSuccess").style.display = "block";
-
-            setCustomerMode("login");
+        if (selectedProductType === "key") {
+          keyFields.classList.remove("hidden");
         }
 
-        function customerLogin() {
-            const username = document.getElementById("customerUsername").value.trim();
-            const password = document.getElementById("customerPassword").value.trim();
-            const remember = document.getElementById("customerRemember").checked;
-
-            const savedUsername = localStorage.getItem("customerUsername");
-            const savedPassword = localStorage.getItem("customerPassword");
-
-            if (username === savedUsername && password === savedPassword) {
-                if (remember) {
-                    localStorage.setItem("customerLoggedIn", "yes");
-                } else {
-                    sessionStorage.setItem("customerLoggedIn", "yes");
-                }
-
-                localStorage.setItem("currentCustomer", username);
-                document.getElementById("customerLoginScreen").style.display = "none";
-                document.getElementById("currentCustomerName").innerText = username;
-            } else {
-                showCustomerError("Wrong username or password.");
-            }
+        if (selectedProductType === "other") {
+          otherFields.classList.remove("hidden");
         }
 
-        function showCustomerError(message) {
-            document.getElementById("customerAuthError").innerText = message;
-            document.getElementById("customerAuthError").style.display = "block";
-            document.getElementById("customerAuthSuccess").style.display = "none";
+        updateLivePreview();
+      });
+    });
+
+    productPictures.addEventListener("change", function () {
+      selectedImages = Array.from(productPictures.files);
+      renderImagePreviews();
+      updateLivePreview();
+    });
+
+    function renderImagePreviews() {
+      previewGrid.innerHTML = "";
+
+      selectedImages.forEach((file, index) => {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          const item = document.createElement("div");
+          item.className = "preview-item";
+
+          const img = document.createElement("img");
+          img.src = e.target.result;
+
+          const removeBtn = document.createElement("button");
+          removeBtn.className = "remove-img";
+          removeBtn.type = "button";
+          removeBtn.innerHTML = "×";
+
+          removeBtn.onclick = function () {
+            selectedImages.splice(index, 1);
+            renderImagePreviews();
+            updateLivePreview();
+          };
+
+          item.appendChild(img);
+          item.appendChild(removeBtn);
+          previewGrid.appendChild(item);
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function getValue(id) {
+      const element = document.getElementById(id);
+      return element ? element.value.trim() : "";
+    }
+
+    function updateLivePreview() {
+      let name = "Product Name";
+      let price = "0";
+      let description = "Product description will appear here.";
+      let typeText = "No Type Selected";
+      let infoHTML = "<div>Choose product type first</div>";
+
+      if (selectedProductType === "account") {
+        typeText = "Account";
+        name = getValue("accountName") || "Account Name";
+        price = getValue("accountPrice") || "0";
+        description = getValue("accountDescription") || "Account description will appear here.";
+
+        infoHTML = `
+          <div><strong>Level:</strong> ${getValue("accountLevel") || "N/A"}</div>
+          <div><strong>UID:</strong> ${getValue("accountUid") || "N/A"}</div>
+          <div><strong>Region:</strong> ${getValue("accountRegion") || "N/A"}</div>
+          <div><strong>Category:</strong> ${getValue("accountCategory") || "N/A"}</div>
+        `;
+      }
+
+      if (selectedProductType === "key") {
+        typeText = "Key";
+        name = getValue("keyName") || "Key Name";
+        price = getValue("keyPrice") || "0";
+        description = getValue("keyDescription") || "Key description will appear here.";
+
+        infoHTML = `
+          <div><strong>Duration:</strong> ${getValue("keyDuration") || "N/A"}</div>
+          <div><strong>Game:</strong> ${getValue("keyGame") || "N/A"}</div>
+          <div><strong>Platform:</strong> ${getValue("keyPlatform") || "N/A"}</div>
+          <div><strong>Server:</strong> ${getValue("keyServer") || "N/A"}</div>
+        `;
+      }
+
+      if (selectedProductType === "other") {
+        typeText = "Other";
+        name = getValue("otherName") || "Item / Service Name";
+        price = getValue("otherPrice") || "0";
+        description = getValue("otherDescription") || "Item description will appear here.";
+
+        infoHTML = `
+          <div><strong>Category:</strong> ${getValue("otherCategory") || "N/A"}</div>
+          <div><strong>Status:</strong> ${getValue("otherAvailability") || "N/A"}</div>
+        `;
+      }
+
+      livePreviewType.innerText = typeText;
+      livePreviewName.innerText = name;
+      livePreviewPrice.innerText = "₱" + price;
+      livePreviewInfo.innerHTML = infoHTML;
+      livePreviewDescription.innerText = description;
+
+      if (selectedImages.length > 0) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          livePreviewImage.innerHTML = `<img src="${e.target.result}" alt="Preview Image">`;
+        };
+
+        reader.readAsDataURL(selectedImages[0]);
+      } else {
+        livePreviewImage.innerHTML = "No image selected";
+      }
+    }
+
+    document.addEventListener("input", updateLivePreview);
+    document.addEventListener("change", updateLivePreview);
+
+    adminForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      if (!selectedProductType) {
+        showError("Please choose what you are selling first: Account, Key, or Other.");
+        return;
+      }
+
+      let productData = {
+        productType: selectedProductType,
+        imagesCount: selectedImages.length
+      };
+
+      if (selectedProductType === "account") {
+        if (!getValue("accountName") || !getValue("accountPrice")) {
+          showError("Please add Account Name and Price.");
+          return;
         }
 
-        function customerLogout() {
-            localStorage.removeItem("customerLoggedIn");
-            sessionStorage.removeItem("customerLoggedIn");
-            location.reload();
+        productData = {
+          ...productData,
+          name: getValue("accountName"),
+          level: getValue("accountLevel"),
+          price: getValue("accountPrice"),
+          uid: getValue("accountUid"),
+          region: getValue("accountRegion"),
+          nickname: getValue("accountNickname"),
+          category: getValue("accountCategory"),
+          description: getValue("accountDescription")
+        };
+      }
+
+      if (selectedProductType === "key") {
+        if (!getValue("keyName") || !getValue("keyPrice")) {
+          showError("Please add Key Name and Price.");
+          return;
         }
 
-        window.addEventListener("load", function () {
-            const loggedIn =
-                localStorage.getItem("customerLoggedIn") === "yes" ||
-                sessionStorage.getItem("customerLoggedIn") === "yes";
+        productData = {
+          ...productData,
+          name: getValue("keyName"),
+          duration: getValue("keyDuration"),
+          price: getValue("keyPrice"),
+          game: getValue("keyGame"),
+          platform: getValue("keyPlatform"),
+          server: getValue("keyServer"),
+          stock: getValue("keyStock"),
+          description: getValue("keyDescription")
+        };
+      }
 
-            const currentCustomer = localStorage.getItem("currentCustomer");
-
-            if (loggedIn) {
-                document.getElementById("customerLoginScreen").style.display = "none";
-                document.getElementById("currentCustomerName").innerText = currentCustomer || "Customer";
-            }
-        });
-
-        function getCategoryTitle(category) {
-            const titles = {
-                "level_1_50": "Level 1-50 Accounts",
-                "level_50_100": "Level 50-100 Accounts",
-                "level_100_150": "Level 100-150 Accounts",
-                "level_150_200": "Level 150-200 Accounts",
-                "level_200_250": "Level 200-250 Accounts",
-                "level_250_300": "Level 250-300 Accounts",
-                "level_300_400": "Level 300-400 Accounts",
-                "level_400_500": "Level 400-500 Accounts"
-            };
-
-            return titles[category] || "Available Accounts";
+      if (selectedProductType === "other") {
+        if (!getValue("otherName") || !getValue("otherPrice")) {
+          showError("Please add Item / Service Name and Price.");
+          return;
         }
 
-        async function showAccounts(category) {
-            const listBox = document.getElementById("accountList");
-            const itemBox = document.getElementById("accountItems");
-            const title = document.getElementById("accountListTitle");
+        productData = {
+          ...productData,
+          name: getValue("otherName"),
+          price: getValue("otherPrice"),
+          category: getValue("otherCategory"),
+          availability: getValue("otherAvailability"),
+          description: getValue("otherDescription")
+        };
+      }
 
-            title.innerText = getCategoryTitle(category);
-            itemBox.innerHTML = "<p>Loading accounts...</p>";
-            listBox.style.display = "block";
-            listBox.scrollIntoView({ behavior: "smooth", block: "start" });
+      console.log("Saved Product:", productData);
 
-            const { data, error } = await db
-                .from("accounts")
-                .select("*")
-                .eq("category", category)
-                .order("created_at", { ascending: false });
+      successModal.classList.add("active");
+    });
 
-            if (error) {
-                itemBox.innerHTML = "<p>Error: " + error.message + "</p>";
-                return;
-            }
+    function showError(message) {
+      errorText.innerText = message;
+      errorModal.classList.add("active");
+    }
 
-            if (!data || data.length === 0) {
-                itemBox.innerHTML = "<p>No accounts available in this category yet.</p>";
-                return;
-            }
+    function closeErrorModal() {
+      errorModal.classList.remove("active");
+    }
 
-            itemBox.innerHTML = "";
+    function closeModal() {
+      successModal.classList.remove("active");
+      clearForm();
+    }
 
-            data.forEach(account => {
-                const item = document.createElement("div");
-                item.className = "account-item";
-                item.innerHTML = `
-                    <strong>${account.name || "Unnamed Account"}</strong>
-                    <span>${account.level || "No level"} • ₱${account.price || "0"} • ${account.region || "No region"}</span>
-                    <div class="pick-cta">Click to view account details →</div>
-                `;
-                item.onclick = function() {
-                    openAccount(account);
-                };
-                itemBox.appendChild(item);
-            });
-        }
+    function clearForm() {
+      adminForm.reset();
 
-        function openAccount(account) {
-            selectedAccount = account;
+      selectedProductType = "";
+      selectedImages = [];
 
-            accountImages = [];
+      previewGrid.innerHTML = "";
 
-            if (Array.isArray(account.image_urls) && account.image_urls.length > 0) {
-                accountImages = account.image_urls;
-            } else if (account.image_url) {
-                accountImages = [account.image_url];
-            }
+      accountFields.classList.add("hidden");
+      keyFields.classList.add("hidden");
+      otherFields.classList.add("hidden");
 
-            currentImageIndex = 0;
-            showAccountImage();
-
-            document.getElementById("infoAccount").innerText = account.name || "N/A";
-            document.getElementById("infoLevel").innerText = account.level || "N/A";
-            document.getElementById("infoPrice").innerText = account.price || "0";
-            document.getElementById("infoNickname").innerText = account.nickname || "N/A";
-            document.getElementById("infoRegion").innerText = account.region || "N/A";
-            document.getElementById("infoUid").innerText = account.uid || "N/A";
-            document.getElementById("infoDetails").innerText = account.details || "No extra details.";
-
-            document.getElementById("accountPopup").style.display = "flex";
-        }
-
-        function showAccountImage() {
-            const img = document.getElementById("accountImage");
-            const counter = document.getElementById("imageCounter");
-
-            if (!accountImages || accountImages.length === 0) {
-                img.src = "";
-                counter.innerText = "No image available";
-                return;
-            }
-
-            img.src = accountImages[currentImageIndex];
-            counter.innerText = (currentImageIndex + 1) + " / " + accountImages.length;
-        }
-
-        function nextAccountImage() {
-            if (!accountImages || accountImages.length === 0) return;
-            currentImageIndex = (currentImageIndex + 1) % accountImages.length;
-            showAccountImage();
-        }
-
-        function prevAccountImage() {
-            if (!accountImages || accountImages.length === 0) return;
-            currentImageIndex = (currentImageIndex - 1 + accountImages.length) % accountImages.length;
-            showAccountImage();
-        }
-
-        function openSellerPopup() {
-            document.getElementById("accountPopup").style.display = "none";
-            document.getElementById("sellerPopup").style.display = "flex";
-        }
-
-        function openGcash(seller) {
-            selectedSeller = seller;
-
-            const sellerInfo = {
-                Demi: {
-                    gcashName: "Ka*a an****n p.",
-                    gcashNumber: "09296357078",
-                    telegram: "Demixyloadmin"
-                },
-                SKE: {
-                    gcashName: "ZE....A N.",
-                    gcashNumber: "09751955891",
-                    telegram: "kaizxns"
-                }
-            };
-
-            const selectedSellerInfo = sellerInfo[seller];
-
-            document.getElementById("sellerPopup").style.display = "none";
-            document.getElementById("gcashPopup").style.display = "flex";
-
-            document.getElementById("gcashAccount").innerText =
-                selectedAccount.name + " - " + selectedAccount.level;
-
-            document.getElementById("gcashSeller").innerText = selectedSeller;
-            document.getElementById("paymentAmount").innerText = selectedAccount.price;
-
-            document.getElementById("gcashName").innerText = selectedSellerInfo.gcashName;
-            document.getElementById("gcashNumber").innerText = selectedSellerInfo.gcashNumber;
-
-            const message =
-                "Hello, I want to buy this account.%0A%0A" +
-                "Account: " + encodeURIComponent(selectedAccount.name || "N/A") + "%0A" +
-                "Level: " + encodeURIComponent(selectedAccount.level || "N/A") + "%0A" +
-                "Price: ₱" + encodeURIComponent(selectedAccount.price || "0") + "%0A" +
-                "Seller: " + encodeURIComponent(selectedSeller) + "%0A%0A" +
-                "I will send my payment proof here.";
-
-            document.getElementById("sellerDmBtn").href =
-                "https://t.me/" + selectedSellerInfo.telegram + "?text=" + message;
-        }
-
-        function backToAccount() {
-            document.getElementById("sellerPopup").style.display = "none";
-            document.getElementById("accountPopup").style.display = "flex";
-        }
-
-        function backToSeller() {
-            document.getElementById("gcashPopup").style.display = "none";
-            document.getElementById("sellerPopup").style.display = "flex";
-        }
-
-        function closePopups() {
-            document.getElementById("accountPopup").style.display = "none";
-            document.getElementById("sellerPopup").style.display = "none";
-            document.getElementById("gcashPopup").style.display = "none";
-        }
-    </script>
+      livePreviewType.innerText = "No Type Selected";
+      livePreviewName.innerText = "Product Name";
+      livePreviewPrice.innerText = "₱0";
+      livePreviewInfo.innerHTML = "<div>Choose product type first</div>";
+      livePreviewDescription.innerText = "Product description will appear here.";
+      livePreviewImage.innerHTML = "No image selected";
+    }
+  </script>
 </body>
 </html>
