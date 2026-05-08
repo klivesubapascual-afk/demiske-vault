@@ -1610,27 +1610,57 @@
     loadAdminData();
   </script>
 
-<script id="fixedAdminLoginButton">
+
+
+
+<script id="fixBlockingOverlay">
 (function () {
   const ADMIN_USER = "xyloresselers";
   const ADMIN_PASS = "modtakels ni xylo";
 
-  window.adminLogin = function () {
-    const userInput = document.getElementById("adminUsername");
-    const passInput = document.getElementById("adminPassword");
+  function fullyHideLogin() {
     const loginScreen = document.getElementById("loginScreen");
-    const errorBox = document.getElementById("loginError");
 
-    const username = userInput ? userInput.value.trim() : "";
-    const password = passInput ? passInput.value.trim() : "";
+    if (loginScreen) {
+      loginScreen.classList.add("hidden");
+      loginScreen.style.display = "none";
+      loginScreen.style.pointerEvents = "none";
+      loginScreen.style.zIndex = "-1";
+      loginScreen.style.visibility = "hidden";
+      loginScreen.style.opacity = "0";
+    }
+
+    document.body.style.pointerEvents = "auto";
+  }
+
+  function showLogin() {
+    const loginScreen = document.getElementById("loginScreen");
+
+    if (loginScreen) {
+      loginScreen.classList.remove("hidden");
+      loginScreen.style.display = "flex";
+      loginScreen.style.pointerEvents = "auto";
+      loginScreen.style.zIndex = "9999";
+      loginScreen.style.visibility = "visible";
+      loginScreen.style.opacity = "1";
+    }
+  }
+
+  window.adminLogin = function () {
+    const username = document.getElementById("adminUsername")?.value.trim() || "";
+    const password = document.getElementById("adminPassword")?.value.trim() || "";
+    const errorBox = document.getElementById("loginError");
 
     if (username === ADMIN_USER && password === ADMIN_PASS) {
       localStorage.setItem("adminLoggedIn", "true");
 
-      if (loginScreen) loginScreen.classList.add("hidden");
       if (errorBox) errorBox.classList.add("hidden");
 
-      alert("Admin login successful.");
+      fullyHideLogin();
+
+      if (typeof loadAdminData === "function") {
+        loadAdminData();
+      }
     } else {
       if (errorBox) {
         errorBox.classList.remove("hidden");
@@ -1643,26 +1673,15 @@
 
   window.adminLogout = function () {
     localStorage.removeItem("adminLoggedIn");
-    const loginScreen = document.getElementById("loginScreen");
-    if (loginScreen) loginScreen.classList.remove("hidden");
+    showLogin();
   };
 
-  function setupLoginFix() {
-    const loginScreen = document.getElementById("loginScreen");
-    const loginButton =
-      document.querySelector('button[onclick*="adminLogin"]') ||
-      document.querySelector(".admin-login-btn");
-
-    const passInput = document.getElementById("adminPassword");
-
-    if (loginScreen) {
-      loginScreen.style.pointerEvents = "auto";
-      loginScreen.style.zIndex = "99999";
-    }
+  function setupClickFix() {
+    const loginButton = document.querySelector('button[onclick*="adminLogin"]');
+    const passwordInput = document.getElementById("adminPassword");
 
     if (loginButton) {
       loginButton.type = "button";
-      loginButton.style.pointerEvents = "auto";
       loginButton.onclick = function (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -1670,8 +1689,8 @@
       };
     }
 
-    if (passInput) {
-      passInput.addEventListener("keydown", function (event) {
+    if (passwordInput) {
+      passwordInput.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
           event.preventDefault();
           window.adminLogin();
@@ -1679,15 +1698,17 @@
       });
     }
 
-    if (localStorage.getItem("adminLoggedIn") === "true" && loginScreen) {
-      loginScreen.classList.add("hidden");
+    if (localStorage.getItem("adminLoggedIn") === "true") {
+      fullyHideLogin();
+    } else {
+      showLogin();
     }
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", setupLoginFix);
+    document.addEventListener("DOMContentLoaded", setupClickFix);
   } else {
-    setupLoginFix();
+    setupClickFix();
   }
 })();
 </script>
