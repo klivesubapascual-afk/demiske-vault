@@ -3,40 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DemiSke Admin</title>
+
+  <title>DemiSke Admin Panel</title>
 
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: "Poppins", Arial, sans-serif;
+      font-family: Arial, sans-serif;
     }
 
     body {
       min-height: 100vh;
       background:
-        radial-gradient(circle at top left, rgba(255, 0, 70, 0.35), transparent 35%),
-        radial-gradient(circle at bottom right, rgba(255, 50, 0, 0.35), transparent 35%),
-        linear-gradient(135deg, #100006, #1a0008, #070707);
+        radial-gradient(circle at top left, rgba(255, 0, 60, 0.35), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(255, 90, 0, 0.28), transparent 35%),
+        linear-gradient(135deg, #100006, #1a0008, #050505);
       color: white;
-      padding: 20px;
+      padding: 18px;
     }
 
     .admin-wrapper {
-      max-width: 720px;
+      max-width: 760px;
       margin: auto;
     }
 
     .admin-card {
-      background: rgba(10, 10, 18, 0.88);
-      border: 1px solid rgba(255, 70, 90, 0.35);
+      background: rgba(8, 8, 16, 0.9);
+      border: 1px solid rgba(255, 70, 95, 0.4);
       border-radius: 28px;
-      padding: 26px;
+      padding: 25px;
       box-shadow:
-        0 0 25px rgba(255, 0, 70, 0.25),
-        inset 0 0 20px rgba(255, 255, 255, 0.02);
-      backdrop-filter: blur(14px);
+        0 0 30px rgba(255, 0, 60, 0.28),
+        inset 0 0 18px rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
     }
 
     .header {
@@ -45,26 +46,141 @@
     }
 
     .header h1 {
-      font-size: 36px;
-      font-weight: 800;
-      background: linear-gradient(90deg, #ff2b4f, #ff6a00, #ff003c);
+      font-size: 38px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #ff1744, #ff6a00, #ff003c);
       -webkit-background-clip: text;
       color: transparent;
-      text-shadow: 0 0 22px rgba(255, 0, 60, 0.45);
+      text-shadow: 0 0 25px rgba(255, 0, 70, 0.4);
     }
 
     .header p {
-      color: #ffc4cc;
       margin-top: 10px;
+      color: #ffc4cc;
       font-size: 15px;
       line-height: 1.6;
     }
 
     .section-title {
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 800;
+      color: #ff8d9d;
       margin: 26px 0 14px;
-      color: #ff8a9a;
+    }
+
+    .form-group {
+      margin-bottom: 17px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #ffa0ae;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 60, 95, 0.45);
+      background: rgba(4, 4, 12, 0.95);
+      color: white;
+      font-size: 15px;
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #ff3155;
+      box-shadow: 0 0 0 3px rgba(255, 49, 85, 0.18);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #777;
+    }
+
+    textarea {
+      height: 95px;
+      resize: none;
+    }
+
+    .helper-text {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 7px;
+      line-height: 1.4;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .type-option {
+      position: relative;
+    }
+
+    .type-option input {
+      display: none;
+    }
+
+    .type-card {
+      min-height: 115px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 70, 95, 0.35);
+      background: rgba(255, 255, 255, 0.045);
+      padding: 16px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .type-card:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 40, 70, 0.1);
+    }
+
+    .type-icon {
+      font-size: 31px;
+      margin-bottom: 8px;
+    }
+
+    .type-card strong {
+      display: block;
+      font-size: 15px;
+      color: white;
+      margin-bottom: 5px;
+    }
+
+    .type-card span {
+      font-size: 11px;
+      color: #ffbec7;
+      line-height: 1.3;
+    }
+
+    .type-option input:checked + .type-card {
+      border-color: #ff3155;
+      background: linear-gradient(135deg, rgba(255, 0, 60, 0.32), rgba(255, 106, 0, 0.16));
+      box-shadow: 0 0 20px rgba(255, 0, 60, 0.35);
     }
 
     .upload-box {
@@ -111,6 +227,10 @@
       margin-top: 16px;
     }
 
+    .preview-item {
+      position: relative;
+    }
+
     .preview-grid img {
       width: 100%;
       height: 95px;
@@ -120,53 +240,105 @@
       box-shadow: 0 0 12px rgba(255, 0, 60, 0.25);
     }
 
-    .form-group {
-      margin-bottom: 17px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: #ff9aaa;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 15px 16px;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 55, 90, 0.45);
-      background: rgba(5, 5, 12, 0.92);
+    .remove-img {
+      position: absolute;
+      top: -7px;
+      right: -7px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: none;
+      background: #ff1744;
       color: white;
-      font-size: 15px;
-      outline: none;
-      transition: 0.2s ease;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0;
     }
 
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: #ff3155;
-      box-shadow: 0 0 0 3px rgba(255, 49, 85, 0.18);
+    .product-preview {
+      margin-top: 24px;
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 70, 95, 0.32);
+      background: rgba(255, 255, 255, 0.045);
     }
 
-    input::placeholder,
-    textarea::placeholder {
-      color: #777;
+    .product-preview h3 {
+      color: #ff8d9d;
+      margin-bottom: 12px;
+      font-size: 18px;
     }
 
-    textarea {
-      resize: none;
-      height: 95px;
+    .preview-card {
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(5, 5, 12, 0.94);
+      border: 1px solid rgba(255, 60, 95, 0.35);
     }
 
-    .two-column {
+    .preview-card-img {
+      width: 100%;
+      height: 190px;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #aaa;
+      font-size: 14px;
+      overflow: hidden;
+    }
+
+    .preview-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-card-body {
+      padding: 16px;
+    }
+
+    .preview-badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff003c, #ff6a00);
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .preview-card-body h4 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .preview-price {
+      color: #ffb0ba;
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .preview-info {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .preview-info div {
+      background: rgba(255, 255, 255, 0.045);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 12px;
+      color: #ddd;
+    }
+
+    .preview-desc {
+      color: #bdbdbd;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     .btn-row {
@@ -182,7 +354,7 @@
       border-radius: 18px;
       padding: 16px;
       font-size: 16px;
-      font-weight: 800;
+      font-weight: 900;
       transition: 0.2s ease;
     }
 
@@ -224,7 +396,7 @@
 
     .modal {
       width: 100%;
-      max-width: 390px;
+      max-width: 395px;
       background:
         radial-gradient(circle at top, rgba(255, 0, 60, 0.25), transparent 45%),
         #111118;
@@ -241,6 +413,7 @@
         opacity: 0;
         transform: scale(0.92) translateY(15px);
       }
+
       to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -278,13 +451,7 @@
       color: white;
     }
 
-    .helper-text {
-      font-size: 12px;
-      color: #9f9f9f;
-      margin-top: 7px;
-    }
-
-    @media (max-width: 560px) {
+    @media (max-width: 600px) {
       body {
         padding: 14px;
       }
@@ -298,7 +465,15 @@
         font-size: 31px;
       }
 
+      .type-grid {
+        grid-template-columns: 1fr;
+      }
+
       .two-column {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-info {
         grid-template-columns: 1fr;
       }
     }
@@ -311,16 +486,50 @@
       <div class="header">
         <h1>DemiSke Admin</h1>
         <p>
-          Upload account pictures and details easily.  
-          You can select multiple images for one account.
+          Add products easily. Choose if you are selling an account, key, or other service.
         </p>
       </div>
 
       <form id="adminForm">
-        <div class="section-title">Account Pictures</div>
+        <div class="section-title">Choose Product Type</div>
 
-        <label class="upload-box" for="accountPictures">
-          <input type="file" id="accountPictures" multiple accept="image/*" />
+        <div class="type-grid">
+          <label class="type-option">
+            <input type="radio" name="productType" value="account" />
+            <div class="type-card">
+              <div class="type-icon">🎮</div>
+              <strong>Account</strong>
+              <span>Game accounts, UID, level, region</span>
+            </div>
+          </label>
+
+          <label class="type-option">
+            <input type="radio" name="productType" value="key" />
+            <div class="type-card">
+              <div class="type-icon">🔑</div>
+              <strong>Key</strong>
+              <span>VIP keys, license, duration</span>
+            </div>
+          </label>
+
+          <label class="type-option">
+            <input type="radio" name="productType" value="other" />
+            <div class="type-card">
+              <div class="type-icon">📦</div>
+              <strong>Other</strong>
+              <span>Services, bundles, top-up, custom</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="helper-text">
+          Select one type first. The form will automatically change based on your choice.
+        </div>
+
+        <div class="section-title">Product Pictures</div>
+
+        <label class="upload-box" for="productPictures">
+          <input type="file" id="productPictures" multiple accept="image/*" />
           <div class="upload-icon">📸</div>
           <strong>Tap to upload pictures</strong>
           <span>Multiple images allowed</span>
@@ -328,122 +537,467 @@
 
         <div id="previewGrid" class="preview-grid"></div>
 
-        <div class="section-title">Account Details</div>
+        <!-- ACCOUNT FIELDS -->
+        <div id="accountFields" class="hidden">
+          <div class="section-title">Account Details</div>
 
-        <div class="form-group">
-          <label>Account Name</label>
-          <input type="text" id="accountName" placeholder="Example: KhunICE Account" required />
-        </div>
-
-        <div class="two-column">
           <div class="form-group">
-            <label>Level</label>
-            <input type="text" id="level" placeholder="Example: Level 184" required />
+            <label>Account Name</label>
+            <input type="text" id="accountName" placeholder="Example: KhunICE Account" />
+          </div>
+
+          <div class="two-column">
+            <div class="form-group">
+              <label>Level</label>
+              <input type="text" id="accountLevel" placeholder="Example: Level 184" />
+            </div>
+
+            <div class="form-group">
+              <label>Price</label>
+              <input type="number" id="accountPrice" placeholder="Example: 550" />
+            </div>
+          </div>
+
+          <div class="two-column">
+            <div class="form-group">
+              <label>UID</label>
+              <input type="text" id="accountUid" placeholder="Example: 361673204" />
+            </div>
+
+            <div class="form-group">
+              <label>Region</label>
+              <input type="text" id="accountRegion" placeholder="Example: TH" />
+            </div>
           </div>
 
           <div class="form-group">
-            <label>Price</label>
-            <input type="number" id="price" placeholder="Example: 550" required />
-          </div>
-        </div>
-
-        <div class="two-column">
-          <div class="form-group">
-            <label>UID</label>
-            <input type="text" id="uid" placeholder="Example: 361673204" />
+            <label>Nickname</label>
+            <input type="text" id="accountNickname" placeholder="Example: DemiSke Buyer" />
           </div>
 
           <div class="form-group">
-            <label>Region</label>
-            <input type="text" id="region" placeholder="Example: TH" />
+            <label>Budget Category</label>
+            <select id="accountCategory">
+              <option value="">Select category</option>
+              <option value="150-200">₱150 - ₱200</option>
+              <option value="201-500">₱201 - ₱500</option>
+              <option value="501-1000">₱501 - ₱1000</option>
+              <option value="1001-2000">₱1001 - ₱2000</option>
+              <option value="2000+">₱2000+</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="accountDescription" placeholder="Add skins, rare items, login type, or other notes..."></textarea>
           </div>
         </div>
 
-        <div class="form-group">
-          <label>Nickname</label>
-          <input type="text" id="nickname" placeholder="Example: DemiSke Buyer" />
+        <!-- KEY FIELDS -->
+        <div id="keyFields" class="hidden">
+          <div class="section-title">Key Details</div>
+
+          <div class="form-group">
+            <label>Key Name</label>
+            <input type="text" id="keyName" placeholder="Example: Astrix VIP Key" />
+          </div>
+
+          <div class="two-column">
+            <div class="form-group">
+              <label>Duration</label>
+              <select id="keyDuration">
+                <option value="">Select duration</option>
+                <option value="1 Day">1 Day</option>
+                <option value="3 Days">3 Days</option>
+                <option value="7 Days">7 Days</option>
+                <option value="14 Days">14 Days</option>
+                <option value="30 Days">30 Days</option>
+                <option value="Lifetime">Lifetime</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Price</label>
+              <input type="number" id="keyPrice" placeholder="Example: 250" />
+            </div>
+          </div>
+
+          <div class="two-column">
+            <div class="form-group">
+              <label>Game / Product</label>
+              <input type="text" id="keyGame" placeholder="Example: PUBGM / MLBB / CODM" />
+            </div>
+
+            <div class="form-group">
+              <label>Platform</label>
+              <select id="keyPlatform">
+                <option value="">Select platform</option>
+                <option value="Android">Android</option>
+                <option value="iOS">iOS</option>
+                <option value="PC">PC</option>
+                <option value="Android / iOS">Android / iOS</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="two-column">
+            <div class="form-group">
+              <label>Server</label>
+              <input type="text" id="keyServer" placeholder="Example: Global / KR / VNG" />
+            </div>
+
+            <div class="form-group">
+              <label>Stock</label>
+              <input type="number" id="keyStock" placeholder="Example: 10" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="keyDescription" placeholder="Add key features, supported version, rules, or notes..."></textarea>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>Category</label>
-          <select id="category">
-            <option value="">Select category</option>
-            <option value="150-200">₱150 - ₱200</option>
-            <option value="201-500">₱201 - ₱500</option>
-            <option value="501-1000">₱501 - ₱1000</option>
-            <option value="1000+">₱1000+</option>
-          </select>
-          <div class="helper-text">This helps customers find accounts by budget.</div>
+        <!-- OTHER FIELDS -->
+        <div id="otherFields" class="hidden">
+          <div class="section-title">Other Product Details</div>
+
+          <div class="form-group">
+            <label>Item / Service Name</label>
+            <input type="text" id="otherName" placeholder="Example: Boosting Service" />
+          </div>
+
+          <div class="two-column">
+            <div class="form-group">
+              <label>Price</label>
+              <input type="number" id="otherPrice" placeholder="Example: 999" />
+            </div>
+
+            <div class="form-group">
+              <label>Category</label>
+              <input type="text" id="otherCategory" placeholder="Example: Service / Top-up / Bundle" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Availability</label>
+            <select id="otherAvailability">
+              <option value="">Select availability</option>
+              <option value="Available">Available</option>
+              <option value="Limited">Limited</option>
+              <option value="Sold Out">Sold Out</option>
+              <option value="Pre-order">Pre-order</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="otherDescription" placeholder="Write details, inclusions, rules, or delivery time..."></textarea>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>Description</label>
-          <textarea id="description" placeholder="Add notes, skins, rare items, or login details..."></textarea>
+        <div class="product-preview">
+          <h3>Live Product Preview</h3>
+
+          <div class="preview-card">
+            <div class="preview-card-img" id="livePreviewImage">
+              No image selected
+            </div>
+
+            <div class="preview-card-body">
+              <div class="preview-badge" id="livePreviewType">No Type Selected</div>
+
+              <h4 id="livePreviewName">Product Name</h4>
+
+              <div class="preview-price" id="livePreviewPrice">₱0</div>
+
+              <div class="preview-info" id="livePreviewInfo">
+                <div>Choose product type first</div>
+              </div>
+
+              <p class="preview-desc" id="livePreviewDescription">
+                Product description will appear here.
+              </p>
+            </div>
+          </div>
         </div>
 
         <div class="btn-row">
-          <button type="submit" class="save-btn">Save Account</button>
+          <button type="submit" class="save-btn">Save Product</button>
           <button type="button" class="clear-btn" onclick="clearForm()">Clear Form</button>
         </div>
       </form>
     </div>
   </div>
 
+  <!-- SUCCESS MODAL -->
   <div class="modal-overlay" id="successModal">
     <div class="modal">
       <div class="modal-icon">✓</div>
-      <h2>Account Saved</h2>
+      <h2>Product Saved</h2>
       <p>
-        Your account details have been saved successfully.
-        You can now add another account.
+        Your product details have been saved successfully.
+        You can now add another product.
       </p>
       <button onclick="closeModal()">Done</button>
     </div>
   </div>
 
-  <script>
-    const imageInput = document.getElementById("accountPictures");
-    const previewGrid = document.getElementById("previewGrid");
-    const adminForm = document.getElementById("adminForm");
-    const successModal = document.getElementById("successModal");
+  <!-- ERROR MODAL -->
+  <div class="modal-overlay" id="errorModal">
+    <div class="modal">
+      <div class="modal-icon">!</div>
+      <h2>Missing Details</h2>
+      <p id="errorText">
+        Please complete the required fields.
+      </p>
+      <button onclick="closeErrorModal()">Okay</button>
+    </div>
+  </div>
 
-    imageInput.addEventListener("change", function () {
+  <script>
+    const adminForm = document.getElementById("adminForm");
+
+    const productTypeInputs = document.querySelectorAll("input[name='productType']");
+
+    const productPictures = document.getElementById("productPictures");
+    const previewGrid = document.getElementById("previewGrid");
+
+    const accountFields = document.getElementById("accountFields");
+    const keyFields = document.getElementById("keyFields");
+    const otherFields = document.getElementById("otherFields");
+
+    const successModal = document.getElementById("successModal");
+    const errorModal = document.getElementById("errorModal");
+    const errorText = document.getElementById("errorText");
+
+    const livePreviewImage = document.getElementById("livePreviewImage");
+    const livePreviewType = document.getElementById("livePreviewType");
+    const livePreviewName = document.getElementById("livePreviewName");
+    const livePreviewPrice = document.getElementById("livePreviewPrice");
+    const livePreviewInfo = document.getElementById("livePreviewInfo");
+    const livePreviewDescription = document.getElementById("livePreviewDescription");
+
+    let selectedProductType = "";
+    let selectedImages = [];
+
+    productTypeInputs.forEach(input => {
+      input.addEventListener("change", function () {
+        selectedProductType = this.value;
+
+        accountFields.classList.add("hidden");
+        keyFields.classList.add("hidden");
+        otherFields.classList.add("hidden");
+
+        if (selectedProductType === "account") {
+          accountFields.classList.remove("hidden");
+        }
+
+        if (selectedProductType === "key") {
+          keyFields.classList.remove("hidden");
+        }
+
+        if (selectedProductType === "other") {
+          otherFields.classList.remove("hidden");
+        }
+
+        updateLivePreview();
+      });
+    });
+
+    productPictures.addEventListener("change", function () {
+      selectedImages = Array.from(productPictures.files);
+      renderImagePreviews();
+      updateLivePreview();
+    });
+
+    function renderImagePreviews() {
       previewGrid.innerHTML = "";
 
-      const files = Array.from(imageInput.files);
-
-      files.forEach(file => {
+      selectedImages.forEach((file, index) => {
         const reader = new FileReader();
 
         reader.onload = function (e) {
+          const item = document.createElement("div");
+          item.className = "preview-item";
+
           const img = document.createElement("img");
           img.src = e.target.result;
-          previewGrid.appendChild(img);
+
+          const removeBtn = document.createElement("button");
+          removeBtn.className = "remove-img";
+          removeBtn.type = "button";
+          removeBtn.innerHTML = "×";
+
+          removeBtn.onclick = function () {
+            selectedImages.splice(index, 1);
+            renderImagePreviews();
+            updateLivePreview();
+          };
+
+          item.appendChild(img);
+          item.appendChild(removeBtn);
+          previewGrid.appendChild(item);
         };
 
         reader.readAsDataURL(file);
       });
-    });
+    }
+
+    function getValue(id) {
+      const element = document.getElementById(id);
+      return element ? element.value.trim() : "";
+    }
+
+    function updateLivePreview() {
+      let name = "Product Name";
+      let price = "0";
+      let description = "Product description will appear here.";
+      let typeText = "No Type Selected";
+      let infoHTML = "<div>Choose product type first</div>";
+
+      if (selectedProductType === "account") {
+        typeText = "Account";
+        name = getValue("accountName") || "Account Name";
+        price = getValue("accountPrice") || "0";
+        description = getValue("accountDescription") || "Account description will appear here.";
+
+        infoHTML = `
+          <div><strong>Level:</strong> ${getValue("accountLevel") || "N/A"}</div>
+          <div><strong>UID:</strong> ${getValue("accountUid") || "N/A"}</div>
+          <div><strong>Region:</strong> ${getValue("accountRegion") || "N/A"}</div>
+          <div><strong>Category:</strong> ${getValue("accountCategory") || "N/A"}</div>
+        `;
+      }
+
+      if (selectedProductType === "key") {
+        typeText = "Key";
+        name = getValue("keyName") || "Key Name";
+        price = getValue("keyPrice") || "0";
+        description = getValue("keyDescription") || "Key description will appear here.";
+
+        infoHTML = `
+          <div><strong>Duration:</strong> ${getValue("keyDuration") || "N/A"}</div>
+          <div><strong>Game:</strong> ${getValue("keyGame") || "N/A"}</div>
+          <div><strong>Platform:</strong> ${getValue("keyPlatform") || "N/A"}</div>
+          <div><strong>Server:</strong> ${getValue("keyServer") || "N/A"}</div>
+        `;
+      }
+
+      if (selectedProductType === "other") {
+        typeText = "Other";
+        name = getValue("otherName") || "Item / Service Name";
+        price = getValue("otherPrice") || "0";
+        description = getValue("otherDescription") || "Item description will appear here.";
+
+        infoHTML = `
+          <div><strong>Category:</strong> ${getValue("otherCategory") || "N/A"}</div>
+          <div><strong>Status:</strong> ${getValue("otherAvailability") || "N/A"}</div>
+        `;
+      }
+
+      livePreviewType.innerText = typeText;
+      livePreviewName.innerText = name;
+      livePreviewPrice.innerText = "₱" + price;
+      livePreviewInfo.innerHTML = infoHTML;
+      livePreviewDescription.innerText = description;
+
+      if (selectedImages.length > 0) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          livePreviewImage.innerHTML = `<img src="${e.target.result}" alt="Preview Image">`;
+        };
+
+        reader.readAsDataURL(selectedImages[0]);
+      } else {
+        livePreviewImage.innerHTML = "No image selected";
+      }
+    }
+
+    document.addEventListener("input", updateLivePreview);
+    document.addEventListener("change", updateLivePreview);
 
     adminForm.addEventListener("submit", function (e) {
       e.preventDefault();
 
-      const accountData = {
-        accountName: document.getElementById("accountName").value,
-        level: document.getElementById("level").value,
-        price: document.getElementById("price").value,
-        uid: document.getElementById("uid").value,
-        region: document.getElementById("region").value,
-        nickname: document.getElementById("nickname").value,
-        category: document.getElementById("category").value,
-        description: document.getElementById("description").value,
-        imagesCount: imageInput.files.length
+      if (!selectedProductType) {
+        showError("Please choose what you are selling first: Account, Key, or Other.");
+        return;
+      }
+
+      let productData = {
+        productType: selectedProductType,
+        imagesCount: selectedImages.length
       };
 
-      console.log("Saved Account:", accountData);
+      if (selectedProductType === "account") {
+        if (!getValue("accountName") || !getValue("accountPrice")) {
+          showError("Please add Account Name and Price.");
+          return;
+        }
+
+        productData = {
+          ...productData,
+          name: getValue("accountName"),
+          level: getValue("accountLevel"),
+          price: getValue("accountPrice"),
+          uid: getValue("accountUid"),
+          region: getValue("accountRegion"),
+          nickname: getValue("accountNickname"),
+          category: getValue("accountCategory"),
+          description: getValue("accountDescription")
+        };
+      }
+
+      if (selectedProductType === "key") {
+        if (!getValue("keyName") || !getValue("keyPrice")) {
+          showError("Please add Key Name and Price.");
+          return;
+        }
+
+        productData = {
+          ...productData,
+          name: getValue("keyName"),
+          duration: getValue("keyDuration"),
+          price: getValue("keyPrice"),
+          game: getValue("keyGame"),
+          platform: getValue("keyPlatform"),
+          server: getValue("keyServer"),
+          stock: getValue("keyStock"),
+          description: getValue("keyDescription")
+        };
+      }
+
+      if (selectedProductType === "other") {
+        if (!getValue("otherName") || !getValue("otherPrice")) {
+          showError("Please add Item / Service Name and Price.");
+          return;
+        }
+
+        productData = {
+          ...productData,
+          name: getValue("otherName"),
+          price: getValue("otherPrice"),
+          category: getValue("otherCategory"),
+          availability: getValue("otherAvailability"),
+          description: getValue("otherDescription")
+        };
+      }
+
+      console.log("Saved Product:", productData);
 
       successModal.classList.add("active");
     });
+
+    function showError(message) {
+      errorText.innerText = message;
+      errorModal.classList.add("active");
+    }
+
+    function closeErrorModal() {
+      errorModal.classList.remove("active");
+    }
 
     function closeModal() {
       successModal.classList.remove("active");
@@ -452,7 +1006,22 @@
 
     function clearForm() {
       adminForm.reset();
+
+      selectedProductType = "";
+      selectedImages = [];
+
       previewGrid.innerHTML = "";
+
+      accountFields.classList.add("hidden");
+      keyFields.classList.add("hidden");
+      otherFields.classList.add("hidden");
+
+      livePreviewType.innerText = "No Type Selected";
+      livePreviewName.innerText = "Product Name";
+      livePreviewPrice.innerText = "₱0";
+      livePreviewInfo.innerHTML = "<div>Choose product type first</div>";
+      livePreviewDescription.innerText = "Product description will appear here.";
+      livePreviewImage.innerHTML = "No image selected";
     }
   </script>
 </body>
