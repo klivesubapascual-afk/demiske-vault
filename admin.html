@@ -737,6 +737,56 @@
       border: 1px solid rgba(255,70,95,0.35);
       color: white;
     }
+  
+    /* FIX: prevent invisible layers from blocking clicks */
+    body,
+    .app,
+    main,
+    section,
+    .panel,
+    .hero,
+    .bottom-nav,
+    button,
+    input,
+    select,
+    textarea,
+    label,
+    .type-card,
+    .upload-box,
+    .product-card,
+    .alert-card {
+      pointer-events: auto !important;
+    }
+
+    .hero::after {
+      pointer-events: none !important;
+      z-index: 0 !important;
+    }
+
+    .hero > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .modal-overlay:not(.active) {
+      display: none !important;
+      pointer-events: none !important;
+      z-index: -1 !important;
+    }
+
+    .login-screen.hidden {
+      display: none !important;
+      pointer-events: none !important;
+      z-index: -1 !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+
+    .bottom-nav {
+      pointer-events: auto !important;
+      z-index: 500 !important;
+    }
+
   </style>
 </head>
 
@@ -1729,6 +1779,39 @@
   } else {
     setupClickFix();
   }
+})();
+</script>
+
+
+<script id="adminClickBlockerFix">
+(function () {
+  function removeBlockingOverlays() {
+    const loginScreen = document.getElementById("loginScreen");
+
+    if (localStorage.getItem("adminLoggedIn") === "true" && loginScreen) {
+      loginScreen.classList.add("hidden");
+      loginScreen.style.display = "none";
+      loginScreen.style.pointerEvents = "none";
+      loginScreen.style.zIndex = "-1";
+      loginScreen.style.visibility = "hidden";
+      loginScreen.style.opacity = "0";
+    }
+
+    document.querySelectorAll(".modal-overlay").forEach(function (modal) {
+      if (!modal.classList.contains("active")) {
+        modal.style.display = "none";
+        modal.style.pointerEvents = "none";
+        modal.style.zIndex = "-1";
+      }
+    });
+
+    document.body.style.pointerEvents = "auto";
+  }
+
+  window.addEventListener("load", removeBlockingOverlays);
+  document.addEventListener("click", function () {
+    setTimeout(removeBlockingOverlays, 50);
+  });
 })();
 </script>
 
