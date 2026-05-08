@@ -588,16 +588,16 @@
 
     .bottom-nav {
       position: fixed;
-      left: 12px;
-      right: 12px;
-      bottom: 12px;
+      left: 10px;
+      right: 10px;
+      bottom: 8px;
       z-index: 200;
       max-width: 620px;
       margin: auto;
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      padding: 10px;
+      gap: 5px;
+      padding: 7px;
       border-radius: 26px;
       background: rgba(8, 8, 13, 0.92);
       backdrop-filter: blur(15px);
@@ -613,16 +613,16 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 800;
       cursor: pointer;
-      border-radius: 18px;
-      padding: 9px 4px;
+      border-radius: 16px;
+      padding: 7px 3px;
       transition: 0.2s ease;
     }
 
     .bottom-item span {
-      font-size: 20px;
+      font-size: 18px;
       line-height: 1;
     }
 
@@ -843,12 +843,12 @@
             </label>
           </div>
 
-          <label class="upload-box" for="productPictures">
-            <input type="file" id="productPictures" multiple accept="image/*" />
+          <div class="upload-box" onclick="openImagePicker()">
+            <input type="file" id="productPictures" multiple accept="image/*" style="display:none;" />
             <div class="upload-icon">📸</div>
             <strong>Tap to upload product pictures</strong>
             <div class="muted">Use 1–3 images for best result</div>
-          </label>
+          </div>
 
           <div id="previewGrid" class="preview-grid"></div>
 
@@ -1138,6 +1138,15 @@
       if (type === "key") return "🔑";
       if (type === "other") return "📦";
       return "🔥";
+    }
+
+
+    function openImagePicker() {
+      const input = document.getElementById("productPictures");
+
+      if (input) {
+        input.click();
+      }
     }
 
     function fileToDataUrl(file) {
