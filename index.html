@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DemiSke Store</title>
+  <title>DemiSke Vault</title>
 
   <style>
     * {
@@ -16,19 +16,21 @@
     :root {
       --red: #ff003c;
       --red2: #ff3155;
-      --orange: #ff6a00;
-      --border: rgba(255, 45, 80, 0.35);
+      --dark: #07070b;
+      --card: rgba(255, 255, 255, 0.055);
+      --border: rgba(255, 65, 95, 0.28);
       --soft: #ffb8c2;
+      --muted: #a9a9b2;
     }
 
     body {
       min-height: 100vh;
       background:
-        radial-gradient(circle at top left, rgba(255, 0, 60, 0.28), transparent 35%),
-        radial-gradient(circle at bottom right, rgba(255, 70, 0, 0.22), transparent 35%),
-        linear-gradient(135deg, #060606, #120006, #000);
+        radial-gradient(circle at top right, rgba(255, 0, 60, 0.22), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(255, 106, 0, 0.12), transparent 35%),
+        linear-gradient(145deg, #050507, #100006, #000);
       color: white;
-      padding-bottom: 80px;
+      padding-bottom: 92px;
       overflow-x: hidden;
     }
 
@@ -36,12 +38,7 @@
       display: none !important;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes slideUp {
+    @keyframes fadeUp {
       from {
         opacity: 0;
         transform: translateY(18px);
@@ -52,669 +49,406 @@
       }
     }
 
-    @keyframes popIn {
+    @keyframes pop {
       from {
         opacity: 0;
-        transform: scale(0.94) translateY(10px);
+        transform: scale(0.95);
       }
       to {
         opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-    }
-
-    @keyframes floatGlow {
-      0%, 100% {
-        transform: translateY(0);
-        box-shadow: 0 0 22px rgba(255, 0, 60, 0.35);
-      }
-      50% {
-        transform: translateY(-5px);
-        box-shadow: 0 0 35px rgba(255, 0, 60, 0.55);
-      }
-    }
-
-    @keyframes pulseDot {
-      0%, 100% {
         transform: scale(1);
-        opacity: 1;
+      }
+    }
+
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(255, 0, 60, 0.35);
       }
       50% {
-        transform: scale(1.35);
-        opacity: 0.65;
+        box-shadow: 0 0 34px rgba(255, 0, 60, 0.65);
       }
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(10, 10, 15, 0.92);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
-      box-shadow: 0 0 25px rgba(255, 0, 60, 0.18);
-      animation: fadeIn 0.4s ease;
-    }
-
-    .topbar-inner {
-      max-width: 1100px;
-      margin: auto;
-      padding: 18px 16px 14px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .menu-btn {
-      width: 46px;
-      height: 46px;
-      border-radius: 15px;
-      border: 1px solid rgba(255, 70, 95, 0.3);
-      background: rgba(255, 255, 255, 0.06);
-      color: white;
-      font-size: 25px;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .menu-btn:hover {
-      transform: scale(1.06);
-      background: rgba(255, 0, 60, 0.16);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 1;
-    }
-
-    .logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 15px;
-      background:
-        radial-gradient(circle at center, rgba(255, 255, 255, 0.18), transparent 40%),
-        linear-gradient(135deg, var(--red), #220006, #000);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 23px;
-      font-weight: 900;
-      animation: floatGlow 3.2s ease-in-out infinite;
-    }
-
-    .brand h1 {
-      font-size: 25px;
-      font-weight: 900;
-      background: linear-gradient(90deg, var(--red), var(--orange));
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-
-    .top-status {
-      font-size: 12px;
-      color: #ffd0d6;
-      padding: 8px 11px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 70, 95, 0.25);
-      white-space: nowrap;
-    }
-
-    .nav-tabs {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(255, 255, 255, 0.035);
-    }
-
-    .nav-tab {
-      padding: 11px 6px 10px;
-      text-align: center;
-      cursor: pointer;
-      color: #ddd;
-      border-bottom: 3px solid transparent;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      transition: 0.2s ease;
-    }
-
-    .nav-icon {
-      font-size: 22px;
-      line-height: 1;
-    }
-
-    .nav-label {
-      font-size: 11px;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .nav-tab:hover {
-      background: rgba(255, 0, 60, 0.08);
-      transform: translateY(-1px);
-    }
-
-    .nav-tab.active {
-      color: white;
-      border-bottom-color: var(--red2);
-      background: rgba(255, 0, 60, 0.14);
     }
 
     .app {
       max-width: 1100px;
       margin: auto;
-    }
-
-    .content {
       padding: 18px 16px;
     }
 
-    section {
-      animation: slideUp 0.35s ease;
-    }
-
-    .hero-card {
-      margin-top: 18px;
-      padding: 24px;
-      border-radius: 30px;
-      background:
-        radial-gradient(circle at top left, rgba(255, 0, 60, 0.28), transparent 40%),
-        linear-gradient(135deg, rgba(40, 0, 10, 0.9), rgba(10, 10, 18, 0.92));
-      border: 1px solid var(--border);
-      box-shadow: 0 0 34px rgba(255, 0, 60, 0.22);
-      animation: slideUp 0.45s ease;
-    }
-
-    .trust-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 80, 100, 0.35);
-      color: #ffd0d6;
-      margin-bottom: 20px;
-      font-size: 14px;
-    }
-
-    .dot {
-      width: 10px;
-      height: 10px;
-      background: #00ff88;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #00ff88;
-      animation: pulseDot 1.5s ease-in-out infinite;
-    }
-
-    .hero-card h2 {
-      font-size: 42px;
-      line-height: 1.08;
-      margin-bottom: 14px;
-    }
-
-    .hero-card p {
-      color: #ffc2cb;
-      font-size: 17px;
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-
-    .hero-btn {
-      width: 100%;
-      border: none;
-      padding: 17px;
-      border-radius: 19px;
-      background: linear-gradient(135deg, var(--red), #ff3b30, var(--orange));
-      color: white;
-      font-size: 16px;
-      font-weight: 900;
-      box-shadow: 0 0 24px rgba(255, 0, 60, 0.35);
-      cursor: pointer;
-      transition: 0.22s ease;
-    }
-
-    .hero-btn:hover,
-    .quick-btn:hover,
-    .buy-btn:hover,
-    .drawer-item:hover,
-    .modal-btn:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
-    }
-
-    .hero-image {
-      margin-top: 22px;
-      height: 210px;
-      border-radius: 24px;
-      background:
-        radial-gradient(circle at center, rgba(255, 0, 60, 0.45), transparent 40%),
-        linear-gradient(135deg, #32000c, #0a0a0f);
-      border: 1px solid rgba(255, 70, 95, 0.35);
+    .top {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 70px;
-      animation: floatGlow 3.6s ease-in-out infinite;
-    }
-
-    .section-title {
-      margin: 28px 0 14px;
-      animation: slideUp 0.45s ease;
-    }
-
-    .section-title h2 {
-      font-size: 27px;
-      margin-bottom: 6px;
-    }
-
-    .section-title p {
-      color: #bdbdbd;
-      font-size: 15px;
-    }
-
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
+      margin-bottom: 20px;
+      animation: fadeUp 0.35s ease;
     }
 
-    .category-card {
-      padding: 18px 12px;
-      border-radius: 22px;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.045);
-      text-align: center;
-      cursor: pointer;
-      transition: 0.22s ease;
-      animation: slideUp 0.45s ease;
-    }
-
-    .category-card.active,
-    .category-card:hover {
-      background: linear-gradient(135deg, rgba(255, 0, 60, 0.28), rgba(255, 106, 0, 0.12));
-      box-shadow: 0 0 22px rgba(255, 0, 60, 0.25);
-      transform: translateY(-4px);
-    }
-
-    .category-card .icon {
-      font-size: 31px;
-      margin-bottom: 8px;
-    }
-
-    .category-card strong {
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .category-card span {
-      color: #ffbdc6;
-      font-size: 12px;
-    }
-
-    .quick-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    .quick-btn {
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.055);
-      color: white;
-      padding: 16px;
+    .logo {
+      width: 52px;
+      height: 52px;
       border-radius: 18px;
-      font-weight: 900;
-      cursor: pointer;
-      transition: 0.22s ease;
-    }
-
-    .quick-btn.primary {
-      background: linear-gradient(135deg, var(--red), var(--orange));
-      box-shadow: 0 0 20px rgba(255, 0, 60, 0.3);
-      border: none;
-    }
-
-
-    .product-carousel {
-      position: relative;
-      height: 165px;
       background:
-        radial-gradient(circle at center, rgba(255, 0, 60, 0.38), transparent 42%),
-        linear-gradient(135deg, #2b000b, #050505);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      font-size: 54px;
-    }
-
-    .product-carousel img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      animation: popIn 0.25s ease;
-    }
-
-    .carousel-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      background: rgba(0, 0, 0, 0.55);
-      color: white;
-      font-size: 18px;
-      font-weight: 900;
-      cursor: pointer;
-      z-index: 5;
-    }
-
-    .carousel-btn.left {
-      left: 10px;
-    }
-
-    .carousel-btn.right {
-      right: 10px;
-    }
-
-    .carousel-count {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      padding: 5px 9px;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      color: white;
-      font-size: 11px;
-      font-weight: 900;
-      z-index: 5;
-    }
-
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
-      gap: 15px;
-      margin-top: 14px;
-    }
-
-    .product-card {
-      overflow: hidden;
-      border-radius: 24px;
-      background: rgba(14, 14, 20, 0.9);
-      border: 1px solid rgba(255, 70, 95, 0.32);
-      box-shadow: 0 0 22px rgba(255, 0, 60, 0.12);
-      animation: popIn 0.35s ease both;
-      transition: 0.22s ease;
-    }
-
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 30px rgba(255, 0, 60, 0.28);
-    }
-
-    .product-img {
-      height: 165px;
-      background:
-        radial-gradient(circle at center, rgba(255, 0, 60, 0.38), transparent 42%),
-        linear-gradient(135deg, #2b000b, #050505);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 54px;
-    }
-
-    .product-body {
-      padding: 16px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 900;
-      background: linear-gradient(135deg, var(--red), var(--orange));
-      margin-bottom: 10px;
-    }
-
-    .product-body h3 {
-      font-size: 19px;
-      margin-bottom: 8px;
-    }
-
-    .price {
-      color: var(--soft);
-      font-weight: 900;
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
-
-    .details {
-      color: #d2d2d2;
-      font-size: 13px;
-      line-height: 1.55;
-      margin-bottom: 14px;
-    }
-
-    .buy-btn {
-      width: 100%;
-      border: none;
-      padding: 14px;
-      border-radius: 16px;
-      color: white;
-      background: linear-gradient(135deg, var(--red), #ff3b30, var(--orange));
-      font-weight: 900;
-      cursor: pointer;
-      transition: 0.22s ease;
-    }
-
-    .empty-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 32px 14px;
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border);
-      color: #ffc4cc;
-    }
-
-    .status-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .status-item {
-      padding: 16px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.055);
-      border: 1px solid rgba(255, 70, 95, 0.28);
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      animation: slideUp 0.35s ease;
-    }
-
-    .status-icon {
-      width: 54px;
-      height: 54px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, var(--red), #240009);
+        radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 45%),
+        linear-gradient(135deg, var(--red), #1b0008, #000);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 25px;
+      font-weight: 900;
+      animation: glow 3s infinite;
     }
 
-    .status-info {
+    .brand {
       flex: 1;
     }
 
-    .status-info strong {
-      display: block;
-      font-size: 18px;
-    }
-
-    .status-info span {
-      color: #aaa;
-      font-size: 13px;
-    }
-
-    .status-tag {
-      color: #00ff88;
-      font-size: 13px;
+    .brand h1 {
+      font-size: 24px;
       font-weight: 900;
-    }
-
-    .promo-card {
-      padding: 20px;
-      border-radius: 24px;
-      background:
-        radial-gradient(circle at top right, rgba(255, 106, 0, 0.18), transparent 45%),
-        rgba(255, 255, 255, 0.055);
-      border: 1px solid rgba(255, 70, 95, 0.32);
-      margin-bottom: 14px;
-      animation: slideUp 0.35s ease;
-      transition: 0.22s ease;
-    }
-
-    .promo-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 0 25px rgba(255, 0, 60, 0.2);
-    }
-
-    .promo-card h3 {
-      font-size: 20px;
-      margin-bottom: 8px;
-    }
-
-    .promo-card p {
-      color: #ffc4cc;
-      line-height: 1.5;
-      font-size: 14px;
-    }
-
-    .drawer-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      z-index: 500;
-      display: none;
-      animation: fadeIn 0.2s ease;
-    }
-
-    .drawer-overlay.active {
-      display: block;
-    }
-
-    .side-drawer {
-      position: fixed;
-      top: 0;
-      left: -310px;
-      width: 300px;
-      height: 100vh;
-      z-index: 600;
-      background:
-        radial-gradient(circle at top left, rgba(255, 0, 60, 0.25), transparent 42%),
-        #09090f;
-      border-right: 1px solid rgba(255, 70, 95, 0.35);
-      box-shadow: 0 0 35px rgba(255, 0, 60, 0.32);
-      padding: 18px;
-      transition: 0.25s ease;
-      overflow-y: auto;
-    }
-
-    .side-drawer.active {
-      left: 0;
-    }
-
-    .drawer-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 22px;
-    }
-
-    .drawer-header .logo {
-      width: 45px;
-      height: 45px;
-    }
-
-    .drawer-header h2 {
-      font-size: 23px;
-      background: linear-gradient(90deg, var(--red), var(--orange));
+      background: linear-gradient(90deg, var(--red), #ff7b00);
       -webkit-background-clip: text;
       color: transparent;
     }
 
-    .close-drawer {
-      margin-left: auto;
-      width: 38px;
-      height: 38px;
-      border: none;
-      border-radius: 12px;
-      color: white;
-      background: rgba(255, 255, 255, 0.08);
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    .drawer-section-title {
-      color: #ff9aaa;
+    .brand p {
+      color: var(--muted);
       font-size: 13px;
-      font-weight: 900;
-      margin: 20px 0 10px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      margin-top: 3px;
     }
 
-    .drawer-item {
-      width: 100%;
-      border: 1px solid rgba(255, 70, 95, 0.22);
-      background: rgba(255, 255, 255, 0.055);
+    .admin-chip {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.06);
       color: white;
-      padding: 14px;
-      border-radius: 16px;
-      margin-bottom: 10px;
-      text-align: left;
+      padding: 10px 13px;
+      border-radius: 999px;
+      font-size: 13px;
       font-weight: 800;
       cursor: pointer;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 24px;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      background:
+        radial-gradient(circle at top right, rgba(255, 0, 60, 0.35), transparent 42%),
+        linear-gradient(135deg, rgba(22, 0, 8, 0.96), rgba(8, 8, 15, 0.95));
+      box-shadow: 0 0 35px rgba(255, 0, 60, 0.18);
+      animation: fadeUp 0.45s ease;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      right: -60px;
+      top: -50px;
+      background: rgba(255, 0, 60, 0.16);
+      filter: blur(3px);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.07);
+      color: #ffd1d8;
+      font-size: 13px;
+      margin-bottom: 17px;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #00ff88;
+      box-shadow: 0 0 10px #00ff88;
+    }
+
+    .hero h2 {
+      font-size: 40px;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      color: #ffc7d0;
+      font-size: 15px;
+      line-height: 1.5;
+      max-width: 600px;
+    }
+
+    .hero-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      border: none;
+      padding: 14px 16px;
+      border-radius: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      color: white;
       transition: 0.22s ease;
     }
 
-    .drawer-item.primary {
-      background: linear-gradient(135deg, var(--red), var(--orange));
-      border: none;
-      box-shadow: 0 0 18px rgba(255, 0, 60, 0.3);
+    .btn:hover,
+    .chip:hover,
+    .product-card:hover,
+    .bottom-item:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
     }
 
-    .drawer-small {
-      color: #aaa;
-      font-size: 12px;
-      line-height: 1.5;
+    .btn.primary {
+      background: linear-gradient(135deg, var(--red), #ff6a00);
+      box-shadow: 0 0 22px rgba(255, 0, 60, 0.28);
+    }
+
+    .btn.ghost {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--border);
+    }
+
+    .search-card {
       margin-top: 18px;
+      padding: 14px;
+      border-radius: 22px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      animation: fadeUp 0.5s ease;
+    }
+
+    .search-box {
+      width: 100%;
+      border: 1px solid rgba(255, 70, 95, 0.3);
+      background: rgba(0, 0, 0, 0.35);
+      color: white;
+      padding: 15px;
+      border-radius: 17px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .chips {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 16px 0 4px;
+      scrollbar-width: none;
+    }
+
+    .chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      white-space: nowrap;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.06);
+      color: white;
+      padding: 11px 15px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .chip.active {
+      background: linear-gradient(135deg, var(--red), #ff6a00);
+      border: none;
+      box-shadow: 0 0 18px rgba(255, 0, 60, 0.28);
+    }
+
+    .section-title {
+      margin: 26px 0 13px;
+      animation: fadeUp 0.5s ease;
+    }
+
+    .section-title h2 {
+      font-size: 25px;
+      margin-bottom: 5px;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .featured-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .mini-card {
+      padding: 16px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background:
+        radial-gradient(circle at top right, rgba(255, 0, 60, 0.18), transparent 40%),
+        rgba(255, 255, 255, 0.05);
+      animation: fadeUp 0.55s ease;
+    }
+
+    .mini-card strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 16px;
+    }
+
+    .mini-card span {
+      color: var(--soft);
+      font-size: 13px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 14px;
+    }
+
+    .product-card {
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.055);
+      box-shadow: 0 0 18px rgba(255, 0, 60, 0.1);
+      cursor: pointer;
+      transition: 0.22s ease;
+      animation: pop 0.32s ease both;
+    }
+
+    .product-img {
+      height: 135px;
+      background:
+        radial-gradient(circle, rgba(255, 0, 60, 0.38), transparent 43%),
+        linear-gradient(135deg, #210008, #050505);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 44px;
+      overflow: hidden;
+    }
+
+    .product-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 13px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(255, 0, 60, 0.18);
+      color: #ffc4cc;
+      font-size: 10px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .product-info h3 {
+      font-size: 15px;
+      line-height: 1.25;
+      margin-bottom: 7px;
+    }
+
+    .price {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--soft);
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 28px;
+      text-align: center;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffc4cc;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      z-index: 200;
+      max-width: 600px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      padding: 10px;
+      border-radius: 26px;
+      background: rgba(8, 8, 13, 0.92);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--border);
+      box-shadow: 0 0 30px rgba(255, 0, 60, 0.25);
+    }
+
+    .bottom-item {
+      border: none;
+      background: transparent;
+      color: #ddd;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      border-radius: 18px;
+      padding: 9px 4px;
+      transition: 0.2s ease;
+    }
+
+    .bottom-item span {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .bottom-item.active {
+      background: linear-gradient(135deg, rgba(255, 0, 60, 0.32), rgba(255, 106, 0, 0.16));
+      color: white;
     }
 
     .modal-overlay {
       position: fixed;
       inset: 0;
+      z-index: 999;
       background: rgba(0, 0, 0, 0.78);
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 18px;
-      z-index: 999;
-      animation: fadeIn 0.18s ease;
+      padding: 16px;
+      animation: fadeUp 0.2s ease;
     }
 
     .modal-overlay.active {
@@ -723,117 +457,162 @@
 
     .modal {
       width: 100%;
-      max-width: 430px;
-      border-radius: 26px;
-      padding: 24px;
+      max-width: 460px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 75, 100, 0.42);
       background:
-        radial-gradient(circle at top, rgba(255, 0, 60, 0.24), transparent 45%),
-        #111118;
-      border: 1px solid rgba(255, 75, 100, 0.45);
-      box-shadow: 0 0 40px rgba(255, 0, 60, 0.38);
-      animation: popIn 0.25s ease;
+        radial-gradient(circle at top, rgba(255, 0, 60, 0.22), transparent 43%),
+        #101018;
+      box-shadow: 0 0 40px rgba(255, 0, 60, 0.35);
+      animation: pop 0.25s ease;
+    }
+
+    .modal-padding {
+      padding: 18px;
     }
 
     .modal h2 {
-      font-size: 24px;
+      font-size: 22px;
       margin-bottom: 8px;
     }
 
     .modal p {
-      color: #ffc4cc;
-      line-height: 1.5;
-      margin-bottom: 16px;
+      color: #d7d7dc;
+      line-height: 1.55;
       font-size: 14px;
     }
 
-    .form-group {
+    .modal-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       margin-bottom: 14px;
     }
 
-    label {
+    .modal-top h2 {
+      flex: 1;
+      margin: 0;
+    }
+
+    .close-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      border: none;
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .details-image {
+      position: relative;
+      height: 240px;
+      background:
+        radial-gradient(circle, rgba(255, 0, 60, 0.38), transparent 43%),
+        linear-gradient(135deg, #210008, #050505);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      overflow: hidden;
+    }
+
+    .details-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      font-size: 22px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .carousel-btn.left {
+      left: 12px;
+    }
+
+    .carousel-btn.right {
+      right: 12px;
+    }
+
+    .carousel-count {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.65);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .detail-box {
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 70, 95, 0.22);
+    }
+
+    .detail-box small {
+      color: var(--muted);
       display: block;
-      margin-bottom: 7px;
-      color: #ffa0ae;
-      font-size: 14px;
-      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .detail-box strong {
+      color: white;
+      font-size: 15px;
     }
 
     input,
     select,
     textarea {
       width: 100%;
-      padding: 14px 15px;
-      border-radius: 15px;
-      border: 1px solid rgba(255, 60, 95, 0.45);
-      background: rgba(4, 4, 12, 0.95);
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 70, 95, 0.35);
+      background: rgba(0, 0, 0, 0.35);
       color: white;
-      font-size: 14px;
       outline: none;
+      margin-bottom: 10px;
     }
 
     textarea {
-      height: 95px;
       resize: none;
-    }
-
-    .modal-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .modal-btn {
-      border: none;
-      cursor: pointer;
-      border-radius: 16px;
-      padding: 14px;
-      font-weight: 900;
-      color: white;
-      transition: 0.22s ease;
-    }
-
-    .submit-btn {
-      background: linear-gradient(135deg, var(--red), var(--orange));
-    }
-
-    .cancel-btn {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--soft);
+      height: 100px;
     }
 
     @media (max-width: 720px) {
-      .top-status {
-        display: none;
+      .hero h2 {
+        font-size: 34px;
       }
 
-      .brand h1 {
-        font-size: 22px;
-      }
-
-      .hero-card h2 {
-        font-size: 38px;
-      }
-
-      .category-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .quick-actions {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 430px) {
-      .brand h1 {
-        font-size: 20px;
-      }
-
-      .category-grid {
+      .featured-strip {
         grid-template-columns: 1fr;
       }
 
-      .modal-actions {
+      .hero-actions {
         grid-template-columns: 1fr;
       }
     }
@@ -841,262 +620,145 @@
 </head>
 
 <body>
-  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-
-  <aside class="side-drawer" id="sideDrawer">
-    <div class="drawer-header">
+  <main class="app">
+    <header class="top">
       <div class="logo">D</div>
-      <h2>DemiSke</h2>
-      <button class="close-drawer" onclick="closeDrawer()">×</button>
-    </div>
-
-    <div class="drawer-section-title">Account</div>
-
-    <div id="guestMenu">
-      <button class="drawer-item primary" onclick="openLoginModal()">Login</button>
-      <button class="drawer-item" onclick="openRegisterModal()">Register</button>
-    </div>
-
-    <div id="userMenu" class="hidden">
-      <div class="drawer-item" style="cursor: default;">
-        👤 Logged in as <br>
-        <span id="loggedInName" style="color:#ffb8c2; font-size:13px;">Customer</span>
-      </div>
-
-      <button class="drawer-item primary" onclick="logoutUser()">Log Out</button>
-    </div>
-
-    <div class="drawer-section-title">Menu</div>
-
-    <button class="drawer-item" onclick="goDrawerPage('home')">🏠 Home</button>
-    <button class="drawer-item" onclick="goDrawerPage('products')">🛒 Products</button>
-    <button class="drawer-item" onclick="goDrawerPage('promos')">🎁 Promos</button>
-    <button class="drawer-item" onclick="goDrawerPage('status')">📡 Status</button>
-
-    <div class="drawer-section-title">Support</div>
-
-    <button class="drawer-item" onclick="openFeedbackModal()">💬 Send Feedback</button>
-    <button class="drawer-item" onclick="openReportModal()">⚠️ Report an Issue</button>
-    <button class="drawer-item" onclick="contactAdmin()">📩 Contact Admin</button>
-
-    <p class="drawer-small">
-      Login/Register is saved on this device only.
-    </p>
-  </aside>
-
-  <div class="topbar">
-    <div class="topbar-inner">
-      <button class="menu-btn" onclick="openDrawer()">☰</button>
 
       <div class="brand">
-        <div class="logo">D</div>
-        <h1>DemiSke</h1>
+        <h1>DemiSke Vault</h1>
+        <p>Premium accounts, VIP keys, and services</p>
       </div>
 
-      <div class="top-status">● Store Online</div>
-    </div>
+      <button class="admin-chip" onclick="openAdmin()">Admin</button>
+    </header>
 
-    <div class="nav-tabs">
-      <div class="nav-tab active" onclick="showPage('home', this)">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-label">Home</span>
+    <section class="hero" id="homeSection">
+      <div class="status">
+        <span class="status-dot"></span>
+        Store Online
       </div>
 
-      <div class="nav-tab" onclick="showPage('products', this)">
-        <span class="nav-icon">🛒</span>
-        <span class="nav-label">Shop</span>
+      <h2>Browse the Vault.<br>Pick your upgrade.</h2>
+
+      <p>
+        A cleaner marketplace experience for game accounts, keys, and custom services.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn primary" onclick="goShop()">Shop Now</button>
+        <button class="btn ghost" onclick="contactAdmin()">Contact Admin</button>
+      </div>
+    </section>
+
+    <section class="search-card" id="shopSection">
+      <input
+        class="search-box"
+        id="searchInput"
+        type="text"
+        placeholder="Search accounts, keys, or services..."
+        oninput="renderProducts()"
+      />
+
+      <div class="chips">
+        <button class="chip active" onclick="setCategory('all', this)">All</button>
+        <button class="chip" onclick="setCategory('account', this)">🎮 Accounts</button>
+        <button class="chip" onclick="setCategory('key', this)">🔑 Keys</button>
+        <button class="chip" onclick="setCategory('other', this)">📦 Services</button>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Featured Deals</h2>
+        <p>Quick options for customers.</p>
       </div>
 
-      <div class="nav-tab" onclick="showPage('promos', this)">
-        <span class="nav-icon">🎁</span>
-        <span class="nav-label">Promos</span>
+      <div class="featured-strip">
+        <div class="mini-card">
+          <strong>Fast Orders</strong>
+          <span>Send details directly</span>
+        </div>
+
+        <div class="mini-card">
+          <strong>VIP Access</strong>
+          <span>Keys and services</span>
+        </div>
+
+        <div class="mini-card">
+          <strong>Support Ready</strong>
+          <span>Report issues anytime</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2 id="shopTitle">Vault Products</h2>
+        <p>Tap a product to view details and pictures.</p>
       </div>
 
-      <div class="nav-tab" onclick="showPage('status', this)">
-        <span class="nav-icon">📡</span>
-        <span class="nav-label">Status</span>
-      </div>
+      <div class="product-grid" id="productGrid"></div>
+    </section>
+  </main>
 
-      <div class="nav-tab" onclick="openReportModal()">
-        <span class="nav-icon">⚠️</span>
-        <span class="nav-label">Report</span>
-      </div>
-    </div>
-  </div>
+  <nav class="bottom-nav">
+    <button class="bottom-item active" onclick="setBottom(this); scrollToHome()">
+      <span>🏠</span>
+      Home
+    </button>
 
-  <div class="app">
-    <div class="content">
-      <section id="homePage">
-        <div class="hero-card">
-          <div class="trust-pill">
-            <span class="dot"></span>
-            Trusted by customers worldwide
-          </div>
+    <button class="bottom-item" onclick="setBottom(this); goShop()">
+      <span>🛒</span>
+      Shop
+    </button>
 
-          <h2>Buy Fast.<br>Play Better.</h2>
+    <button class="bottom-item" onclick="setBottom(this); openFeedbackModal()">
+      <span>💬</span>
+      Feedback
+    </button>
 
-          <p>
-            Browse accounts, VIP keys, and gaming services with a clean and secure order flow.
-          </p>
+    <button class="bottom-item" onclick="setBottom(this); openReportModal()">
+      <span>⚠️</span>
+      Report
+    </button>
 
-          <button class="hero-btn" onclick="scrollToProducts()">View featured products</button>
+    <button class="bottom-item" onclick="setBottom(this); contactAdmin()">
+      <span>📩</span>
+      Admin
+    </button>
+  </nav>
 
-          <div class="hero-image">🔥</div>
-        </div>
-
-        <div class="section-title">
-          <h2>What do you want to buy?</h2>
-          <p>Select a category below.</p>
-        </div>
-
-        <div class="category-grid">
-          <div class="category-card active" onclick="filterProducts('all', this)">
-            <div class="icon">🔥</div>
-            <strong>All</strong>
-            <span>Everything</span>
-          </div>
-
-          <div class="category-card" onclick="filterProducts('account', this)">
-            <div class="icon">🎮</div>
-            <strong>Accounts</strong>
-            <span>Game accounts</span>
-          </div>
-
-          <div class="category-card" onclick="filterProducts('key', this)">
-            <div class="icon">🔑</div>
-            <strong>Keys</strong>
-            <span>VIP keys</span>
-          </div>
-
-          <div class="category-card" onclick="filterProducts('other', this)">
-            <div class="icon">📦</div>
-            <strong>Others</strong>
-            <span>Services</span>
-          </div>
-        </div>
-
-        <div class="quick-actions">
-          <button class="quick-btn primary" onclick="openFeedbackModal()">Send Feedback</button>
-          <button class="quick-btn" onclick="openReportModal()">Report an Issue</button>
-        </div>
-      </section>
-
-      <section id="productsPage">
-        <div class="section-title" id="productsSection">
-          <h2 id="productTitle">Featured Products</h2>
-          <p>Choose a product and submit your order.</p>
-        </div>
-
-        <div class="products-grid" id="productsGrid"></div>
-      </section>
-
-      <section id="promosPage" class="hidden">
-        <div class="section-title">
-          <h2>Promos</h2>
-          <p>Limited offers and announcements.</p>
-        </div>
-
-        <div class="promo-card">
-          <h3>🔥 New Customer Promo</h3>
-          <p>First-time buyers can message admin to ask for available discounts or bundles.</p>
-        </div>
-
-        <div class="promo-card">
-          <h3>🎁 Bundle Deals</h3>
-          <p>Buy multiple keys or services and request a custom price from admin.</p>
-        </div>
-
-        <div class="promo-card">
-          <h3>⚡ Fast Delivery Notice</h3>
-          <p>Prepare payment proof and correct contact details for faster processing.</p>
-        </div>
-      </section>
-
-      <section id="statusPage" class="hidden">
-        <div class="section-title">
-          <h2>Product Status</h2>
-          <p>Check product availability by category.</p>
-        </div>
-
-        <div class="status-list">
-          <div class="status-item">
-            <div class="status-icon">🎮</div>
-            <div class="status-info">
-              <strong>Accounts</strong>
-              <span>Game account listings</span>
-            </div>
-            <div class="status-tag">Online</div>
-          </div>
-
-          <div class="status-item">
-            <div class="status-icon">🔑</div>
-            <div class="status-info">
-              <strong>VIP Keys</strong>
-              <span>Keys and licenses</span>
-            </div>
-            <div class="status-tag">Online</div>
-          </div>
-
-          <div class="status-item">
-            <div class="status-icon">📦</div>
-            <div class="status-info">
-              <strong>Other Services</strong>
-              <span>Custom service listings</span>
-            </div>
-            <div class="status-tag">Online</div>
-          </div>
-        </div>
-      </section>
-    </div>
-  </div>
-
-  <!-- LOGIN MODAL -->
-  <div class="modal-overlay" id="loginModal">
+  <!-- PRODUCT DETAILS MODAL -->
+  <div class="modal-overlay" id="productModal">
     <div class="modal">
-      <h2>Login</h2>
-      <p>Enter your account details to continue.</p>
+      <div class="details-image" id="modalImageBox">🎮</div>
 
-      <div class="form-group">
-        <label>Email or Username</label>
-        <input type="text" id="loginUser" placeholder="Enter email or username" />
-      </div>
+      <div class="modal-padding">
+        <div class="modal-top">
+          <h2 id="modalProductName">Product Name</h2>
+          <button class="close-btn" onclick="closeModal('productModal')">×</button>
+        </div>
 
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="loginPassword" placeholder="Enter password" />
-      </div>
+        <span class="tag" id="modalProductType">PRODUCT</span>
 
-      <div class="modal-actions">
-        <button class="modal-btn cancel-btn" onclick="closeModal('loginModal')">Cancel</button>
-        <button class="modal-btn submit-btn" onclick="submitLogin()">Login</button>
-      </div>
-    </div>
-  </div>
+        <div class="detail-row">
+          <div class="detail-box">
+            <small>Price</small>
+            <strong id="modalProductPrice">₱0</strong>
+          </div>
 
-  <!-- REGISTER MODAL -->
-  <div class="modal-overlay" id="registerModal">
-    <div class="modal">
-      <h2>Register</h2>
-      <p>Create your customer account.</p>
+          <div class="detail-box">
+            <small>Status</small>
+            <strong>Available</strong>
+          </div>
+        </div>
 
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="registerName" placeholder="Enter your name" />
-      </div>
+        <p id="modalProductDetails"></p>
 
-      <div class="form-group">
-        <label>Telegram / Contact</label>
-        <input type="text" id="registerContact" placeholder="@username or phone number" />
-      </div>
-
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="registerPassword" placeholder="Create password" />
-      </div>
-
-      <div class="modal-actions">
-        <button class="modal-btn cancel-btn" onclick="closeModal('registerModal')">Cancel</button>
-        <button class="modal-btn submit-btn" onclick="submitRegister()">Register</button>
+        <div class="hero-actions">
+          <button class="btn primary" onclick="openBuyModal()">Buy This</button>
+          <button class="btn ghost" onclick="contactAdmin()">Ask Admin</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1104,21 +766,17 @@
   <!-- BUY MODAL -->
   <div class="modal-overlay" id="buyModal">
     <div class="modal">
-      <h2>Buy Product</h2>
-      <p id="buyProductText">Please confirm your order.</p>
+      <div class="modal-padding">
+        <div class="modal-top">
+          <h2>Submit Order</h2>
+          <button class="close-btn" onclick="closeModal('buyModal')">×</button>
+        </div>
 
-      <div class="form-group">
-        <label>Your Name</label>
-        <input type="text" id="buyerName" placeholder="Enter your name" />
-      </div>
+        <p id="buyText">Fill your details below.</p>
 
-      <div class="form-group">
-        <label>Contact</label>
-        <input type="text" id="buyerContact" placeholder="Telegram username or phone number" />
-      </div>
+        <input id="buyerName" type="text" placeholder="Your name" />
+        <input id="buyerContact" type="text" placeholder="Telegram username or phone number" />
 
-      <div class="form-group">
-        <label>Payment Method</label>
         <select id="paymentMethod">
           <option value="">Select payment method</option>
           <option value="GCash">GCash</option>
@@ -1126,11 +784,8 @@
           <option value="Bank Transfer">Bank Transfer</option>
           <option value="Other">Other</option>
         </select>
-      </div>
 
-      <div class="modal-actions">
-        <button class="modal-btn cancel-btn" onclick="closeModal('buyModal')">Cancel</button>
-        <button class="modal-btn submit-btn" onclick="submitOrder()">Submit Order</button>
+        <button class="btn primary" style="width:100%;" onclick="submitOrder()">Submit Order</button>
       </div>
     </div>
   </div>
@@ -1138,30 +793,24 @@
   <!-- FEEDBACK MODAL -->
   <div class="modal-overlay" id="feedbackModal">
     <div class="modal">
-      <h2>Send Feedback</h2>
-      <p>Your feedback helps improve the store and service.</p>
+      <div class="modal-padding">
+        <div class="modal-top">
+          <h2>Send Feedback</h2>
+          <button class="close-btn" onclick="closeModal('feedbackModal')">×</button>
+        </div>
 
-      <div class="form-group">
-        <label>Feedback Category</label>
         <select id="feedbackCategory">
-          <option value="">Select category</option>
+          <option value="">Select feedback category</option>
           <option value="Website UI">Website UI</option>
           <option value="Product Quality">Product Quality</option>
           <option value="Customer Service">Customer Service</option>
           <option value="Payment Process">Payment Process</option>
-          <option value="Delivery Time">Delivery Time</option>
           <option value="Suggestion">Suggestion</option>
         </select>
-      </div>
 
-      <div class="form-group">
-        <label>Your Message</label>
-        <textarea id="feedbackMessage" placeholder="Write your feedback here..."></textarea>
-      </div>
+        <textarea id="feedbackMessage" placeholder="Write your feedback..."></textarea>
 
-      <div class="modal-actions">
-        <button class="modal-btn cancel-btn" onclick="closeModal('feedbackModal')">Cancel</button>
-        <button class="modal-btn submit-btn" onclick="submitFeedback()">Submit Feedback</button>
+        <button class="btn primary" style="width:100%;" onclick="submitFeedback()">Submit Feedback</button>
       </div>
     </div>
   </div>
@@ -1169,59 +818,34 @@
   <!-- REPORT MODAL -->
   <div class="modal-overlay" id="reportModal">
     <div class="modal">
-      <h2>Report an Issue</h2>
-      <p>Send a problem report. This will notify the admin panel.</p>
+      <div class="modal-padding">
+        <div class="modal-top">
+          <h2>Report Issue</h2>
+          <button class="close-btn" onclick="closeModal('reportModal')">×</button>
+        </div>
 
-      <div class="form-group">
-        <label>Issue Category</label>
         <select id="issueCategory">
           <option value="">Select issue</option>
           <option value="Payment Problem">Payment Problem</option>
           <option value="Account Problem">Account Problem</option>
           <option value="Key Not Working">Key Not Working</option>
           <option value="Website Bug">Website Bug</option>
-          <option value="Wrong Product Info">Wrong Product Info</option>
           <option value="Slow Response">Slow Response</option>
           <option value="Other Issue">Other Issue</option>
         </select>
-      </div>
 
-      <div class="form-group">
-        <label>Your Contact</label>
-        <input type="text" id="reportContact" placeholder="Telegram username or phone number" />
-      </div>
+        <input id="reportContact" type="text" placeholder="Your Telegram / contact" />
+        <textarea id="issueMessage" placeholder="Explain the issue..."></textarea>
 
-      <div class="form-group">
-        <label>Explain the Issue</label>
-        <textarea id="issueMessage" placeholder="Describe the problem clearly..."></textarea>
-      </div>
-
-      <div class="modal-actions">
-        <button class="modal-btn cancel-btn" onclick="closeModal('reportModal')">Cancel</button>
-        <button class="modal-btn submit-btn" onclick="submitIssue()">Report Issue</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- SUCCESS MODAL -->
-  <div class="modal-overlay" id="successModal">
-    <div class="modal">
-      <h2 id="successTitle">Success</h2>
-      <p id="successMessage">Your request has been submitted.</p>
-
-      <div class="modal-actions">
-        <button class="modal-btn submit-btn" onclick="closeModal('successModal')">Done</button>
+        <button class="btn primary" style="width:100%;" onclick="submitIssue()">Submit Report</button>
       </div>
     </div>
   </div>
 
   <script>
-    const productsGrid = document.getElementById("productsGrid");
-    const productTitle = document.getElementById("productTitle");
-
-    let selectedProduct = null;
-    let productCarouselState = {};
-    let currentFilter = "all";
+    let activeCategory = "all";
+    let activeProduct = null;
+    let activeImageIndex = 0;
 
     const demoProducts = [
       {
@@ -1232,7 +856,8 @@
         level: "184",
         region: "TH",
         uid: "361673204",
-        description: "Good skins, high level account, ready to use."
+        description: "Good skins, high level account, ready to use.",
+        images: []
       },
       {
         id: 2,
@@ -1243,7 +868,8 @@
         game: "PUBGM",
         platform: "Android",
         server: "Global / KR / VNG",
-        description: "14 days VIP key. Message admin after payment."
+        description: "14 days VIP key. Message admin after payment.",
+        images: []
       },
       {
         id: 3,
@@ -1252,185 +878,111 @@
         price: 999,
         category: "Service",
         availability: "Available",
-        description: "Fast service. Manual process. Message admin first."
+        description: "Fast service. Manual process. Message admin first.",
+        images: []
       }
     ];
 
-    function openDrawer() {
-      document.getElementById("sideDrawer").classList.add("active");
-      document.getElementById("drawerOverlay").classList.add("active");
-      updateAuthMenu();
-    }
-
-    function closeDrawer() {
-      document.getElementById("sideDrawer").classList.remove("active");
-      document.getElementById("drawerOverlay").classList.remove("active");
-    }
-
-    function goDrawerPage(page) {
-      closeDrawer();
-      showPage(page);
-    }
-
-    function openLoginModal() {
-      closeDrawer();
-      document.getElementById("loginModal").classList.add("active");
-    }
-
-    function openRegisterModal() {
-      closeDrawer();
-      document.getElementById("registerModal").classList.add("active");
-    }
-
-    function contactAdmin() {
-      closeDrawer();
-      window.location.href = "https://t.me/Demixyloadmin";
-    }
-
-    function updateAuthMenu() {
-      const isLoggedIn = localStorage.getItem("customerLoggedIn") === "true";
-      const customerName = localStorage.getItem("customerName") || "Customer";
-
-      document.getElementById("guestMenu").classList.toggle("hidden", isLoggedIn);
-      document.getElementById("userMenu").classList.toggle("hidden", !isLoggedIn);
-      document.getElementById("loggedInName").innerText = customerName;
-    }
-
-    function submitLogin() {
-      const user = getValue("loginUser");
-      const pass = getValue("loginPassword");
-
-      if (!user || !pass) {
-        alert("Please enter your username/email and password.");
-        return;
-      }
-
-      localStorage.setItem("customerLoggedIn", "true");
-      localStorage.setItem("customerName", user);
-
-      closeModal("loginModal");
-      updateAuthMenu();
-
-      showSuccess("Logged In", "You are now logged in on this device.");
-
-      document.getElementById("loginUser").value = "";
-      document.getElementById("loginPassword").value = "";
-    }
-
-    function submitRegister() {
-      const name = getValue("registerName");
-      const contact = getValue("registerContact");
-      const pass = getValue("registerPassword");
-
-      if (!name || !contact || !pass) {
-        alert("Please complete your name, contact, and password.");
-        return;
-      }
-
-      localStorage.setItem("customerLoggedIn", "true");
-      localStorage.setItem("customerName", name);
-      localStorage.setItem("customerContact", contact);
-
-      saveAdminNotification({
-        notificationType: "New Registration",
-        category: "Account",
-        title: "New Customer Registered",
-        message: `${name} registered on the website. Contact: ${contact}`,
-        customerName: name,
-        contact: contact
-      });
-
-      closeModal("registerModal");
-      updateAuthMenu();
-
-      showSuccess("Registered", "Your account has been created on this device.");
-
-      document.getElementById("registerName").value = "";
-      document.getElementById("registerContact").value = "";
-      document.getElementById("registerPassword").value = "";
-    }
-
-    function logoutUser() {
-      localStorage.removeItem("customerLoggedIn");
-      localStorage.removeItem("customerName");
-      localStorage.removeItem("customerContact");
-
-      closeDrawer();
-      updateAuthMenu();
-
-      showSuccess("Logged Out", "You have been logged out successfully.");
-    }
-
     function getProducts() {
-      const savedProducts = JSON.parse(localStorage.getItem("adminProducts")) || [];
-      return savedProducts.length > 0 ? savedProducts : demoProducts;
+      const saved = JSON.parse(localStorage.getItem("adminProducts")) || [];
+      return saved.length ? saved : demoProducts;
     }
 
-
-    function getProductImageHTML(product) {
-      const images = product.images || [];
-      const icon = getProductIcon(product.productType);
-
-      if (!images.length) {
-        return `
-          <div class="product-carousel">
-            ${icon}
-          </div>
-        `;
-      }
-
-      const currentIndex = productCarouselState[product.id] || 0;
-      const currentImage = images[currentIndex] || images[0];
-
-      return `
-        <div class="product-carousel">
-          <img src="${currentImage}" alt="${product.name || 'Product Image'}">
-
-          ${images.length > 1 ? `
-            <button class="carousel-btn left" onclick="changeProductImage(event, ${product.id}, -1)">‹</button>
-            <button class="carousel-btn right" onclick="changeProductImage(event, ${product.id}, 1)">›</button>
-            <div class="carousel-count">${currentIndex + 1}/${images.length}</div>
-          ` : ""}
-        </div>
-      `;
-    }
-
-    function changeProductImage(event, productId, direction) {
-      event.stopPropagation();
-
-      const products = getProducts();
-      const product = products.find(item => item.id === productId);
-
-      if (!product || !product.images || product.images.length === 0) {
-        return;
-      }
-
-      const total = product.images.length;
-      const currentIndex = productCarouselState[productId] || 0;
-      let nextIndex = currentIndex + direction;
-
-      if (nextIndex < 0) nextIndex = total - 1;
-      if (nextIndex >= total) nextIndex = 0;
-
-      productCarouselState[productId] = nextIndex;
-
-      renderProducts(currentFilter);
-    }
-
-    function getProductIcon(type) {
+    function getIcon(type) {
       if (type === "account") return "🎮";
       if (type === "key") return "🔑";
       if (type === "other") return "📦";
       return "🔥";
     }
 
-    function getProductDetails(product) {
+    function renderProducts() {
+      const grid = document.getElementById("productGrid");
+      const search = document.getElementById("searchInput").value.toLowerCase().trim();
+
+      let products = getProducts();
+
+      products = products.filter(product => {
+        const matchCategory = activeCategory === "all" || product.productType === activeCategory;
+        const matchSearch = !search || `${product.name} ${product.description} ${product.productType}`.toLowerCase().includes(search);
+        return matchCategory && matchSearch;
+      });
+
+      grid.innerHTML = "";
+
+      if (!products.length) {
+        grid.innerHTML = `<div class="empty-state">No products found.</div>`;
+        return;
+      }
+
+      products.forEach((product, index) => {
+        const image = product.images && product.images.length ? product.images[0] : null;
+
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.style.animationDelay = `${index * 0.05}s`;
+        card.onclick = () => openProductDetails(product.id);
+
+        card.innerHTML = `
+          <div class="product-img">
+            ${image ? `<img src="${image}" alt="${product.name}">` : getIcon(product.productType)}
+          </div>
+
+          <div class="product-info">
+            <span class="tag">${(product.productType || "product").toUpperCase()}</span>
+            <h3>${product.name || "Unnamed Product"}</h3>
+            <div class="price">₱${product.price || 0}</div>
+            <div class="muted">Tap to view full details</div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function setCategory(category, element) {
+      activeCategory = category;
+
+      document.querySelectorAll(".chip").forEach(chip => chip.classList.remove("active"));
+      element.classList.add("active");
+
+      const title = document.getElementById("shopTitle");
+
+      if (category === "all") title.innerText = "Vault Products";
+      if (category === "account") title.innerText = "Game Accounts";
+      if (category === "key") title.innerText = "VIP Keys";
+      if (category === "other") title.innerText = "Services";
+
+      renderProducts();
+    }
+
+    function setBottom(element) {
+      document.querySelectorAll(".bottom-item").forEach(item => item.classList.remove("active"));
+      element.classList.add("active");
+    }
+
+    function scrollToHome() {
+      document.getElementById("homeSection").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function goShop() {
+      document.getElementById("shopSection").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function openAdmin() {
+      window.location.href = "admin.html";
+    }
+
+    function contactAdmin() {
+      window.location.href = "https://t.me/Demixyloadmin";
+    }
+
+    function getDetails(product) {
       if (product.productType === "account") {
         return `
           Level: ${product.level || "N/A"}<br>
           UID: ${product.uid || "N/A"}<br>
-          Region: ${product.region || "N/A"}<br>
-          ${product.description || ""}
+          Region: ${product.region || "N/A"}<br><br>
+          ${product.description || "No description."}
         `;
       }
 
@@ -1439,161 +991,91 @@
           Duration: ${product.duration || "N/A"}<br>
           Game: ${product.game || "N/A"}<br>
           Platform: ${product.platform || "N/A"}<br>
-          Server: ${product.server || "N/A"}<br>
-          ${product.description || ""}
+          Server: ${product.server || "N/A"}<br><br>
+          ${product.description || "No description."}
         `;
       }
 
       return `
         Category: ${product.category || "N/A"}<br>
-        Status: ${product.availability || "N/A"}<br>
-        ${product.description || ""}
+        Status: ${product.availability || "Available"}<br><br>
+        ${product.description || "No description."}
       `;
     }
 
-    function renderProducts(filter = "all") {
-      currentFilter = filter;
-      productsGrid.innerHTML = "";
+    function openProductDetails(productId) {
+      const product = getProducts().find(item => item.id === productId);
 
-      const products = getProducts();
-
-      const filteredProducts = filter === "all"
-        ? products
-        : products.filter(product => product.productType === filter);
-
-      if (filteredProducts.length === 0) {
-        productsGrid.innerHTML = `
-          <div class="empty-state">
-            No products available in this category.
-          </div>
-        `;
-        return;
-      }
-
-      filteredProducts.forEach((product, index) => {
-        const card = document.createElement("div");
-        card.className = "product-card";
-        card.style.animationDelay = `${index * 0.06}s`;
-
-        card.innerHTML = `
-          <div class="product-img">
-            ${getProductIcon(product.productType)}
-          </div>
-
-          <div class="product-body">
-            <div class="badge">${(product.productType || "PRODUCT").toUpperCase()}</div>
-
-            <h3>${product.name || "Unnamed Product"}</h3>
-
-            <div class="price">₱${product.price || 0}</div>
-
-            <div class="details">
-              ${getProductDetails(product)}
-            </div>
-
-            <button class="buy-btn" onclick="openBuyModal(${product.id})">
-              Buy Now
-            </button>
-          </div>
-        `;
-
-        productsGrid.appendChild(card);
-      });
-    }
-
-    function filterProducts(type, element) {
-      document.querySelectorAll(".category-card").forEach(card => {
-        card.classList.remove("active");
-      });
-
-      element.classList.add("active");
-
-      if (type === "all") productTitle.innerText = "Featured Products";
-      if (type === "account") productTitle.innerText = "Available Accounts";
-      if (type === "key") productTitle.innerText = "Available Keys";
-      if (type === "other") productTitle.innerText = "Other Products / Services";
-
-      renderProducts(type);
-      showPage("products");
-    }
-
-    function showPage(page, tabElement = null) {
-      document.getElementById("homePage").classList.add("hidden");
-      document.getElementById("productsPage").classList.add("hidden");
-      document.getElementById("promosPage").classList.add("hidden");
-      document.getElementById("statusPage").classList.add("hidden");
-
-      if (page === "home") {
-        document.getElementById("homePage").classList.remove("hidden");
-        document.getElementById("productsPage").classList.remove("hidden");
-      }
-
-      if (page === "products") {
-        document.getElementById("productsPage").classList.remove("hidden");
-      }
-
-      if (page === "promos") {
-        document.getElementById("promosPage").classList.remove("hidden");
-      }
-
-      if (page === "status") {
-        document.getElementById("statusPage").classList.remove("hidden");
-      }
-
-      if (tabElement) {
-        document.querySelectorAll(".nav-tab").forEach(tab => {
-          tab.classList.remove("active");
-        });
-
-        tabElement.classList.add("active");
-      }
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function scrollToProducts() {
-      document.getElementById("productsSection").scrollIntoView({
-        behavior: "smooth"
-      });
-    }
-
-    function openBuyModal(productId) {
-      const products = getProducts();
-      selectedProduct = products.find(product => product.id === productId);
-
-      if (!selectedProduct) {
+      if (!product) {
         alert("Product not found.");
         return;
       }
 
-      document.getElementById("buyProductText").innerText =
-        `You are buying: ${selectedProduct.name} for ₱${selectedProduct.price}`;
+      activeProduct = product;
+      activeImageIndex = 0;
 
+      document.getElementById("modalProductName").innerText = product.name || "Unnamed Product";
+      document.getElementById("modalProductPrice").innerText = `₱${product.price || 0}`;
+      document.getElementById("modalProductType").innerText = (product.productType || "PRODUCT").toUpperCase();
+      document.getElementById("modalProductDetails").innerHTML = getDetails(product);
+
+      renderModalImage();
+
+      document.getElementById("productModal").classList.add("active");
+    }
+
+    function renderModalImage() {
+      const box = document.getElementById("modalImageBox");
+
+      if (!activeProduct) return;
+
+      const images = activeProduct.images || [];
+
+      if (!images.length) {
+        box.innerHTML = getIcon(activeProduct.productType);
+        return;
+      }
+
+      const image = images[activeImageIndex] || images[0];
+
+      box.innerHTML = `
+        <img src="${image}" alt="${activeProduct.name || "Product image"}">
+
+        ${images.length > 1 ? `
+          <button class="carousel-btn left" onclick="changeImage(-1)">‹</button>
+          <button class="carousel-btn right" onclick="changeImage(1)">›</button>
+          <div class="carousel-count">${activeImageIndex + 1}/${images.length}</div>
+        ` : ""}
+      `;
+    }
+
+    function changeImage(direction) {
+      if (!activeProduct || !activeProduct.images || !activeProduct.images.length) return;
+
+      const total = activeProduct.images.length;
+      activeImageIndex += direction;
+
+      if (activeImageIndex < 0) activeImageIndex = total - 1;
+      if (activeImageIndex >= total) activeImageIndex = 0;
+
+      renderModalImage();
+    }
+
+    function openBuyModal() {
+      if (!activeProduct) {
+        alert("Please select a product first.");
+        return;
+      }
+
+      document.getElementById("buyText").innerText =
+        `You are buying ${activeProduct.name} for ₱${activeProduct.price || 0}.`;
+
+      closeModal("productModal");
       document.getElementById("buyModal").classList.add("active");
-    }
-
-    function openFeedbackModal() {
-      closeDrawer();
-      document.getElementById("feedbackModal").classList.add("active");
-    }
-
-    function openReportModal() {
-      closeDrawer();
-      document.getElementById("reportModal").classList.add("active");
     }
 
     function closeModal(id) {
       document.getElementById(id).classList.remove("active");
-    }
-
-    function showSuccess(title, message) {
-      document.getElementById("successTitle").innerText = title;
-      document.getElementById("successMessage").innerText = message;
-      document.getElementById("successModal").classList.add("active");
-    }
-
-    function getValue(id) {
-      return document.getElementById(id).value.trim();
     }
 
     function saveAdminNotification(data) {
@@ -1609,37 +1091,51 @@
       localStorage.setItem("adminNotifications", JSON.stringify(notifications));
     }
 
-    function submitOrder() {
-      const buyerName = getValue("buyerName");
-      const buyerContact = getValue("buyerContact");
-      const paymentMethod = getValue("paymentMethod");
+    function getValue(id) {
+      return document.getElementById(id).value.trim();
+    }
 
-      if (!buyerName || !buyerContact || !paymentMethod) {
+    function submitOrder() {
+      const name = getValue("buyerName");
+      const contact = getValue("buyerContact");
+      const payment = getValue("paymentMethod");
+
+      if (!activeProduct) {
+        alert("No product selected.");
+        return;
+      }
+
+      if (!name || !contact || !payment) {
         alert("Please complete your name, contact, and payment method.");
         return;
       }
 
       saveAdminNotification({
         notificationType: "New Order",
-        category: selectedProduct.productType,
+        category: activeProduct.productType,
         title: "New Customer Order",
-        message: `${buyerName} wants to buy ${selectedProduct.name}. Payment method: ${paymentMethod}. Contact: ${buyerContact}`,
-        customerName: buyerName,
-        contact: buyerContact,
-        productName: selectedProduct.name,
-        price: selectedProduct.price
+        message: `${name} wants to buy ${activeProduct.name}. Payment method: ${payment}. Contact: ${contact}`,
+        customerName: name,
+        contact: contact,
+        productName: activeProduct.name,
+        price: activeProduct.price
       });
 
       closeModal("buyModal");
 
-      showSuccess(
-        "Order Submitted",
-        "Your order has been sent. Please wait for admin confirmation."
-      );
+      alert("Order submitted. Please wait for admin confirmation.");
 
       document.getElementById("buyerName").value = "";
       document.getElementById("buyerContact").value = "";
       document.getElementById("paymentMethod").value = "";
+    }
+
+    function openFeedbackModal() {
+      document.getElementById("feedbackModal").classList.add("active");
+    }
+
+    function openReportModal() {
+      document.getElementById("reportModal").classList.add("active");
     }
 
     function submitFeedback() {
@@ -1647,7 +1143,7 @@
       const message = getValue("feedbackMessage");
 
       if (!category || !message) {
-        alert("Please choose a feedback category and write your message.");
+        alert("Please choose category and write your feedback.");
         return;
       }
 
@@ -1660,10 +1156,7 @@
 
       closeModal("feedbackModal");
 
-      showSuccess(
-        "Feedback Sent",
-        "Thank you. Your feedback has been sent to the admin panel."
-      );
+      alert("Feedback submitted.");
 
       document.getElementById("feedbackCategory").value = "";
       document.getElementById("feedbackMessage").value = "";
@@ -1675,7 +1168,7 @@
       const message = getValue("issueMessage");
 
       if (!category || !contact || !message) {
-        alert("Please complete issue category, contact, and message.");
+        alert("Please complete all report fields.");
         return;
       }
 
@@ -1689,10 +1182,7 @@
 
       closeModal("reportModal");
 
-      showSuccess(
-        "Issue Reported",
-        "Your issue has been sent. The admin will check it as soon as possible."
-      );
+      alert("Issue report submitted.");
 
       document.getElementById("issueCategory").value = "";
       document.getElementById("reportContact").value = "";
@@ -1700,7 +1190,6 @@
     }
 
     renderProducts();
-    updateAuthMenu();
   </script>
 </body>
 </html>
