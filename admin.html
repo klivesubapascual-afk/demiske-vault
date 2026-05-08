@@ -1120,7 +1120,7 @@
     const ADMIN_USERNAME = "xyloresselers";
     const ADMIN_PASSWORD = "modtakels ni xylo";
 
-    let selectedProductType = "";
+    var selectedProductType = "";
     let selectedImages = [];
     let savedImageDataUrls = [];
     let productFilter = "all";
@@ -1819,6 +1819,7 @@
 <script id="fixTypeButtonsClick">
 (function () {
   function forceType(type) {
+    selectedProductType = type;
     window.selectedProductType = type;
 
     const radios = document.querySelectorAll('input[name="productType"]');
