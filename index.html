@@ -4,105 +4,858 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DemiSke Vault</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
 :root{--red:#ff003c;--orange:#ff6a00;--card:rgba(255,255,255,.06);--border:rgba(255,70,95,.35);--soft:#ffb8c2;--muted:#aaa;--green:#00ff88}
 body{min-height:100vh;background:radial-gradient(circle at top right,rgba(255,0,60,.25),transparent 35%),radial-gradient(circle at bottom left,rgba(255,106,0,.13),transparent 35%),linear-gradient(145deg,#050507,#140008,#000);color:white;padding-bottom:95px;overflow-x:hidden}
-button,input,select,textarea{font-family:Arial,sans-serif}button{cursor:pointer}.hidden{display:none!important}.wrap{max-width:1050px;margin:auto;padding:18px 15px}.top{display:flex;align-items:center;gap:12px;margin-bottom:18px}.logo{width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,var(--red),#1d0008,#000);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:25px;box-shadow:0 0 25px rgba(255,0,60,.4)}.brand{flex:1}.brand h1{font-size:24px;background:linear-gradient(90deg,var(--red),var(--orange));-webkit-background-clip:text;color:transparent}.brand p,.muted{color:var(--muted);font-size:13px;line-height:1.45}.pill{border:1px solid var(--border);background:rgba(255,255,255,.06);padding:10px 13px;border-radius:999px;font-size:12px;font-weight:900;color:white;white-space:nowrap}
-.hero,.searchBox,.card,.buyerBox{border:1px solid var(--border);background:var(--card);box-shadow:0 0 18px rgba(255,0,60,.1)}.hero{border-radius:30px;padding:24px;background:radial-gradient(circle at top right,rgba(255,0,60,.34),transparent 42%),linear-gradient(135deg,rgba(26,0,8,.96),rgba(9,9,16,.96));margin-bottom:18px}.status,.online{display:inline-flex;gap:8px;align-items:center;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);font-size:13px;color:#ffd1d8;margin-bottom:12px;font-weight:800}.online{border:1px solid rgba(255,70,95,.35)}.dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}.hero h2{font-size:36px;line-height:1.08;margin-bottom:10px}.hero p{color:#ffc7d0;line-height:1.5;font-size:15px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.btn{border:0;border-radius:17px;padding:14px 16px;color:white;font-weight:900;text-align:center;text-decoration:none}.primary{background:linear-gradient(135deg,var(--red),var(--orange));box-shadow:0 0 22px rgba(255,0,60,.28)}.ghost{background:rgba(255,255,255,.07);border:1px solid var(--border)}
-.buyerBox{margin-top:15px;padding:15px;border-radius:22px}.buyerTitle{color:var(--soft);font-weight:900;margin-bottom:10px;font-size:14px}.buyerGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.buyerBtn{border:1px solid var(--border);background:rgba(255,255,255,.07);color:white;padding:14px;border-radius:16px;font-weight:900}.buyerBtn.demi{background:linear-gradient(135deg,var(--red),var(--orange));border:0}
-.searchBox{border-radius:22px;padding:14px;margin-bottom:18px}input,select,textarea{width:100%;border:1px solid rgba(255,70,95,.35);background:rgba(0,0,0,.34);color:white;padding:14px;border-radius:16px;outline:none;font-size:14px}textarea{height:100px;resize:none}.chips{display:flex;gap:10px;overflow-x:auto;padding-top:14px}.chips::-webkit-scrollbar{display:none}.chip{white-space:nowrap;border:1px solid var(--border);background:rgba(255,255,255,.06);color:white;border-radius:999px;padding:11px 15px;font-weight:900}.chip.active{background:linear-gradient(135deg,var(--red),var(--orange));border:0}
-.title{margin:24px 0 12px}.title h2{font-size:25px}.title p{color:var(--muted);font-size:14px;margin-top:5px}.productGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}.card{border-radius:24px;overflow:hidden;cursor:pointer}.img{height:135px;background:radial-gradient(circle,rgba(255,0,60,.38),transparent 44%),linear-gradient(135deg,#210008,#050505);display:flex;align-items:center;justify-content:center;font-size:44px;overflow:hidden}.img img{width:100%;height:100%;object-fit:cover}.info{padding:13px}.tag{display:inline-block;padding:5px 8px;border-radius:999px;background:rgba(255,0,60,.18);color:#ffc4cc;font-size:10px;font-weight:900;margin-bottom:8px}.info h3{font-size:15px;line-height:1.25;margin-bottom:7px}.price{font-size:20px;font-weight:900;color:var(--soft);margin:8px 0}.empty{grid-column:1/-1;text-align:center;border:1px solid var(--border);background:var(--card);border-radius:22px;padding:28px;color:#ffc4cc}
-.bottom{position:fixed;left:12px;right:12px;bottom:12px;max-width:620px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:10px;border-radius:26px;background:rgba(8,8,13,.93);backdrop-filter:blur(15px);border:1px solid var(--border);z-index:20}.nav{border:0;background:transparent;color:#ddd;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:800;border-radius:18px;padding:8px 2px}.nav span{font-size:20px}.nav.active{background:linear-gradient(135deg,rgba(255,0,60,.32),rgba(255,106,0,.16));color:white}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:99;display:none;align-items:center;justify-content:center;padding:16px}.modal.active{display:flex}.box{width:100%;max-width:460px;max-height:90vh;overflow:auto;border:1px solid rgba(255,75,100,.42);border-radius:28px;background:radial-gradient(circle at top,rgba(255,0,60,.22),transparent 43%),#101018;box-shadow:0 0 40px rgba(255,0,60,.35)}.boxPad{padding:18px}.close{float:right;width:38px;height:38px;border:0;border-radius:13px;background:rgba(255,255,255,.08);color:white;font-size:22px}.detailImg{height:240px;background:radial-gradient(circle,rgba(255,0,60,.38),transparent 44%),linear-gradient(135deg,#210008,#050505);display:flex;align-items:center;justify-content:center;font-size:60px;overflow:hidden;position:relative}.detailImg img{width:100%;height:100%;object-fit:cover}.arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.28);background:rgba(0,0,0,.6);color:white;font-size:22px;font-weight:900}.left{left:12px}.right{right:12px}.count{position:absolute;right:12px;bottom:12px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.65);font-size:12px;font-weight:900}
-@media(max-width:720px){.hero h2{font-size:32px}.actions,.buyerGrid{grid-template-columns:1fr}.productGrid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr))}}
+button,input,select,textarea{font-family:Arial,sans-serif}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+.wrap{max-width:1050px;margin:auto;padding:18px 15px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.logo{width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,var(--red),#1d0008,#000);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:25px;box-shadow:0 0 25px rgba(255,0,60,.4)}
+.brand{flex:1}
+.brand h1{font-size:24px;background:linear-gradient(90deg,var(--red),var(--orange));-webkit-background-clip:text;color:transparent}
+.brand p,.muted{color:var(--muted);font-size:13px;line-height:1.45}
+.pill{border:1px solid var(--border);background:rgba(255,255,255,.06);padding:10px 13px;border-radius:999px;font-size:12px;font-weight:900;color:white;white-space:nowrap}
+
+.hero,.searchBox,.card,.buyerBox,.accountBox{border:1px solid var(--border);background:var(--card);box-shadow:0 0 18px rgba(255,0,60,.1)}
+.hero{border-radius:30px;padding:24px;background:radial-gradient(circle at top right,rgba(255,0,60,.34),transparent 42%),linear-gradient(135deg,rgba(26,0,8,.96),rgba(9,9,16,.96));margin-bottom:18px}
+.status,.online{display:inline-flex;gap:8px;align-items:center;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);font-size:13px;color:#ffd1d8;margin-bottom:12px;font-weight:800}
+.online{border:1px solid rgba(255,70,95,.35)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+.hero h2{font-size:36px;line-height:1.08;margin-bottom:10px}
+.hero p{color:#ffc7d0;line-height:1.5;font-size:15px}
+
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.btn{border:0;border-radius:17px;padding:14px 16px;color:white;font-weight:900;text-align:center;text-decoration:none}
+.primary{background:linear-gradient(135deg,var(--red),var(--orange));box-shadow:0 0 22px rgba(255,0,60,.28)}
+.ghost{background:rgba(255,255,255,.07);border:1px solid var(--border)}
+.danger{background:rgba(255,0,60,.2);border:1px solid rgba(255,70,95,.45)}
+
+.accountBox{margin-top:15px;padding:15px;border-radius:22px}
+.accountTop{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+.accountTitle{color:var(--soft);font-weight:900;font-size:14px}
+.accountName{font-size:13px;color:#ffd1d8;font-weight:900}
+.accountGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.buyerBox{margin-top:15px;padding:15px;border-radius:22px}
+.buyerTitle{color:var(--soft);font-weight:900;margin-bottom:10px;font-size:14px}
+.buyerGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.buyerBtn{border:1px solid var(--border);background:rgba(255,255,255,.07);color:white;padding:14px;border-radius:16px;font-weight:900}
+.buyerBtn.demi{background:linear-gradient(135deg,var(--red),var(--orange));border:0}
+
+.searchBox{border-radius:22px;padding:14px;margin-bottom:18px}
+input,select,textarea{width:100%;border:1px solid rgba(255,70,95,.35);background:rgba(0,0,0,.34);color:white;padding:14px;border-radius:16px;outline:none;font-size:14px}
+textarea{height:100px;resize:none}
+.chips{display:flex;gap:10px;overflow-x:auto;padding-top:14px}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;border:1px solid var(--border);background:rgba(255,255,255,.06);color:white;border-radius:999px;padding:11px 15px;font-weight:900}
+.chip.active{background:linear-gradient(135deg,var(--red),var(--orange));border:0}
+
+.title{margin:24px 0 12px}
+.title h2{font-size:25px}
+.title p{color:var(--muted);font-size:14px;margin-top:5px}
+
+.productGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.card{border-radius:24px;overflow:hidden;cursor:pointer}
+.img{height:135px;background:radial-gradient(circle,rgba(255,0,60,.38),transparent 44%),linear-gradient(135deg,#210008,#050505);display:flex;align-items:center;justify-content:center;font-size:44px;overflow:hidden}
+.img img{width:100%;height:100%;object-fit:cover}
+.info{padding:13px}
+.tag{display:inline-block;padding:5px 8px;border-radius:999px;background:rgba(255,0,60,.18);color:#ffc4cc;font-size:10px;font-weight:900;margin-bottom:8px}
+.info h3{font-size:15px;line-height:1.25;margin-bottom:7px}
+.price{font-size:20px;font-weight:900;color:var(--soft);margin:8px 0}
+.empty{grid-column:1/-1;text-align:center;border:1px solid var(--border);background:var(--card);border-radius:22px;padding:28px;color:#ffc4cc}
+
+.bottom{position:fixed;left:12px;right:12px;bottom:12px;max-width:620px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:10px;border-radius:26px;background:rgba(8,8,13,.93);backdrop-filter:blur(15px);border:1px solid var(--border);z-index:20}
+.nav{border:0;background:transparent;color:#ddd;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:800;border-radius:18px;padding:8px 2px}
+.nav span{font-size:20px}
+.nav.active{background:linear-gradient(135deg,rgba(255,0,60,.32),rgba(255,106,0,.16));color:white}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:99;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.active{display:flex}
+.box{width:100%;max-width:460px;max-height:90vh;overflow:auto;border:1px solid rgba(255,75,100,.42);border-radius:28px;background:radial-gradient(circle at top,rgba(255,0,60,.22),transparent 43%),#101018;box-shadow:0 0 40px rgba(255,0,60,.35)}
+.boxPad{padding:18px}
+.close{float:right;width:38px;height:38px;border:0;border-radius:13px;background:rgba(255,255,255,.08);color:white;font-size:22px}
+.detailImg{height:240px;background:radial-gradient(circle,rgba(255,0,60,.38),transparent 44%),linear-gradient(135deg,#210008,#050505);display:flex;align-items:center;justify-content:center;font-size:60px;overflow:hidden;position:relative}
+.detailImg img{width:100%;height:100%;object-fit:cover}
+.arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.28);background:rgba(0,0,0,.6);color:white;font-size:22px;font-weight:900}
+.left{left:12px}
+.right{right:12px}
+.count{position:absolute;right:12px;bottom:12px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.65);font-size:12px;font-weight:900}
+
+@media(max-width:720px){
+  .hero h2{font-size:32px}
+  .actions,.buyerGrid,.accountGrid{grid-template-columns:1fr}
+  .productGrid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr))}
+}
 </style>
 </head>
+
 <body>
 <main class="wrap">
-<header class="top"><div class="logo">D</div><div class="brand"><h1>DemiSke Vault</h1><p>Premium accounts, keys, and services</p></div><div class="pill">DEMISKE</div></header>
-<section class="hero" id="home"><div class="status"><span class="dot"></span> Store Online</div><br><div class="online"><span class="dot"></span><span id="onlineCount">24</span> customers online</div><h2>Browse the Vault.<br>Pick your upgrade.</h2><p>A clean marketplace for game accounts, VIP keys, and custom services.</p><div class="actions"><button class="btn primary" onclick="scrollToShop()">Shop Now</button><button class="btn ghost" onclick="contactAdmin()">Contact Admin</button></div><div class="buyerBox"><div class="buyerTitle">Choose who you want to buy from:</div><div class="buyerGrid"><button class="buyerBtn demi" onclick="chooseBuyer('demi')">🔥 Demi - Website Order</button><button class="buyerBtn" onclick="chooseBuyer('ske')">⚡ Ske - Telegram</button></div></div></section>
-<section class="searchBox" id="shop"><input id="searchInput" placeholder="Search products..." oninput="renderProducts()"><div class="chips"><button class="chip active" onclick="setCategory('all',this)">All</button><button class="chip" onclick="setCategory('account',this)">🎮 Accounts</button><button class="chip" onclick="setCategory('key',this)">🔑 Keys</button><button class="chip" onclick="setCategory('other',this)">📦 Services</button></div></section>
-<section><div class="title"><h2 id="shopTitle">Vault Products</h2><p>Tap product to view full details and pictures.</p></div><div class="productGrid" id="productGrid"></div></section>
+  <header class="top">
+    <div class="logo">D</div>
+    <div class="brand">
+      <h1>DemiSke Vault</h1>
+      <p>Premium accounts, keys, and services</p>
+    </div>
+    <div class="pill">DEMISKE</div>
+  </header>
+
+  <section class="hero" id="home">
+    <div class="status">
+      <span class="dot"></span>
+      Store Online
+    </div>
+
+    <br>
+
+    <div class="online">
+      <span class="dot"></span>
+      <span id="onlineCount">0</span> customers online
+    </div>
+
+    <h2>Browse the Vault.<br>Pick your upgrade.</h2>
+    <p>A clean marketplace for game accounts, VIP keys, and custom services.</p>
+
+    <div class="accountBox">
+      <div class="accountTop">
+        <div>
+          <div class="accountTitle">Customer Account</div>
+          <div class="accountName" id="accountStatus">Not logged in</div>
+        </div>
+      </div>
+
+      <div class="accountGrid" id="guestActions">
+        <button class="btn primary" onclick="openModal('loginModal')">Login</button>
+        <button class="btn ghost" onclick="openModal('registerModal')">Register</button>
+      </div>
+
+      <div class="accountGrid hidden" id="userActions">
+        <button class="btn ghost" onclick="openProfile()">My Account</button>
+        <button class="btn danger" onclick="logoutCustomer()">Logout</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" onclick="scrollToShop()">Shop Now</button>
+      <button class="btn ghost" onclick="contactAdmin()">Contact Admin</button>
+    </div>
+
+    <div class="buyerBox">
+      <div class="buyerTitle">Choose who you want to buy from:</div>
+
+      <div class="buyerGrid">
+        <button class="buyerBtn demi" onclick="chooseBuyer('demi')">
+          🔥 Demi - Website Order
+        </button>
+
+        <button class="buyerBtn" onclick="chooseBuyer('ske')">
+          ⚡ Ske - Telegram
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="searchBox" id="shop">
+    <input id="searchInput" placeholder="Search products..." oninput="renderProducts()">
+
+    <div class="chips">
+      <button class="chip active" onclick="setCategory('all',this)">All</button>
+      <button class="chip" onclick="setCategory('account',this)">🎮 Accounts</button>
+      <button class="chip" onclick="setCategory('key',this)">🔑 Keys</button>
+      <button class="chip" onclick="setCategory('other',this)">📦 Services</button>
+    </div>
+  </section>
+
+  <section>
+    <div class="title">
+      <h2 id="shopTitle">Vault Products</h2>
+      <p>Tap product to view full details and pictures.</p>
+    </div>
+
+    <div class="productGrid" id="productGrid"></div>
+  </section>
 </main>
-<nav class="bottom"><button class="nav active" onclick="setNav(this);goHome()"><span>🏠</span>Home</button><button class="nav" onclick="setNav(this);scrollToShop()"><span>🛒</span>Shop</button><button class="nav" onclick="setNav(this);openFeedback()"><span>💬</span>Feedback</button><button class="nav" onclick="setNav(this);openReport()"><span>⚠️</span>Report</button><button class="nav" onclick="setNav(this);contactAdmin()"><span>📩</span>Admin</button></nav>
-<div class="modal" id="productModal"><div class="box"><div class="detailImg" id="detailImg">🎮</div><div class="boxPad"><button class="close" onclick="closeModal('productModal')">×</button><h2 id="detailName">Product</h2><span class="tag" id="detailType">PRODUCT</span><div class="price" id="detailPrice">₱0</div><p class="muted" id="detailInfo"></p><div class="buyerBox"><div class="buyerTitle">Choose buyer for this product:</div><div class="buyerGrid"><button class="buyerBtn demi" onclick="buyFromDemi()">🔥 Demi - Website Order</button><button class="buyerBtn" onclick="buyFromSke()">⚡ Ske - Telegram</button></div></div></div></div></div>
-<div class="modal" id="buyModal"><div class="box"><div class="boxPad"><button class="close" onclick="closeModal('buyModal')">×</button><h2>Submit Order to Demi</h2><p class="muted" id="buyText">Fill your details below.</p><br><input id="buyerName" placeholder="Your name"><br><br><input id="buyerContact" placeholder="@Telegram username"><br><br><select id="paymentMethod"><option value="">Payment method</option><option>GCash</option><option>Maya</option><option>Bank Transfer</option><option>Other</option></select><br><br><button class="btn primary" style="width:100%" onclick="submitOrder()">Submit Order</button></div></div></div>
-<div class="modal" id="feedbackModal"><div class="box"><div class="boxPad"><button class="close" onclick="closeModal('feedbackModal')">×</button><h2>Send Feedback</h2><br><select id="feedbackCategory"><option value="">Select category</option><option>Website UI</option><option>Product Quality</option><option>Customer Service</option><option>Payment Process</option><option>Suggestion</option></select><br><br><textarea id="feedbackMessage" placeholder="Write your feedback..."></textarea><br><br><button class="btn primary" style="width:100%" onclick="submitFeedback()">Submit Feedback</button></div></div></div>
-<div class="modal" id="reportModal"><div class="box"><div class="boxPad"><button class="close" onclick="closeModal('reportModal')">×</button><h2>Report Issue</h2><br><select id="issueCategory"><option value="">Select issue</option><option>Payment Problem</option><option>Account Problem</option><option>Key Not Working</option><option>Website Bug</option><option>Slow Response</option><option>Other Issue</option></select><br><br><input id="reportContact" placeholder="@Telegram username"><br><br><textarea id="issueMessage" placeholder="Explain the issue..."></textarea><br><br><button class="btn primary" style="width:100%" onclick="submitIssue()">Submit Report</button></div></div></div>
+
+<nav class="bottom">
+  <button class="nav active" onclick="setNav(this);goHome()"><span>🏠</span>Home</button>
+  <button class="nav" onclick="setNav(this);scrollToShop()"><span>🛒</span>Shop</button>
+  <button class="nav" onclick="setNav(this);openFeedback()"><span>💬</span>Feedback</button>
+  <button class="nav" onclick="setNav(this);openReport()"><span>⚠️</span>Report</button>
+  <button class="nav" onclick="setNav(this);contactAdmin()"><span>📩</span>Admin</button>
+</nav>
+
+<div class="modal" id="loginModal">
+  <div class="box">
+    <div class="boxPad">
+      <button class="close" onclick="closeModal('loginModal')">×</button>
+      <h2>Customer Login</h2>
+      <p class="muted">Login is saved only on this device.</p>
+      <br>
+      <input id="loginUsername" placeholder="Username">
+      <br><br>
+      <input id="loginPassword" type="password" placeholder="Password">
+      <br><br>
+      <button class="btn primary" style="width:100%" onclick="loginCustomer()">Login</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="registerModal">
+  <div class="box">
+    <div class="boxPad">
+      <button class="close" onclick="closeModal('registerModal')">×</button>
+      <h2>Create Account</h2>
+      <p class="muted">This account is saved on your device only.</p>
+      <br>
+      <input id="registerName" placeholder="Display name">
+      <br><br>
+      <input id="registerUsername" placeholder="Username">
+      <br><br>
+      <input id="registerPassword" type="password" placeholder="Password">
+      <br><br>
+      <input id="registerConfirm" type="password" placeholder="Confirm password">
+      <br><br>
+      <button class="btn primary" style="width:100%" onclick="registerCustomer()">Register</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="profileModal">
+  <div class="box">
+    <div class="boxPad">
+      <button class="close" onclick="closeModal('profileModal')">×</button>
+      <h2>My Account</h2>
+      <br>
+      <p class="muted" id="profileInfo">No account data.</p>
+      <br>
+      <button class="btn danger" style="width:100%" onclick="logoutCustomer()">Logout</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="productModal">
+  <div class="box">
+    <div class="detailImg" id="detailImg">🎮</div>
+
+    <div class="boxPad">
+      <button class="close" onclick="closeModal('productModal')">×</button>
+      <h2 id="detailName">Product</h2>
+      <span class="tag" id="detailType">PRODUCT</span>
+      <div class="price" id="detailPrice">₱0</div>
+      <p class="muted" id="detailInfo"></p>
+
+      <div class="buyerBox">
+        <div class="buyerTitle">Choose buyer for this product:</div>
+
+        <div class="buyerGrid">
+          <button class="buyerBtn demi" onclick="buyFromDemi()">
+            🔥 Demi - Website Order
+          </button>
+
+          <button class="buyerBtn" onclick="buyFromSke()">
+            ⚡ Ske - Telegram
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="buyModal">
+  <div class="box">
+    <div class="boxPad">
+      <button class="close" onclick="closeModal('buyModal')">×</button>
+      <h2>Submit Order to Demi</h2>
+      <p class="muted" id="buyText">Fill your details below.</p>
+
+      <br>
+      <input id="buyerName" placeholder="Your name">
+
+      <br><br>
+      <input id="buyerContact" placeholder="@Telegram username">
+
+      <br><br>
+      <select id="paymentMethod">
+        <option value="">Payment method</option>
+        <option>GCash</option>
+        <option>Maya</option>
+        <option>Bank Transfer</option>
+        <option>Other</option>
+      </select>
+
+      <br><br>
+      <button class="btn primary" style="width:100%" onclick="submitOrder()">Submit Order</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="feedbackModal">
+  <div class="box">
+    <div class="boxPad">
+      <button class="close" onclick="closeModal('feedbackModal')">×</button>
+      <h2>Send Feedback</h2>
+
+      <br>
+      <select id="feedbackCategory">
+        <option value="">Select category</option>
+        <option>Website UI</option>
+        <option>Product Quality</option>
+        <option>Customer Service</option>
+        <option>Payment Process</option>
+        <option>Suggestion</option>
+      </select>
+
+      <br><br>
+      <textarea id="feedbackMessage" placeholder="Write your feedback..."></textarea>
+
+      <br><br>
+      <button class="btn primary" style="width:100%" onclick="submitFeedback()">Submit Feedback</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="reportModal">
+  <div class="box">
+    <div class="boxPad">
+      <button class="close" onclick="closeModal('reportModal')">×</button>
+      <h2>Report Issue</h2>
+
+      <br>
+      <select id="issueCategory">
+        <option value="">Select issue</option>
+        <option>Payment Problem</option>
+        <option>Account Problem</option>
+        <option>Key Not Working</option>
+        <option>Website Bug</option>
+        <option>Slow Response</option>
+        <option>Other Issue</option>
+      </select>
+
+      <br><br>
+      <input id="reportContact" placeholder="@Telegram username">
+
+      <br><br>
+      <textarea id="issueMessage" placeholder="Explain the issue..."></textarea>
+
+      <br><br>
+      <button class="btn primary" style="width:100%" onclick="submitIssue()">Submit Report</button>
+    </div>
+  </div>
+</div>
+
 <script>
-let activeCategory="all",activeProduct=null,activeImageIndex=0;
-const demoProducts=[{id:1,productType:"account",name:"Premium Game Account",price:550,level:"184",uid:"361673204",region:"TH",description:"Good skins, high level account, ready to use.",images:[]},{id:2,productType:"key",name:"VIP Key",price:250,duration:"14 Days",game:"PUBGM",platform:"Android",description:"VIP key. Message admin after payment.",images:[]},{id:3,productType:"other",name:"Boosting Service",price:999,category:"Service",description:"Fast service. Message admin first.",images:[]}];
-function getProducts(){const saved=JSON.parse(localStorage.getItem("adminProducts"))||[];return saved.length?saved:demoProducts}
-function icon(t){return t==="account"?"🎮":t==="key"?"🔑":t==="other"?"📦":"🔥"}
-function renderProducts(){const grid=document.getElementById("productGrid"),search=document.getElementById("searchInput").value.toLowerCase().trim();let products=getProducts().filter(p=>(activeCategory==="all"||p.productType===activeCategory)&&(!search||`${p.name} ${p.description} ${p.productType}`.toLowerCase().includes(search)));grid.innerHTML="";if(!products.length){grid.innerHTML='<div class="empty">No products found.</div>';return}products.forEach(p=>{const image=p.images&&p.images[0]?`<img src="${p.images[0]}">`:icon(p.productType);const c=document.createElement("div");c.className="card";c.onclick=()=>openProduct(p.id);c.innerHTML=`<div class="img">${image}</div><div class="info"><span class="tag">${(p.productType||"PRODUCT").toUpperCase()}</span><h3>${p.name||"Unnamed Product"}</h3><div class="price">₱${p.price||0}</div><p class="muted">Tap to view details</p></div>`;grid.appendChild(c)})}
-function setCategory(cat,btn){activeCategory=cat;document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));btn.classList.add("active");document.getElementById("shopTitle").innerText=cat==="all"?"Vault Products":cat==="account"?"Game Accounts":cat==="key"?"VIP Keys":"Services";renderProducts()}
-function openProduct(id){const p=getProducts().find(x=>x.id===id);if(!p)return alert("Product not found.");activeProduct=p;activeImageIndex=0;document.getElementById("detailName").innerText=p.name||"Unnamed Product";document.getElementById("detailType").innerText=(p.productType||"PRODUCT").toUpperCase();document.getElementById("detailPrice").innerText="₱"+(p.price||0);document.getElementById("detailInfo").innerHTML=getDetails(p);renderImage();openModal("productModal")}
-function getDetails(p){if(p.productType==="account")return`Level: ${p.level||"N/A"}<br>UID: ${p.uid||"N/A"}<br>Region: ${p.region||"N/A"}<br><br>${p.description||"No description."}`;if(p.productType==="key")return`Duration: ${p.duration||"N/A"}<br>Game: ${p.game||"N/A"}<br>Platform: ${p.platform||"N/A"}<br><br>${p.description||"No description."}`;return`Category: ${p.category||"N/A"}<br>Status: ${p.availability||"Available"}<br><br>${p.description||"No description."}`}
-function renderImage(){const box=document.getElementById("detailImg"),imgs=activeProduct.images||[];if(!imgs.length){box.innerHTML=icon(activeProduct.productType);return}box.innerHTML=`<img src="${imgs[activeImageIndex]||imgs[0]}">${imgs.length>1?`<button class="arrow left" onclick="changeImage(-1)">‹</button><button class="arrow right" onclick="changeImage(1)">›</button><div class="count">${activeImageIndex+1}/${imgs.length}</div>`:""}`}
-function changeImage(d){const total=activeProduct.images.length;activeImageIndex+=d;if(activeImageIndex<0)activeImageIndex=total-1;if(activeImageIndex>=total)activeImageIndex=0;renderImage()}
-function chooseBuyer(b){if(b==="demi"){scrollToShop();alert("Choose a product, then tap Demi - Website Order.")}if(b==="ske")location.href="https://t.me/kaizxns"}
-function buyFromDemi(){if(!activeProduct)return alert("Choose a product first.");document.getElementById("buyText").innerText=`You are buying ${activeProduct.name} for ₱${activeProduct.price||0}.`;closeModal("productModal");openModal("buyModal")}
-function buyFromSke(){location.href="https://t.me/kaizxns"}function contactAdmin(){location.href="https://t.me/Demixyloadmin"}
-function submitOrder(){const name=document.getElementById("buyerName").value.trim(),contact=document.getElementById("buyerContact").value.trim(),payment=document.getElementById("paymentMethod").value.trim();if(!activeProduct)return alert("No product selected.");if(!name||!contact||!payment)return alert("Please complete your name, Telegram, and payment method.");saveAdminNotification({notificationType:"New Order",category:activeProduct.productType,title:"New Customer Order",message:`${name} wants to buy ${activeProduct.name}. Payment method: ${payment}. Contact: ${contact}`,customerName:name,contact:contact,productName:activeProduct.name,price:activeProduct.price,buyer:"Demi"});closeModal("buyModal");alert("Order submitted to Demi. Please wait for confirmation.");["buyerName","buyerContact","paymentMethod"].forEach(id=>document.getElementById(id).value="")}
-function submitFeedback(){const c=document.getElementById("feedbackCategory").value.trim(),m=document.getElementById("feedbackMessage").value.trim();if(!c||!m)return alert("Please choose category and write your feedback.");saveAdminNotification({notificationType:"Feedback",category:c,title:"New Customer Feedback",message:m});closeModal("feedbackModal");alert("Feedback submitted.");document.getElementById("feedbackCategory").value="";document.getElementById("feedbackMessage").value=""}
-function submitIssue(){const c=document.getElementById("issueCategory").value.trim(),contact=document.getElementById("reportContact").value.trim(),m=document.getElementById("issueMessage").value.trim();if(!c||!contact||!m)return alert("Please complete all report fields.");saveAdminNotification({notificationType:"Issue Report",category:c,title:"Customer Reported an Issue",message:m,contact:contact});closeModal("reportModal");alert("Issue report submitted.");["issueCategory","reportContact","issueMessage"].forEach(id=>document.getElementById(id).value="")}
-function saveAdminNotification(data){const n=JSON.parse(localStorage.getItem("adminNotifications"))||[];n.unshift({id:Date.now(),date:new Date().toLocaleString(),status:"unread",...data});localStorage.setItem("adminNotifications",JSON.stringify(n))}
-function openFeedback(){openModal("feedbackModal")}function openReport(){openModal("reportModal")}function openModal(id){document.getElementById(id).classList.add("active")}function closeModal(id){document.getElementById(id).classList.remove("active")}function setNav(btn){document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));btn.classList.add("active")}function scrollToShop(){document.getElementById("shop").scrollIntoView({behavior:"smooth"})}function goHome(){document.getElementById("home").scrollIntoView({behavior:"smooth"})}
+let activeCategory="all";
+let activeProduct=null;
+let activeImageIndex=0;
+
+const demoProducts=[
+  {
+    id:1,
+    productType:"account",
+    name:"Premium Game Account",
+    price:550,
+    level:"184",
+    uid:"361673204",
+    region:"TH",
+    description:"Good skins, high level account, ready to use.",
+    images:[]
+  },
+  {
+    id:2,
+    productType:"key",
+    name:"VIP Key",
+    price:250,
+    duration:"14 Days",
+    game:"PUBGM",
+    platform:"Android",
+    description:"VIP key. Message admin after payment.",
+    images:[]
+  },
+  {
+    id:3,
+    productType:"other",
+    name:"Boosting Service",
+    price:999,
+    category:"Service",
+    description:"Fast service. Message admin first.",
+    images:[]
+  }
+];
+
+function getProducts(){
+  const saved=JSON.parse(localStorage.getItem("adminProducts"))||[];
+  return saved.length?saved:demoProducts;
+}
+
+function icon(type){
+  if(type==="account")return"🎮";
+  if(type==="key")return"🔑";
+  if(type==="other")return"📦";
+  return"🔥";
+}
+
+function getCustomer(){
+  return JSON.parse(localStorage.getItem("customerAccount"))||null;
+}
+
+function getCustomerSession(){
+  return JSON.parse(localStorage.getItem("customerSession"))||null;
+}
+
+function refreshCustomerUI(){
+  const account=getCustomer();
+  const session=getCustomerSession();
+
+  if(account&&session&&session.username===account.username){
+    document.getElementById("accountStatus").innerText="Logged in as "+account.displayName;
+    document.getElementById("guestActions").classList.add("hidden");
+    document.getElementById("userActions").classList.remove("hidden");
+
+    const buyerName=document.getElementById("buyerName");
+    if(buyerName&&!buyerName.value)buyerName.value=account.displayName;
+  }else{
+    document.getElementById("accountStatus").innerText="Not logged in";
+    document.getElementById("guestActions").classList.remove("hidden");
+    document.getElementById("userActions").classList.add("hidden");
+  }
+}
+
+function registerCustomer(){
+  const displayName=document.getElementById("registerName").value.trim();
+  const username=document.getElementById("registerUsername").value.trim();
+  const password=document.getElementById("registerPassword").value.trim();
+  const confirm=document.getElementById("registerConfirm").value.trim();
+
+  if(!displayName||!username||!password||!confirm){
+    alert("Please complete all fields.");
+    return;
+  }
+
+  if(password!==confirm){
+    alert("Passwords do not match.");
+    return;
+  }
+
+  const account={
+    displayName:displayName,
+    username:username,
+    password:password,
+    createdAt:new Date().toLocaleString()
+  };
+
+  localStorage.setItem("customerAccount",JSON.stringify(account));
+  localStorage.setItem("customerSession",JSON.stringify({username:username}));
+
+  closeModal("registerModal");
+  refreshCustomerUI();
+  alert("Account created and logged in.");
+
+  document.getElementById("registerName").value="";
+  document.getElementById("registerUsername").value="";
+  document.getElementById("registerPassword").value="";
+  document.getElementById("registerConfirm").value="";
+}
+
+function loginCustomer(){
+  const username=document.getElementById("loginUsername").value.trim();
+  const password=document.getElementById("loginPassword").value.trim();
+  const account=getCustomer();
+
+  if(!account){
+    alert("No account found on this device. Please register first.");
+    return;
+  }
+
+  if(username===account.username&&password===account.password){
+    localStorage.setItem("customerSession",JSON.stringify({username:username}));
+    closeModal("loginModal");
+    refreshCustomerUI();
+    alert("Login successful.");
+
+    document.getElementById("loginUsername").value="";
+    document.getElementById("loginPassword").value="";
+  }else{
+    alert("Wrong username or password.");
+  }
+}
+
+function logoutCustomer(){
+  localStorage.removeItem("customerSession");
+  closeModal("profileModal");
+  refreshCustomerUI();
+  alert("Logged out.");
+}
+
+function openProfile(){
+  const account=getCustomer();
+  const session=getCustomerSession();
+
+  if(!account||!session){
+    alert("Please login first.");
+    return;
+  }
+
+  document.getElementById("profileInfo").innerHTML=`
+    Name: ${account.displayName}<br>
+    Username: ${account.username}<br>
+    Created: ${account.createdAt||"N/A"}
+  `;
+
+  openModal("profileModal");
+}
+
+function renderProducts(){
+  const grid=document.getElementById("productGrid");
+  const search=document.getElementById("searchInput").value.toLowerCase().trim();
+
+  let products=getProducts().filter(product=>{
+    const categoryMatch=activeCategory==="all"||product.productType===activeCategory;
+    const searchMatch=!search||`${product.name} ${product.description} ${product.productType}`.toLowerCase().includes(search);
+    return categoryMatch&&searchMatch;
+  });
+
+  grid.innerHTML="";
+
+  if(!products.length){
+    grid.innerHTML='<div class="empty">No products found.</div>';
+    return;
+  }
+
+  products.forEach(product=>{
+    const image=product.images&&product.images[0]?`<img src="${product.images[0]}">`:icon(product.productType);
+
+    const card=document.createElement("div");
+    card.className="card";
+    card.onclick=()=>openProduct(product.id);
+
+    card.innerHTML=`
+      <div class="img">${image}</div>
+      <div class="info">
+        <span class="tag">${(product.productType||"PRODUCT").toUpperCase()}</span>
+        <h3>${product.name||"Unnamed Product"}</h3>
+        <div class="price">₱${product.price||0}</div>
+        <p class="muted">Tap to view details</p>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+function setCategory(category,button){
+  activeCategory=category;
+
+  document.querySelectorAll(".chip").forEach(chip=>chip.classList.remove("active"));
+  button.classList.add("active");
+
+  const title=document.getElementById("shopTitle");
+
+  if(category==="all")title.innerText="Vault Products";
+  if(category==="account")title.innerText="Game Accounts";
+  if(category==="key")title.innerText="VIP Keys";
+  if(category==="other")title.innerText="Services";
+
+  renderProducts();
+}
+
+function openProduct(id){
+  const product=getProducts().find(item=>item.id===id);
+
+  if(!product){
+    alert("Product not found.");
+    return;
+  }
+
+  activeProduct=product;
+  activeImageIndex=0;
+
+  document.getElementById("detailName").innerText=product.name||"Unnamed Product";
+  document.getElementById("detailType").innerText=(product.productType||"PRODUCT").toUpperCase();
+  document.getElementById("detailPrice").innerText="₱"+(product.price||0);
+  document.getElementById("detailInfo").innerHTML=getDetails(product);
+
+  renderImage();
+  openModal("productModal");
+}
+
+function getDetails(product){
+  if(product.productType==="account"){
+    return`
+      Level: ${product.level||"N/A"}<br>
+      UID: ${product.uid||"N/A"}<br>
+      Region: ${product.region||"N/A"}<br><br>
+      ${product.description||"No description."}
+    `;
+  }
+
+  if(product.productType==="key"){
+    return`
+      Duration: ${product.duration||"N/A"}<br>
+      Game: ${product.game||"N/A"}<br>
+      Platform: ${product.platform||"N/A"}<br><br>
+      ${product.description||"No description."}
+    `;
+  }
+
+  return`
+    Category: ${product.category||"N/A"}<br>
+    Status: ${product.availability||"Available"}<br><br>
+    ${product.description||"No description."}
+  `;
+}
+
+function renderImage(){
+  const box=document.getElementById("detailImg");
+  const images=activeProduct.images||[];
+
+  if(!images.length){
+    box.innerHTML=icon(activeProduct.productType);
+    return;
+  }
+
+  box.innerHTML=`
+    <img src="${images[activeImageIndex]||images[0]}">
+    ${
+      images.length>1
+      ?`
+        <button class="arrow left" onclick="changeImage(-1)">‹</button>
+        <button class="arrow right" onclick="changeImage(1)">›</button>
+        <div class="count">${activeImageIndex+1}/${images.length}</div>
+      `
+      :""
+    }
+  `;
+}
+
+function changeImage(direction){
+  const total=activeProduct.images.length;
+
+  activeImageIndex+=direction;
+
+  if(activeImageIndex<0)activeImageIndex=total-1;
+  if(activeImageIndex>=total)activeImageIndex=0;
+
+  renderImage();
+}
+
+function chooseBuyer(buyer){
+  if(buyer==="demi"){
+    scrollToShop();
+    alert("Choose a product, then tap Demi - Website Order.");
+  }
+
+  if(buyer==="ske"){
+    location.href="https://t.me/kaizxns";
+  }
+}
+
+function buyFromDemi(){
+  if(!activeProduct){
+    alert("Choose a product first.");
+    return;
+  }
+
+  document.getElementById("buyText").innerText=`You are buying ${activeProduct.name} for ₱${activeProduct.price||0}.`;
+
+  const account=getCustomer();
+  const session=getCustomerSession();
+
+  if(account&&session&&session.username===account.username){
+    document.getElementById("buyerName").value=account.displayName;
+  }
+
+  closeModal("productModal");
+  openModal("buyModal");
+}
+
+function buyFromSke(){
+  location.href="https://t.me/kaizxns";
+}
+
+function contactAdmin(){
+  location.href="https://t.me/Demixyloadmin";
+}
+
+function submitOrder(){
+  const name=document.getElementById("buyerName").value.trim();
+  const contact=document.getElementById("buyerContact").value.trim();
+  const payment=document.getElementById("paymentMethod").value.trim();
+
+  if(!activeProduct){
+    alert("No product selected.");
+    return;
+  }
+
+  if(!name||!contact||!payment){
+    alert("Please complete your name, Telegram, and payment method.");
+    return;
+  }
+
+  saveAdminNotification({
+    notificationType:"New Order",
+    category:activeProduct.productType,
+    title:"New Customer Order",
+    message:`${name} wants to buy ${activeProduct.name}. Payment method: ${payment}. Contact: ${contact}`,
+    customerName:name,
+    contact:contact,
+    productName:activeProduct.name,
+    price:activeProduct.price,
+    buyer:"Demi"
+  });
+
+  closeModal("buyModal");
+
+  alert("Order submitted to Demi. Please wait for confirmation.");
+
+  document.getElementById("buyerName").value="";
+  document.getElementById("buyerContact").value="";
+  document.getElementById("paymentMethod").value="";
+
+  refreshCustomerUI();
+}
+
+function submitFeedback(){
+  const category=document.getElementById("feedbackCategory").value.trim();
+  const message=document.getElementById("feedbackMessage").value.trim();
+
+  if(!category||!message){
+    alert("Please choose category and write your feedback.");
+    return;
+  }
+
+  saveAdminNotification({
+    notificationType:"Feedback",
+    category:category,
+    title:"New Customer Feedback",
+    message:message
+  });
+
+  closeModal("feedbackModal");
+
+  alert("Feedback submitted.");
+
+  document.getElementById("feedbackCategory").value="";
+  document.getElementById("feedbackMessage").value="";
+}
+
+function submitIssue(){
+  const category=document.getElementById("issueCategory").value.trim();
+  const contact=document.getElementById("reportContact").value.trim();
+  const message=document.getElementById("issueMessage").value.trim();
+
+  if(!category||!contact||!message){
+    alert("Please complete all report fields.");
+    return;
+  }
+
+  saveAdminNotification({
+    notificationType:"Issue Report",
+    category:category,
+    title:"Customer Reported an Issue",
+    message:message,
+    contact:contact
+  });
+
+  closeModal("reportModal");
+
+  alert("Issue report submitted.");
+
+  document.getElementById("issueCategory").value="";
+  document.getElementById("reportContact").value="";
+  document.getElementById("issueMessage").value="";
+}
+
+function saveAdminNotification(data){
+  const notifications=JSON.parse(localStorage.getItem("adminNotifications"))||[];
+
+  notifications.unshift({
+    id:Date.now(),
+    date:new Date().toLocaleString(),
+    status:"unread",
+    ...data
+  });
+
+  localStorage.setItem("adminNotifications",JSON.stringify(notifications));
+}
+
+function openFeedback(){
+  openModal("feedbackModal");
+}
+
+function openReport(){
+  openModal("reportModal");
+}
+
+function openModal(id){
+  document.getElementById(id).classList.add("active");
+}
+
+function closeModal(id){
+  document.getElementById(id).classList.remove("active");
+}
+
+function setNav(button){
+  document.querySelectorAll(".nav").forEach(nav=>nav.classList.remove("active"));
+  button.classList.add("active");
+}
+
+function scrollToShop(){
+  document.getElementById("shop").scrollIntoView({behavior:"smooth"});
+}
+
+function goHome(){
+  document.getElementById("home").scrollIntoView({behavior:"smooth"});
+}
+
+refreshCustomerUI();
 renderProducts();
 </script>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import {
-      getDatabase,
-      ref,
-      push,
-      set,
-      onDisconnect,
-      onValue,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import{getDatabase,ref,push,set,onDisconnect,onValue,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCpxfXFVrcKa-3wE6m4DLXN5j6kKW1d9Tk",
-      authDomain: "demiske-vault.firebaseapp.com",
-      databaseURL: "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app/",
-      projectId: "demiske-vault",
-      storageBucket: "demiske-vault.firebasestorage.app",
-      messagingSenderId: "269369179527",
-      appId: "1:269369179527:web:1db8cd077345886234a722",
-      measurementId: "G-2JV5DSTMBG"
-    };
+const firebaseConfig={
+  apiKey:"AIzaSyCpxfXFVrcKa-3wE6m4DLXN5j6kKW1d9Tk",
+  authDomain:"demiske-vault.firebaseapp.com",
+  databaseURL:"https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId:"demiske-vault",
+  storageBucket:"demiske-vault.firebasestorage.app",
+  messagingSenderId:"269369179527",
+  appId:"1:269369179527:web:1db8cd077345886234a722",
+  measurementId:"G-2JV5DSTMBG"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+const connectedRef=ref(db,".info/connected");
+const onlineUsersRef=ref(db,"onlineUsers");
 
-    const connectedRef = ref(db, ".info/connected");
-    const onlineUsersRef = ref(db, "onlineUsers");
+onValue(connectedRef,function(snapshot){
+  if(snapshot.val()!==true)return;
 
-    onValue(connectedRef, function(snapshot) {
-      if (snapshot.val() !== true) return;
+  const userConnectionRef=push(onlineUsersRef);
 
-      const userConnectionRef = push(onlineUsersRef);
+  set(userConnectionRef,{
+    online:true,
+    joinedAt:serverTimestamp()
+  });
 
-      set(userConnectionRef, {
-        online: true,
-        joinedAt: serverTimestamp()
-      });
+  onDisconnect(userConnectionRef).remove();
+});
 
-      onDisconnect(userConnectionRef).remove();
-    });
+onValue(onlineUsersRef,function(snapshot){
+  const onlineCount=document.getElementById("onlineCount");
+  if(!onlineCount)return;
 
-    onValue(onlineUsersRef, function(snapshot) {
-      const onlineCount = document.getElementById("onlineCount");
-      if (!onlineCount) return;
-
-      const users = snapshot.val() || {};
-      onlineCount.innerText = Object.keys(users).length;
-    });
-  </script>
-
+  const users=snapshot.val()||{};
+  onlineCount.innerText=Object.keys(users).length;
+});
+</script>
 </body>
 </html>
