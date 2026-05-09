@@ -1,1195 +1,636 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DemiSke Vault</title>
-
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
-
-    :root {
-      --red: #ff003c;
-      --red2: #ff3155;
-      --dark: #07070b;
-      --card: rgba(255, 255, 255, 0.055);
-      --border: rgba(255, 65, 95, 0.28);
-      --soft: #ffb8c2;
-      --muted: #a9a9b2;
-    }
-
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at top right, rgba(255, 0, 60, 0.22), transparent 35%),
-        radial-gradient(circle at bottom left, rgba(255, 106, 0, 0.12), transparent 35%),
-        linear-gradient(145deg, #050507, #100006, #000);
-      color: white;
-      padding-bottom: 92px;
-      overflow-x: hidden;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(18px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes pop {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes glow {
-      0%, 100% {
-        box-shadow: 0 0 20px rgba(255, 0, 60, 0.35);
-      }
-      50% {
-        box-shadow: 0 0 34px rgba(255, 0, 60, 0.65);
-      }
-    }
-
-    .app {
-      max-width: 1100px;
-      margin: auto;
-      padding: 18px 16px;
-    }
-
-    .top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      animation: fadeUp 0.35s ease;
-    }
-
-    .logo {
-      width: 52px;
-      height: 52px;
-      border-radius: 18px;
-      background:
-        radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 45%),
-        linear-gradient(135deg, var(--red), #1b0008, #000);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 25px;
-      font-weight: 900;
-      animation: glow 3s infinite;
-    }
-
-    .brand {
-      flex: 1;
-    }
-
-    .brand h1 {
-      font-size: 24px;
-      font-weight: 900;
-      background: linear-gradient(90deg, var(--red), #ff7b00);
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-
-    .brand p {
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 3px;
-    }
-
-    .admin-chip {
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.06);
-      color: white;
-      padding: 10px 13px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .hero {
-      position: relative;
-      overflow: hidden;
-      padding: 24px;
-      border-radius: 30px;
-      border: 1px solid var(--border);
-      background:
-        radial-gradient(circle at top right, rgba(255, 0, 60, 0.35), transparent 42%),
-        linear-gradient(135deg, rgba(22, 0, 8, 0.96), rgba(8, 8, 15, 0.95));
-      box-shadow: 0 0 35px rgba(255, 0, 60, 0.18);
-      animation: fadeUp 0.45s ease;
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      width: 190px;
-      height: 190px;
-      border-radius: 50%;
-      right: -60px;
-      top: -50px;
-      background: rgba(255, 0, 60, 0.16);
-      filter: blur(3px);
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(255, 255, 255, 0.07);
-      color: #ffd1d8;
-      font-size: 13px;
-      margin-bottom: 17px;
-    }
-
-    .status-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #00ff88;
-      box-shadow: 0 0 10px #00ff88;
-    }
-
-    .hero h2 {
-      font-size: 40px;
-      line-height: 1.05;
-      margin-bottom: 12px;
-    }
-
-    .hero p {
-      color: #ffc7d0;
-      font-size: 15px;
-      line-height: 1.5;
-      max-width: 600px;
-    }
-
-    .hero-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .btn {
-      border: none;
-      padding: 14px 16px;
-      border-radius: 17px;
-      font-weight: 900;
-      cursor: pointer;
-      color: white;
-      transition: 0.22s ease;
-    }
-
-    .btn:hover,
-    .chip:hover,
-    .product-card:hover,
-    .bottom-item:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
-    }
-
-    .btn.primary {
-      background: linear-gradient(135deg, var(--red), #ff6a00);
-      box-shadow: 0 0 22px rgba(255, 0, 60, 0.28);
-    }
-
-    .btn.ghost {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid var(--border);
-    }
-
-    .search-card {
-      margin-top: 18px;
-      padding: 14px;
-      border-radius: 22px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      animation: fadeUp 0.5s ease;
-    }
-
-    .search-box {
-      width: 100%;
-      border: 1px solid rgba(255, 70, 95, 0.3);
-      background: rgba(0, 0, 0, 0.35);
-      color: white;
-      padding: 15px;
-      border-radius: 17px;
-      outline: none;
-      font-size: 14px;
-    }
-
-    .chips {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding: 16px 0 4px;
-      scrollbar-width: none;
-    }
-
-    .chips::-webkit-scrollbar {
-      display: none;
-    }
-
-    .chip {
-      white-space: nowrap;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.06);
-      color: white;
-      padding: 11px 15px;
-      border-radius: 999px;
-      font-weight: 900;
-      font-size: 13px;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .chip.active {
-      background: linear-gradient(135deg, var(--red), #ff6a00);
-      border: none;
-      box-shadow: 0 0 18px rgba(255, 0, 60, 0.28);
-    }
-
-    .section-title {
-      margin: 26px 0 13px;
-      animation: fadeUp 0.5s ease;
-    }
-
-    .section-title h2 {
-      font-size: 25px;
-      margin-bottom: 5px;
-    }
-
-    .section-title p {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .featured-strip {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .mini-card {
-      padding: 16px;
-      border-radius: 22px;
-      border: 1px solid var(--border);
-      background:
-        radial-gradient(circle at top right, rgba(255, 0, 60, 0.18), transparent 40%),
-        rgba(255, 255, 255, 0.05);
-      animation: fadeUp 0.55s ease;
-    }
-
-    .mini-card strong {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 16px;
-    }
-
-    .mini-card span {
-      color: var(--soft);
-      font-size: 13px;
-    }
-
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-      gap: 14px;
-    }
-
-    .product-card {
-      border-radius: 24px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.055);
-      box-shadow: 0 0 18px rgba(255, 0, 60, 0.1);
-      cursor: pointer;
-      transition: 0.22s ease;
-      animation: pop 0.32s ease both;
-    }
-
-    .product-img {
-      height: 135px;
-      background:
-        radial-gradient(circle, rgba(255, 0, 60, 0.38), transparent 43%),
-        linear-gradient(135deg, #210008, #050505);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 44px;
-      overflow: hidden;
-    }
-
-    .product-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .product-info {
-      padding: 13px;
-    }
-
-    .tag {
-      display: inline-block;
-      padding: 5px 8px;
-      border-radius: 999px;
-      background: rgba(255, 0, 60, 0.18);
-      color: #ffc4cc;
-      font-size: 10px;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
-
-    .product-info h3 {
-      font-size: 15px;
-      line-height: 1.25;
-      margin-bottom: 7px;
-    }
-
-    .price {
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--soft);
-    }
-
-    .muted {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 6px;
-      line-height: 1.4;
-    }
-
-    .empty-state {
-      grid-column: 1 / -1;
-      padding: 28px;
-      text-align: center;
-      border-radius: 22px;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.05);
-      color: #ffc4cc;
-    }
-
-    .bottom-nav {
-      position: fixed;
-      left: 12px;
-      right: 12px;
-      bottom: 12px;
-      z-index: 200;
-      max-width: 600px;
-      margin: auto;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      padding: 10px;
-      border-radius: 26px;
-      background: rgba(8, 8, 13, 0.92);
-      backdrop-filter: blur(15px);
-      border: 1px solid var(--border);
-      box-shadow: 0 0 30px rgba(255, 0, 60, 0.25);
-    }
-
-    .bottom-item {
-      border: none;
-      background: transparent;
-      color: #ddd;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      border-radius: 18px;
-      padding: 9px 4px;
-      transition: 0.2s ease;
-    }
-
-    .bottom-item span {
-      font-size: 20px;
-      line-height: 1;
-    }
-
-    .bottom-item.active {
-      background: linear-gradient(135deg, rgba(255, 0, 60, 0.32), rgba(255, 106, 0, 0.16));
-      color: white;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 999;
-      background: rgba(0, 0, 0, 0.78);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      animation: fadeUp 0.2s ease;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    .modal {
-      width: 100%;
-      max-width: 460px;
-      max-height: 90vh;
-      overflow-y: auto;
-      border-radius: 28px;
-      border: 1px solid rgba(255, 75, 100, 0.42);
-      background:
-        radial-gradient(circle at top, rgba(255, 0, 60, 0.22), transparent 43%),
-        #101018;
-      box-shadow: 0 0 40px rgba(255, 0, 60, 0.35);
-      animation: pop 0.25s ease;
-    }
-
-    .modal-padding {
-      padding: 18px;
-    }
-
-    .modal h2 {
-      font-size: 22px;
-      margin-bottom: 8px;
-    }
-
-    .modal p {
-      color: #d7d7dc;
-      line-height: 1.55;
-      font-size: 14px;
-    }
-
-    .modal-top {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .modal-top h2 {
-      flex: 1;
-      margin: 0;
-    }
-
-    .close-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 13px;
-      border: none;
-      background: rgba(255, 255, 255, 0.08);
-      color: white;
-      font-size: 22px;
-      cursor: pointer;
-    }
-
-    .details-image {
-      position: relative;
-      height: 240px;
-      background:
-        radial-gradient(circle, rgba(255, 0, 60, 0.38), transparent 43%),
-        linear-gradient(135deg, #210008, #050505);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 60px;
-      overflow: hidden;
-    }
-
-    .details-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .carousel-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      background: rgba(0, 0, 0, 0.6);
-      color: white;
-      font-size: 22px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .carousel-btn.left {
-      left: 12px;
-    }
-
-    .carousel-btn.right {
-      right: 12px;
-    }
-
-    .carousel-count {
-      position: absolute;
-      right: 12px;
-      bottom: 12px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.65);
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .detail-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 14px 0;
-    }
-
-    .detail-box {
-      padding: 12px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 70, 95, 0.22);
-    }
-
-    .detail-box small {
-      color: var(--muted);
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .detail-box strong {
-      color: white;
-      font-size: 15px;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 70, 95, 0.35);
-      background: rgba(0, 0, 0, 0.35);
-      color: white;
-      outline: none;
-      margin-bottom: 10px;
-    }
-
-    textarea {
-      resize: none;
-      height: 100px;
-    }
-
-    @media (max-width: 720px) {
-      .hero h2 {
-        font-size: 34px;
-      }
-
-      .featured-strip {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-actions {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemiSke Vault</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+:root{--red:#ff003c;--orange:#ff6a00;--card:rgba(255,255,255,.06);--border:rgba(255,70,95,.35);--soft:#ffb8c2;--muted:#aaa;--green:#00ff88}
+body{min-height:100vh;background:radial-gradient(circle at top right,rgba(255,0,60,.25),transparent 35%),radial-gradient(circle at bottom left,rgba(255,106,0,.13),transparent 35%),linear-gradient(145deg,#050507,#140008,#000);color:white;padding-bottom:95px;overflow-x:hidden}
+button,input,select,textarea{font-family:Arial,sans-serif}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+.wrap{max-width:1050px;margin:auto;padding:18px 15px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.logo{width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,var(--red),#1d0008,#000);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:25px;box-shadow:0 0 25px rgba(255,0,60,.4)}
+.brand{flex:1}
+.brand h1{font-size:24px;background:linear-gradient(90deg,var(--red),var(--orange));-webkit-background-clip:text;color:transparent}
+.brand p,.muted{color:var(--muted);font-size:13px;line-height:1.45}
+.pill{border:1px solid var(--border);background:rgba(255,255,255,.06);padding:10px 13px;border-radius:999px;font-size:12px;font-weight:900;color:white;white-space:nowrap}
+
+.hero,.searchBox,.card,.buyerBox{border:1px solid var(--border);background:var(--card);box-shadow:0 0 18px rgba(255,0,60,.1)}
+.hero{border-radius:30px;padding:24px;background:radial-gradient(circle at top right,rgba(255,0,60,.34),transparent 42%),linear-gradient(135deg,rgba(26,0,8,.96),rgba(9,9,16,.96));margin-bottom:18px}
+.status,.online{display:inline-flex;gap:8px;align-items:center;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);font-size:13px;color:#ffd1d8;margin-bottom:12px;font-weight:800}
+.online{border:1px solid rgba(255,70,95,.35)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+.hero h2{font-size:36px;line-height:1.08;margin-bottom:10px}
+.hero p{color:#ffc7d0;line-height:1.5;font-size:15px}
+
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.btn{border:0;border-radius:17px;padding:14px 16px;color:white;font-weight:900;text-align:center;text-decoration:none}
+.primary{background:linear-gradient(135deg,var(--red),var(--orange));box-shadow:0 0 22px rgba(255,0,60,.28)}
+.ghost{background:rgba(255,255,255,.07);border:1px solid var(--border)}
+
+.buyerBox{margin-top:15px;padding:15px;border-radius:22px}
+.buyerTitle{color:var(--soft);font-weight:900;margin-bottom:10px;font-size:14px}
+.buyerGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.buyerBtn{border:1px solid var(--border);background:rgba(255,255,255,.07);color:white;padding:14px;border-radius:16px;font-weight:900}
+.buyerBtn.demi{background:linear-gradient(135deg,var(--red),var(--orange));border:0}
+
+.searchBox{border-radius:22px;padding:14px;margin-bottom:18px}
+input,select,textarea{width:100%;border:1px solid rgba(255,70,95,.35);background:rgba(0,0,0,.34);color:white;padding:14px;border-radius:16px;outline:none;font-size:14px}
+textarea{height:100px;resize:none}
+.chips{display:flex;gap:10px;overflow-x:auto;padding-top:14px}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;border:1px solid var(--border);background:rgba(255,255,255,.06);color:white;border-radius:999px;padding:11px 15px;font-weight:900}
+.chip.active{background:linear-gradient(135deg,var(--red),var(--orange));border:0}
+
+.title{margin:24px 0 12px}
+.title h2{font-size:25px}
+.title p{color:var(--muted);font-size:14px;margin-top:5px}
+
+.productGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.card{border-radius:24px;overflow:hidden;cursor:pointer}
+.img{height:135px;background:radial-gradient(circle,rgba(255,0,60,.38),transparent 44%),linear-gradient(135deg,#210008,#050505);display:flex;align-items:center;justify-content:center;font-size:44px;overflow:hidden}
+.img img{width:100%;height:100%;object-fit:cover}
+.info{padding:13px}
+.tag{display:inline-block;padding:5px 8px;border-radius:999px;background:rgba(255,0,60,.18);color:#ffc4cc;font-size:10px;font-weight:900;margin-bottom:8px}
+.info h3{font-size:15px;line-height:1.25;margin-bottom:7px}
+.price{font-size:20px;font-weight:900;color:var(--soft);margin:8px 0}
+.empty{grid-column:1/-1;text-align:center;border:1px solid var(--border);background:var(--card);border-radius:22px;padding:28px;color:#ffc4cc}
+
+.bottom{position:fixed;left:12px;right:12px;bottom:12px;max-width:620px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:10px;border-radius:26px;background:rgba(8,8,13,.93);backdrop-filter:blur(15px);border:1px solid var(--border);z-index:20}
+.nav{border:0;background:transparent;color:#ddd;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:800;border-radius:18px;padding:8px 2px}
+.nav span{font-size:20px}
+.nav.active{background:linear-gradient(135deg,rgba(255,0,60,.32),rgba(255,106,0,.16));color:white}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:99;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.active{display:flex}
+.box{width:100%;max-width:460px;max-height:90vh;overflow:auto;border:1px solid rgba(255,75,100,.42);border-radius:28px;background:radial-gradient(circle at top,rgba(255,0,60,.22),transparent 43%),#101018;box-shadow:0 0 40px rgba(255,0,60,.35)}
+.boxPad{padding:18px}
+.close{float:right;width:38px;height:38px;border:0;border-radius:13px;background:rgba(255,255,255,.08);color:white;font-size:22px}
+.detailImg{height:240px;background:radial-gradient(circle,rgba(255,0,60,.38),transparent 44%),linear-gradient(135deg,#210008,#050505);display:flex;align-items:center;justify-content:center;font-size:60px;overflow:hidden;position:relative}
+.detailImg img{width:100%;height:100%;object-fit:cover}
+.arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.28);background:rgba(0,0,0,.6);color:white;font-size:22px;font-weight:900}
+.left{left:12px}
+.right{right:12px}
+.count{position:absolute;right:12px;bottom:12px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.65);font-size:12px;font-weight:900}
+
+@media(max-width:720px){
+  .hero h2{font-size:32px}
+  .actions,.buyerGrid{grid-template-columns:1fr}
+  .productGrid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr))}
+}
+</style>
 </head>
 
 <body>
-  <main class="app">
-    <header class="top">
-      <div class="logo">D</div>
+<main class="wrap">
+  <header class="top">
+    <div class="logo">D</div>
+    <div class="brand">
+      <h1>DemiSke Vault</h1>
+      <p>Premium accounts, keys, and services</p>
+    </div>
+    <div class="pill">DEMISKE</div>
+  </header>
 
-      <div class="brand">
-        <h1>DemiSke Vault</h1>
-        <p>Premium accounts, VIP keys, and services</p>
+  <section class="hero" id="home">
+    <div class="status">
+      <span class="dot"></span>
+      Store Online
+    </div>
+
+    <br>
+
+    <div class="online">
+      <span class="dot"></span>
+      <span id="onlineCount">24</span> customers online
+    </div>
+
+    <h2>Browse the Vault.<br>Pick your upgrade.</h2>
+    <p>A clean marketplace for game accounts, VIP keys, and custom services.</p>
+
+    <div class="actions">
+      <button class="btn primary" onclick="scrollToShop()">Shop Now</button>
+      <button class="btn ghost" onclick="contactAdmin()">Contact Admin</button>
+    </div>
+
+    <div class="buyerBox">
+      <div class="buyerTitle">Choose who you want to buy from:</div>
+
+      <div class="buyerGrid">
+        <button class="buyerBtn demi" onclick="chooseBuyer('demi')">
+          🔥 Demi - Website Order
+        </button>
+
+        <button class="buyerBtn" onclick="chooseBuyer('ske')">
+          ⚡ Ske - Telegram
+        </button>
       </div>
+    </div>
+  </section>
 
-      <div class="admin-chip">DEMISKE</div>
-    </header>
+  <section class="searchBox" id="shop">
+    <input id="searchInput" placeholder="Search products..." oninput="renderProducts()">
 
-    <section class="hero" id="homeSection">
-      <div class="status">
-        <span class="status-dot"></span>
-        Store Online
-      </div>
+    <div class="chips">
+      <button class="chip active" onclick="setCategory('all',this)">All</button>
+      <button class="chip" onclick="setCategory('account',this)">🎮 Accounts</button>
+      <button class="chip" onclick="setCategory('key',this)">🔑 Keys</button>
+      <button class="chip" onclick="setCategory('other',this)">📦 Services</button>
+    </div>
+  </section>
 
-      <h2>Browse the Vault.<br>Pick your upgrade.</h2>
+  <section>
+    <div class="title">
+      <h2 id="shopTitle">Vault Products</h2>
+      <p>Tap product to view full details and pictures.</p>
+    </div>
 
-      <p>
-        A cleaner marketplace experience for game accounts, keys, and custom services.
-      </p>
+    <div class="productGrid" id="productGrid"></div>
+  </section>
+</main>
 
-      <div class="hero-actions">
-        <button class="btn primary" onclick="goShop()">Shop Now</button>
-        <button class="btn ghost" onclick="contactAdmin()">Contact Admin</button>
-      </div>
-    </section>
+<nav class="bottom">
+  <button class="nav active" onclick="setNav(this);goHome()"><span>🏠</span>Home</button>
+  <button class="nav" onclick="setNav(this);scrollToShop()"><span>🛒</span>Shop</button>
+  <button class="nav" onclick="setNav(this);openFeedback()"><span>💬</span>Feedback</button>
+  <button class="nav" onclick="setNav(this);openReport()"><span>⚠️</span>Report</button>
+  <button class="nav" onclick="setNav(this);contactAdmin()"><span>📩</span>Admin</button>
+</nav>
 
-    <section class="search-card" id="shopSection">
-      <input
-        class="search-box"
-        id="searchInput"
-        type="text"
-        placeholder="Search accounts, keys, or services..."
-        oninput="renderProducts()"
-      />
+<div class="modal" id="productModal">
+  <div class="box">
+    <div class="detailImg" id="detailImg">🎮</div>
 
-      <div class="chips">
-        <button class="chip active" onclick="setCategory('all', this)">All</button>
-        <button class="chip" onclick="setCategory('account', this)">🎮 Accounts</button>
-        <button class="chip" onclick="setCategory('key', this)">🔑 Keys</button>
-        <button class="chip" onclick="setCategory('other', this)">📦 Services</button>
-      </div>
-    </section>
+    <div class="boxPad">
+      <button class="close" onclick="closeModal('productModal')">×</button>
+      <h2 id="detailName">Product</h2>
+      <span class="tag" id="detailType">PRODUCT</span>
+      <div class="price" id="detailPrice">₱0</div>
+      <p class="muted" id="detailInfo"></p>
 
-    <section>
-      <div class="section-title">
-        <h2>Featured Deals</h2>
-        <p>Quick options for customers.</p>
-      </div>
+      <div class="buyerBox">
+        <div class="buyerTitle">Choose buyer for this product:</div>
 
-      <div class="featured-strip">
-        <div class="mini-card">
-          <strong>Fast Orders</strong>
-          <span>Send details directly</span>
-        </div>
+        <div class="buyerGrid">
+          <button class="buyerBtn demi" onclick="buyFromDemi()">
+            🔥 Demi - Website Order
+          </button>
 
-        <div class="mini-card">
-          <strong>VIP Access</strong>
-          <span>Keys and services</span>
-        </div>
-
-        <div class="mini-card">
-          <strong>Support Ready</strong>
-          <span>Report issues anytime</span>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="section-title">
-        <h2 id="shopTitle">Vault Products</h2>
-        <p>Tap a product to view details and pictures.</p>
-      </div>
-
-      <div class="product-grid" id="productGrid"></div>
-    </section>
-  </main>
-
-  <nav class="bottom-nav">
-    <button class="bottom-item active" onclick="setBottom(this); scrollToHome()">
-      <span>🏠</span>
-      Home
-    </button>
-
-    <button class="bottom-item" onclick="setBottom(this); goShop()">
-      <span>🛒</span>
-      Shop
-    </button>
-
-    <button class="bottom-item" onclick="setBottom(this); openFeedbackModal()">
-      <span>💬</span>
-      Feedback
-    </button>
-
-    <button class="bottom-item" onclick="setBottom(this); openReportModal()">
-      <span>⚠️</span>
-      Report
-    </button>
-
-    <button class="bottom-item" onclick="setBottom(this); contactAdmin()">
-      <span>📩</span>
-      Admin
-    </button>
-  </nav>
-
-  <!-- PRODUCT DETAILS MODAL -->
-  <div class="modal-overlay" id="productModal">
-    <div class="modal">
-      <div class="details-image" id="modalImageBox">🎮</div>
-
-      <div class="modal-padding">
-        <div class="modal-top">
-          <h2 id="modalProductName">Product Name</h2>
-          <button class="close-btn" onclick="closeModal('productModal')">×</button>
-        </div>
-
-        <span class="tag" id="modalProductType">PRODUCT</span>
-
-        <div class="detail-row">
-          <div class="detail-box">
-            <small>Price</small>
-            <strong id="modalProductPrice">₱0</strong>
-          </div>
-
-          <div class="detail-box">
-            <small>Status</small>
-            <strong>Available</strong>
-          </div>
-        </div>
-
-        <p id="modalProductDetails"></p>
-
-        <div class="hero-actions">
-          <button class="btn primary" onclick="openBuyModal()">Buy This</button>
-          <button class="btn ghost" onclick="contactAdmin()">Ask Admin</button>
+          <button class="buyerBtn" onclick="buyFromSke()">
+            ⚡ Ske - Telegram
+          </button>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- BUY MODAL -->
-  <div class="modal-overlay" id="buyModal">
-    <div class="modal">
-      <div class="modal-padding">
-        <div class="modal-top">
-          <h2>Submit Order</h2>
-          <button class="close-btn" onclick="closeModal('buyModal')">×</button>
-        </div>
+<div class="modal" id="buyModal">
+  <div class="box">
+    <div class="boxPad">
+      <button class="close" onclick="closeModal('buyModal')">×</button>
+      <h2>Submit Order to Demi</h2>
+      <p class="muted" id="buyText">Fill your details below.</p>
 
-        <p id="buyText">Fill your details below.</p>
+      <br>
+      <input id="buyerName" placeholder="Your name">
 
-        <input id="buyerName" type="text" placeholder="Your name" />
-        <input id="buyerContact" type="text" placeholder="Telegram username or phone number" />
+      <br><br>
+      <input id="buyerContact" placeholder="@Telegram username">
 
-        <select id="paymentMethod">
-          <option value="">Select payment method</option>
-          <option value="GCash">GCash</option>
-          <option value="Maya">Maya</option>
-          <option value="Bank Transfer">Bank Transfer</option>
-          <option value="Other">Other</option>
-        </select>
+      <br><br>
+      <select id="paymentMethod">
+        <option value="">Payment method</option>
+        <option>GCash</option>
+        <option>Maya</option>
+        <option>Bank Transfer</option>
+        <option>Other</option>
+      </select>
 
-        <button class="btn primary" style="width:100%;" onclick="submitOrder()">Submit Order</button>
-      </div>
+      <br><br>
+      <button class="btn primary" style="width:100%" onclick="submitOrder()">Submit Order</button>
     </div>
   </div>
+</div>
 
-  <!-- FEEDBACK MODAL -->
-  <div class="modal-overlay" id="feedbackModal">
-    <div class="modal">
-      <div class="modal-padding">
-        <div class="modal-top">
-          <h2>Send Feedback</h2>
-          <button class="close-btn" onclick="closeModal('feedbackModal')">×</button>
-        </div>
+<div class="modal" id="feedbackModal">
+  <div class="box">
+    <div class="boxPad">
+      <button class="close" onclick="closeModal('feedbackModal')">×</button>
+      <h2>Send Feedback</h2>
 
-        <select id="feedbackCategory">
-          <option value="">Select feedback category</option>
-          <option value="Website UI">Website UI</option>
-          <option value="Product Quality">Product Quality</option>
-          <option value="Customer Service">Customer Service</option>
-          <option value="Payment Process">Payment Process</option>
-          <option value="Suggestion">Suggestion</option>
-        </select>
+      <br>
+      <select id="feedbackCategory">
+        <option value="">Select category</option>
+        <option>Website UI</option>
+        <option>Product Quality</option>
+        <option>Customer Service</option>
+        <option>Payment Process</option>
+        <option>Suggestion</option>
+      </select>
 
-        <textarea id="feedbackMessage" placeholder="Write your feedback..."></textarea>
+      <br><br>
+      <textarea id="feedbackMessage" placeholder="Write your feedback..."></textarea>
 
-        <button class="btn primary" style="width:100%;" onclick="submitFeedback()">Submit Feedback</button>
-      </div>
+      <br><br>
+      <button class="btn primary" style="width:100%" onclick="submitFeedback()">Submit Feedback</button>
     </div>
   </div>
+</div>
 
-  <!-- REPORT MODAL -->
-  <div class="modal-overlay" id="reportModal">
-    <div class="modal">
-      <div class="modal-padding">
-        <div class="modal-top">
-          <h2>Report Issue</h2>
-          <button class="close-btn" onclick="closeModal('reportModal')">×</button>
-        </div>
+<div class="modal" id="reportModal">
+  <div class="box">
+    <div class="boxPad">
+      <button class="close" onclick="closeModal('reportModal')">×</button>
+      <h2>Report Issue</h2>
 
-        <select id="issueCategory">
-          <option value="">Select issue</option>
-          <option value="Payment Problem">Payment Problem</option>
-          <option value="Account Problem">Account Problem</option>
-          <option value="Key Not Working">Key Not Working</option>
-          <option value="Website Bug">Website Bug</option>
-          <option value="Slow Response">Slow Response</option>
-          <option value="Other Issue">Other Issue</option>
-        </select>
+      <br>
+      <select id="issueCategory">
+        <option value="">Select issue</option>
+        <option>Payment Problem</option>
+        <option>Account Problem</option>
+        <option>Key Not Working</option>
+        <option>Website Bug</option>
+        <option>Slow Response</option>
+        <option>Other Issue</option>
+      </select>
 
-        <input id="reportContact" type="text" placeholder="Your Telegram / contact" />
-        <textarea id="issueMessage" placeholder="Explain the issue..."></textarea>
+      <br><br>
+      <input id="reportContact" placeholder="@Telegram username">
 
-        <button class="btn primary" style="width:100%;" onclick="submitIssue()">Submit Report</button>
-      </div>
+      <br><br>
+      <textarea id="issueMessage" placeholder="Explain the issue..."></textarea>
+
+      <br><br>
+      <button class="btn primary" style="width:100%" onclick="submitIssue()">Submit Report</button>
     </div>
   </div>
+</div>
 
-  <script>
-    let activeCategory = "all";
-    let activeProduct = null;
-    let activeImageIndex = 0;
+<script>
+let activeCategory="all";
+let activeProduct=null;
+let activeImageIndex=0;
 
-    const demoProducts = [
-      {
-        id: 1,
-        productType: "account",
-        name: "Premium Game Account",
-        price: 550,
-        level: "184",
-        region: "TH",
-        uid: "361673204",
-        description: "Good skins, high level account, ready to use.",
-        images: []
-      },
-      {
-        id: 2,
-        productType: "key",
-        name: "Astrix VIP Key",
-        price: 250,
-        duration: "14 Days",
-        game: "PUBGM",
-        platform: "Android",
-        server: "Global / KR / VNG",
-        description: "14 days VIP key. Message admin after payment.",
-        images: []
-      },
-      {
-        id: 3,
-        productType: "other",
-        name: "Boosting Service",
-        price: 999,
-        category: "Service",
-        availability: "Available",
-        description: "Fast service. Manual process. Message admin first.",
-        images: []
-      }
-    ];
+const demoProducts=[
+  {
+    id:1,
+    productType:"account",
+    name:"Premium Game Account",
+    price:550,
+    level:"184",
+    uid:"361673204",
+    region:"TH",
+    description:"Good skins, high level account, ready to use.",
+    images:[]
+  },
+  {
+    id:2,
+    productType:"key",
+    name:"VIP Key",
+    price:250,
+    duration:"14 Days",
+    game:"PUBGM",
+    platform:"Android",
+    description:"VIP key. Message admin after payment.",
+    images:[]
+  },
+  {
+    id:3,
+    productType:"other",
+    name:"Boosting Service",
+    price:999,
+    category:"Service",
+    description:"Fast service. Message admin first.",
+    images:[]
+  }
+];
 
-    function getProducts() {
-      const saved = JSON.parse(localStorage.getItem("adminProducts")) || [];
-      return saved.length ? saved : demoProducts;
+function getProducts(){
+  const saved=JSON.parse(localStorage.getItem("adminProducts"))||[];
+  return saved.length?saved:demoProducts;
+}
+
+function icon(type){
+  if(type==="account")return"🎮";
+  if(type==="key")return"🔑";
+  if(type==="other")return"📦";
+  return"🔥";
+}
+
+function updateOnline(){
+  const el=document.getElementById("onlineCount");
+  if(!el)return;
+
+  const min=18;
+  const max=47;
+  el.innerText=Math.floor(Math.random()*(max-min+1))+min;
+}
+
+updateOnline();
+setInterval(updateOnline,12000);
+
+function renderProducts(){
+  const grid=document.getElementById("productGrid");
+  const search=document.getElementById("searchInput").value.toLowerCase().trim();
+
+  let products=getProducts().filter(product=>{
+    const categoryMatch=activeCategory==="all"||product.productType===activeCategory;
+    const searchMatch=!search||`${product.name} ${product.description} ${product.productType}`.toLowerCase().includes(search);
+    return categoryMatch&&searchMatch;
+  });
+
+  grid.innerHTML="";
+
+  if(!products.length){
+    grid.innerHTML='<div class="empty">No products found.</div>';
+    return;
+  }
+
+  products.forEach(product=>{
+    const image=product.images&&product.images[0]?`<img src="${product.images[0]}">`:icon(product.productType);
+
+    const card=document.createElement("div");
+    card.className="card";
+    card.onclick=()=>openProduct(product.id);
+
+    card.innerHTML=`
+      <div class="img">${image}</div>
+      <div class="info">
+        <span class="tag">${(product.productType||"PRODUCT").toUpperCase()}</span>
+        <h3>${product.name||"Unnamed Product"}</h3>
+        <div class="price">₱${product.price||0}</div>
+        <p class="muted">Tap to view details</p>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+function setCategory(category,button){
+  activeCategory=category;
+
+  document.querySelectorAll(".chip").forEach(chip=>chip.classList.remove("active"));
+  button.classList.add("active");
+
+  const title=document.getElementById("shopTitle");
+
+  if(category==="all")title.innerText="Vault Products";
+  if(category==="account")title.innerText="Game Accounts";
+  if(category==="key")title.innerText="VIP Keys";
+  if(category==="other")title.innerText="Services";
+
+  renderProducts();
+}
+
+function openProduct(id){
+  const product=getProducts().find(item=>item.id===id);
+
+  if(!product){
+    alert("Product not found.");
+    return;
+  }
+
+  activeProduct=product;
+  activeImageIndex=0;
+
+  document.getElementById("detailName").innerText=product.name||"Unnamed Product";
+  document.getElementById("detailType").innerText=(product.productType||"PRODUCT").toUpperCase();
+  document.getElementById("detailPrice").innerText="₱"+(product.price||0);
+  document.getElementById("detailInfo").innerHTML=getDetails(product);
+
+  renderImage();
+  openModal("productModal");
+}
+
+function getDetails(product){
+  if(product.productType==="account"){
+    return`
+      Level: ${product.level||"N/A"}<br>
+      UID: ${product.uid||"N/A"}<br>
+      Region: ${product.region||"N/A"}<br><br>
+      ${product.description||"No description."}
+    `;
+  }
+
+  if(product.productType==="key"){
+    return`
+      Duration: ${product.duration||"N/A"}<br>
+      Game: ${product.game||"N/A"}<br>
+      Platform: ${product.platform||"N/A"}<br><br>
+      ${product.description||"No description."}
+    `;
+  }
+
+  return`
+    Category: ${product.category||"N/A"}<br>
+    Status: ${product.availability||"Available"}<br><br>
+    ${product.description||"No description."}
+  `;
+}
+
+function renderImage(){
+  const box=document.getElementById("detailImg");
+  const images=activeProduct.images||[];
+
+  if(!images.length){
+    box.innerHTML=icon(activeProduct.productType);
+    return;
+  }
+
+  box.innerHTML=`
+    <img src="${images[activeImageIndex]||images[0]}">
+    ${
+      images.length>1
+      ?`
+        <button class="arrow left" onclick="changeImage(-1)">‹</button>
+        <button class="arrow right" onclick="changeImage(1)">›</button>
+        <div class="count">${activeImageIndex+1}/${images.length}</div>
+      `
+      :""
     }
-
-    function getIcon(type) {
-      if (type === "account") return "🎮";
-      if (type === "key") return "🔑";
-      if (type === "other") return "📦";
-      return "🔥";
-    }
-
-    function renderProducts() {
-      const grid = document.getElementById("productGrid");
-      const search = document.getElementById("searchInput").value.toLowerCase().trim();
-
-      let products = getProducts();
-
-      products = products.filter(product => {
-        const matchCategory = activeCategory === "all" || product.productType === activeCategory;
-        const matchSearch = !search || `${product.name} ${product.description} ${product.productType}`.toLowerCase().includes(search);
-        return matchCategory && matchSearch;
-      });
-
-      grid.innerHTML = "";
-
-      if (!products.length) {
-        grid.innerHTML = `<div class="empty-state">No products found.</div>`;
-        return;
-      }
-
-      products.forEach((product, index) => {
-        const image = product.images && product.images.length ? product.images[0] : null;
-
-        const card = document.createElement("div");
-        card.className = "product-card";
-        card.style.animationDelay = `${index * 0.05}s`;
-        card.onclick = () => openProductDetails(product.id);
-
-        card.innerHTML = `
-          <div class="product-img">
-            ${image ? `<img src="${image}" alt="${product.name}">` : getIcon(product.productType)}
-          </div>
-
-          <div class="product-info">
-            <span class="tag">${(product.productType || "product").toUpperCase()}</span>
-            <h3>${product.name || "Unnamed Product"}</h3>
-            <div class="price">₱${product.price || 0}</div>
-            <div class="muted">Tap to view full details</div>
-          </div>
-        `;
-
-        grid.appendChild(card);
-      });
-    }
-
-    function setCategory(category, element) {
-      activeCategory = category;
-
-      document.querySelectorAll(".chip").forEach(chip => chip.classList.remove("active"));
-      element.classList.add("active");
-
-      const title = document.getElementById("shopTitle");
-
-      if (category === "all") title.innerText = "Vault Products";
-      if (category === "account") title.innerText = "Game Accounts";
-      if (category === "key") title.innerText = "VIP Keys";
-      if (category === "other") title.innerText = "Services";
-
-      renderProducts();
-    }
-
-    function setBottom(element) {
-      document.querySelectorAll(".bottom-item").forEach(item => item.classList.remove("active"));
-      element.classList.add("active");
-    }
-
-    function scrollToHome() {
-      document.getElementById("homeSection").scrollIntoView({ behavior: "smooth" });
-    }
-
-    function goShop() {
-      document.getElementById("shopSection").scrollIntoView({ behavior: "smooth" });
-    }
-
-    function openAdmin() {
-      window.location.href = "admin.html";
-    }
-
-    function contactAdmin() {
-      window.location.href = "https://t.me/Demixyloadmin";
-    }
-
-    function getDetails(product) {
-      if (product.productType === "account") {
-        return `
-          Level: ${product.level || "N/A"}<br>
-          UID: ${product.uid || "N/A"}<br>
-          Region: ${product.region || "N/A"}<br><br>
-          ${product.description || "No description."}
-        `;
-      }
-
-      if (product.productType === "key") {
-        return `
-          Duration: ${product.duration || "N/A"}<br>
-          Game: ${product.game || "N/A"}<br>
-          Platform: ${product.platform || "N/A"}<br>
-          Server: ${product.server || "N/A"}<br><br>
-          ${product.description || "No description."}
-        `;
-      }
-
-      return `
-        Category: ${product.category || "N/A"}<br>
-        Status: ${product.availability || "Available"}<br><br>
-        ${product.description || "No description."}
-      `;
-    }
-
-    function openProductDetails(productId) {
-      const product = getProducts().find(item => item.id === productId);
-
-      if (!product) {
-        alert("Product not found.");
-        return;
-      }
-
-      activeProduct = product;
-      activeImageIndex = 0;
-
-      document.getElementById("modalProductName").innerText = product.name || "Unnamed Product";
-      document.getElementById("modalProductPrice").innerText = `₱${product.price || 0}`;
-      document.getElementById("modalProductType").innerText = (product.productType || "PRODUCT").toUpperCase();
-      document.getElementById("modalProductDetails").innerHTML = getDetails(product);
-
-      renderModalImage();
-
-      document.getElementById("productModal").classList.add("active");
-    }
-
-    function renderModalImage() {
-      const box = document.getElementById("modalImageBox");
-
-      if (!activeProduct) return;
-
-      const images = activeProduct.images || [];
-
-      if (!images.length) {
-        box.innerHTML = getIcon(activeProduct.productType);
-        return;
-      }
-
-      const image = images[activeImageIndex] || images[0];
-
-      box.innerHTML = `
-        <img src="${image}" alt="${activeProduct.name || "Product image"}">
-
-        ${images.length > 1 ? `
-          <button class="carousel-btn left" onclick="changeImage(-1)">‹</button>
-          <button class="carousel-btn right" onclick="changeImage(1)">›</button>
-          <div class="carousel-count">${activeImageIndex + 1}/${images.length}</div>
-        ` : ""}
-      `;
-    }
-
-    function changeImage(direction) {
-      if (!activeProduct || !activeProduct.images || !activeProduct.images.length) return;
-
-      const total = activeProduct.images.length;
-      activeImageIndex += direction;
-
-      if (activeImageIndex < 0) activeImageIndex = total - 1;
-      if (activeImageIndex >= total) activeImageIndex = 0;
-
-      renderModalImage();
-    }
-
-    function openBuyModal() {
-      if (!activeProduct) {
-        alert("Please select a product first.");
-        return;
-      }
-
-      document.getElementById("buyText").innerText =
-        `You are buying ${activeProduct.name} for ₱${activeProduct.price || 0}.`;
-
-      closeModal("productModal");
-      document.getElementById("buyModal").classList.add("active");
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.remove("active");
-    }
-
-    function saveAdminNotification(data) {
-      const notifications = JSON.parse(localStorage.getItem("adminNotifications")) || [];
-
-      notifications.unshift({
-        id: Date.now(),
-        status: "unread",
-        date: new Date().toLocaleString(),
-        ...data
-      });
-
-      localStorage.setItem("adminNotifications", JSON.stringify(notifications));
-    }
-
-    function getValue(id) {
-      return document.getElementById(id).value.trim();
-    }
-
-    function submitOrder() {
-      const name = getValue("buyerName");
-      const contact = getValue("buyerContact");
-      const payment = getValue("paymentMethod");
-
-      if (!activeProduct) {
-        alert("No product selected.");
-        return;
-      }
-
-      if (!name || !contact || !payment) {
-        alert("Please complete your name, contact, and payment method.");
-        return;
-      }
-
-      saveAdminNotification({
-        notificationType: "New Order",
-        category: activeProduct.productType,
-        title: "New Customer Order",
-        message: `${name} wants to buy ${activeProduct.name}. Payment method: ${payment}. Contact: ${contact}`,
-        customerName: name,
-        contact: contact,
-        productName: activeProduct.name,
-        price: activeProduct.price
-      });
-
-      closeModal("buyModal");
-
-      alert("Order submitted. Please wait for admin confirmation.");
-
-      document.getElementById("buyerName").value = "";
-      document.getElementById("buyerContact").value = "";
-      document.getElementById("paymentMethod").value = "";
-    }
-
-    function openFeedbackModal() {
-      document.getElementById("feedbackModal").classList.add("active");
-    }
-
-    function openReportModal() {
-      document.getElementById("reportModal").classList.add("active");
-    }
-
-    function submitFeedback() {
-      const category = getValue("feedbackCategory");
-      const message = getValue("feedbackMessage");
-
-      if (!category || !message) {
-        alert("Please choose category and write your feedback.");
-        return;
-      }
-
-      saveAdminNotification({
-        notificationType: "Feedback",
-        category: category,
-        title: "New Customer Feedback",
-        message: message
-      });
-
-      closeModal("feedbackModal");
-
-      alert("Feedback submitted.");
-
-      document.getElementById("feedbackCategory").value = "";
-      document.getElementById("feedbackMessage").value = "";
-    }
-
-    function submitIssue() {
-      const category = getValue("issueCategory");
-      const contact = getValue("reportContact");
-      const message = getValue("issueMessage");
-
-      if (!category || !contact || !message) {
-        alert("Please complete all report fields.");
-        return;
-      }
-
-      saveAdminNotification({
-        notificationType: "Issue Report",
-        category: category,
-        title: "Customer Reported an Issue",
-        message: message,
-        contact: contact
-      });
-
-      closeModal("reportModal");
-
-      alert("Issue report submitted.");
-
-      document.getElementById("issueCategory").value = "";
-      document.getElementById("reportContact").value = "";
-      document.getElementById("issueMessage").value = "";
-    }
-
-    renderProducts();
-  </script>
+  `;
+}
+
+function changeImage(direction){
+  const total=activeProduct.images.length;
+
+  activeImageIndex+=direction;
+
+  if(activeImageIndex<0)activeImageIndex=total-1;
+  if(activeImageIndex>=total)activeImageIndex=0;
+
+  renderImage();
+}
+
+function chooseBuyer(buyer){
+  if(buyer==="demi"){
+    scrollToShop();
+    alert("Choose a product, then tap Demi - Website Order.");
+  }
+
+  if(buyer==="ske"){
+    location.href="https://t.me/kaizxns";
+  }
+}
+
+function buyFromDemi(){
+  if(!activeProduct){
+    alert("Choose a product first.");
+    return;
+  }
+
+  document.getElementById("buyText").innerText=`You are buying ${activeProduct.name} for ₱${activeProduct.price||0}.`;
+
+  closeModal("productModal");
+  openModal("buyModal");
+}
+
+function buyFromSke(){
+  location.href="https://t.me/kaizxns";
+}
+
+function contactAdmin(){
+  location.href="https://t.me/Demixyloadmin";
+}
+
+function submitOrder(){
+  const name=document.getElementById("buyerName").value.trim();
+  const contact=document.getElementById("buyerContact").value.trim();
+  const payment=document.getElementById("paymentMethod").value.trim();
+
+  if(!activeProduct){
+    alert("No product selected.");
+    return;
+  }
+
+  if(!name||!contact||!payment){
+    alert("Please complete your name, Telegram, and payment method.");
+    return;
+  }
+
+  saveAdminNotification({
+    notificationType:"New Order",
+    category:activeProduct.productType,
+    title:"New Customer Order",
+    message:`${name} wants to buy ${activeProduct.name}. Payment method: ${payment}. Contact: ${contact}`,
+    customerName:name,
+    contact:contact,
+    productName:activeProduct.name,
+    price:activeProduct.price,
+    buyer:"Demi"
+  });
+
+  closeModal("buyModal");
+
+  alert("Order submitted to Demi. Please wait for confirmation.");
+
+  document.getElementById("buyerName").value="";
+  document.getElementById("buyerContact").value="";
+  document.getElementById("paymentMethod").value="";
+}
+
+function submitFeedback(){
+  const category=document.getElementById("feedbackCategory").value.trim();
+  const message=document.getElementById("feedbackMessage").value.trim();
+
+  if(!category||!message){
+    alert("Please choose category and write your feedback.");
+    return;
+  }
+
+  saveAdminNotification({
+    notificationType:"Feedback",
+    category:category,
+    title:"New Customer Feedback",
+    message:message
+  });
+
+  closeModal("feedbackModal");
+
+  alert("Feedback submitted.");
+
+  document.getElementById("feedbackCategory").value="";
+  document.getElementById("feedbackMessage").value="";
+}
+
+function submitIssue(){
+  const category=document.getElementById("issueCategory").value.trim();
+  const contact=document.getElementById("reportContact").value.trim();
+  const message=document.getElementById("issueMessage").value.trim();
+
+  if(!category||!contact||!message){
+    alert("Please complete all report fields.");
+    return;
+  }
+
+  saveAdminNotification({
+    notificationType:"Issue Report",
+    category:category,
+    title:"Customer Reported an Issue",
+    message:message,
+    contact:contact
+  });
+
+  closeModal("reportModal");
+
+  alert("Issue report submitted.");
+
+  document.getElementById("issueCategory").value="";
+  document.getElementById("reportContact").value="";
+  document.getElementById("issueMessage").value="";
+}
+
+function saveAdminNotification(data){
+  const notifications=JSON.parse(localStorage.getItem("adminNotifications"))||[];
+
+  notifications.unshift({
+    id:Date.now(),
+    date:new Date().toLocaleString(),
+    status:"unread",
+    ...data
+  });
+
+  localStorage.setItem("adminNotifications",JSON.stringify(notifications));
+}
+
+function openFeedback(){
+  openModal("feedbackModal");
+}
+
+function openReport(){
+  openModal("reportModal");
+}
+
+function openModal(id){
+  document.getElementById(id).classList.add("active");
+}
+
+function closeModal(id){
+  document.getElementById(id).classList.remove("active");
+}
+
+function setNav(button){
+  document.querySelectorAll(".nav").forEach(nav=>nav.classList.remove("active"));
+  button.classList.add("active");
+}
+
+function scrollToShop(){
+  document.getElementById("shop").scrollIntoView({behavior:"smooth"});
+}
+
+function goHome(){
+  document.getElementById("home").scrollIntoView({behavior:"smooth"});
+}
+
+renderProducts();
+</script>
 </body>
 </html>
