@@ -6,11 +6,11 @@
 <title>DemiSke Admin</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-:root{--red:#ff003c;--orange:#ff6a00;--card:rgba(255,255,255,.06);--border:rgba(255,70,95,.35);--soft:#ffb8c2;--muted:#aaa}
-body{min-height:100vh;background:radial-gradient(circle at top right,rgba(255,0,60,.25),transparent 35%),linear-gradient(145deg,#050507,#140008,#000);color:white;padding-bottom:95px}
+:root{--red:#ff003c;--orange:#ff6a00;--card:rgba(255,255,255,.06);--border:rgba(255,70,95,.35);--soft:#ffb8c2;--muted:#aaa;--green:#00ff88}
+body{min-height:100vh;background:radial-gradient(circle at top right,rgba(255,0,60,.25),transparent 35%),linear-gradient(145deg,#050507,#140008,#000);color:white;padding-bottom:95px;overflow-x:hidden}
 button,input,select,textarea{font-family:Arial,sans-serif}button{cursor:pointer}.hidden{display:none!important}
 .wrap{max-width:1050px;margin:auto;padding:18px 15px}.top{display:flex;align-items:center;gap:12px;margin-bottom:18px}.logo{width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,var(--red),#1d0008,#000);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:25px;box-shadow:0 0 25px rgba(255,0,60,.4)}.brand{flex:1}.brand h1{font-size:24px;background:linear-gradient(90deg,var(--red),var(--orange));-webkit-background-clip:text;color:transparent}.brand p,.muted{color:var(--muted);font-size:13px;line-height:1.45}.pill{border:1px solid var(--border);background:rgba(255,255,255,.06);padding:10px 13px;border-radius:999px;font-size:12px;font-weight:900;color:white}
-.hero,.panel,.card,.alert{border:1px solid var(--border);background:var(--card);box-shadow:0 0 18px rgba(255,0,60,.1)}.hero{border-radius:30px;padding:24px;background:radial-gradient(circle at top right,rgba(255,0,60,.34),transparent 42%),linear-gradient(135deg,rgba(26,0,8,.96),rgba(9,9,16,.96));margin-bottom:18px}.status{display:inline-flex;gap:8px;align-items:center;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);font-size:13px;color:#ffd1d8;margin-bottom:16px}.dot{width:9px;height:9px;border-radius:50%;background:#00ff88;box-shadow:0 0 10px #00ff88}.hero h2{font-size:36px;line-height:1.08;margin-bottom:10px}.hero p{color:#ffc7d0;line-height:1.5;font-size:15px}
+.hero,.panel,.card,.alert{border:1px solid var(--border);background:var(--card);box-shadow:0 0 18px rgba(255,0,60,.1)}.hero{border-radius:30px;padding:24px;background:radial-gradient(circle at top right,rgba(255,0,60,.34),transparent 42%),linear-gradient(135deg,rgba(26,0,8,.96),rgba(9,9,16,.96));margin-bottom:18px}.status{display:inline-flex;gap:8px;align-items:center;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);font-size:13px;color:#ffd1d8;margin-bottom:16px}.dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}.hero h2{font-size:36px;line-height:1.08;margin-bottom:10px}.hero p{color:#ffc7d0;line-height:1.5;font-size:15px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}.stat{border:1px solid var(--border);background:rgba(255,255,255,.055);border-radius:22px;padding:16px}.stat strong{font-size:28px;display:block}.stat span{font-size:12px;color:var(--soft);font-weight:900}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.btn{border:0;border-radius:17px;padding:14px 16px;color:white;font-weight:900;text-align:center}.primary{background:linear-gradient(135deg,var(--red),var(--orange));box-shadow:0 0 22px rgba(255,0,60,.28)}.ghost{background:rgba(255,255,255,.07);border:1px solid var(--border)}.danger{background:rgba(255,0,60,.2);border:1px solid rgba(255,70,95,.45)}
 .title{margin:24px 0 12px}.title h2{font-size:25px}.title p{color:var(--muted);font-size:14px;margin-top:5px}.panel{border-radius:26px;padding:18px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.typeGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.typeBtn{border:1px solid var(--border);background:rgba(255,255,255,.055);color:white;border-radius:22px;padding:16px 10px;min-height:110px}.typeBtn.active{background:linear-gradient(135deg,rgba(255,0,60,.35),rgba(255,106,0,.18));box-shadow:0 0 22px rgba(255,0,60,.35)}.typeBtn .ico{font-size:32px;margin-bottom:8px}.typeBtn strong{display:block}.typeBtn span{font-size:12px;color:var(--soft)}
@@ -23,7 +23,6 @@ label{display:block;color:#ffa0ae;font-size:13px;font-weight:900;margin:0 0 7px}
 @media(max-width:720px){.hero h2{font-size:32px}.stats,.grid2,.actions,.typeGrid{grid-template-columns:1fr}.productGrid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr))}}
 </style>
 </head>
-
 <body>
 <div class="login" id="loginScreen">
   <div class="loginBox">
@@ -38,110 +37,67 @@ label{display:block;color:#ffa0ae;font-size:13px;font-weight:900;margin:0 0 7px}
 </div>
 
 <main class="wrap">
-<header class="top">
-  <div class="logo">A</div>
-  <div class="brand"><h1>DemiSke Vault</h1><p>Admin Control Center</p></div>
-  <button class="pill" onclick="logout()">Logout</button>
-</header>
-
+<header class="top"><div class="logo">A</div><div class="brand"><h1>DemiSke Vault</h1><p>Admin Control Center</p></div><button class="pill" onclick="logout()">Logout</button></header>
 <section class="hero" id="dashboard">
-  <div class="status"><span class="dot"></span> Admin Online</div>
-  <h2>Manage the Vault.<br>Simple and clean.</h2>
-  <p>Fully remade admin panel with working buttons, visible upload input, product list, and alerts.</p>
+  <div class="status"><span class="dot"></span> Firebase Product Database</div>
+  <h2>Manage the Vault.<br>Visible to all customers.</h2>
+  <p>Products saved here are stored in Firebase, so every customer can see them from any device.</p>
   <div class="stats">
     <div class="stat"><strong id="statProducts">0</strong><span>Products</span></div>
     <div class="stat"><strong id="statAlerts">0</strong><span>Alerts</span></div>
     <div class="stat"><strong id="statOrders">0</strong><span>Orders</span></div>
     <div class="stat"><strong id="statReports">0</strong><span>Reports</span></div>
   </div>
-  <div class="actions">
-    <button class="btn primary" onclick="go('add')">Add Product</button>
-    <button class="btn ghost" onclick="location.href='index.html'">Open Website</button>
-  </div>
+  <div class="actions"><button class="btn primary" onclick="go('add')">Add Product</button><button class="btn ghost" onclick="location.href='index.html'">Open Website</button></div>
 </section>
 
-<section id="add">
-  <div class="title"><h2>Add Product</h2><p>Select type, upload image, fill details, then save.</p></div>
-  <div class="panel">
-    <div class="typeGrid">
-      <button type="button" class="typeBtn" onclick="selectType('account',this)"><div class="ico">🎮</div><strong>Account</strong><span>Game accounts</span></button>
-      <button type="button" class="typeBtn" onclick="selectType('key',this)"><div class="ico">🔑</div><strong>Key</strong><span>VIP keys</span></button>
-      <button type="button" class="typeBtn" onclick="selectType('other',this)"><div class="ico">📦</div><strong>Service</strong><span>Other services</span></button>
-    </div>
+<section id="add"><div class="title"><h2>Add Product</h2><p>Select type, upload image, fill details, then save to Firebase.</p></div><div class="panel">
+<div class="typeGrid">
+  <button type="button" class="typeBtn" onclick="selectType('account',this)"><div class="ico">🎮</div><strong>Account</strong><span>Game accounts</span></button>
+  <button type="button" class="typeBtn" onclick="selectType('key',this)"><div class="ico">🔑</div><strong>Key</strong><span>VIP keys</span></button>
+  <button type="button" class="typeBtn" onclick="selectType('other',this)"><div class="ico">📦</div><strong>Service</strong><span>Other services</span></button>
+</div>
 
-    <div class="upload">
-      <h3>Upload Pictures</h3>
-      <p class="muted">Use 1–3 pictures. Tap Choose Files below.</p><br>
-      <input type="file" id="productPictures" multiple accept="image/*">
-    </div>
+<div class="upload"><h3>Upload Pictures</h3><p class="muted">Use 1–3 smaller pictures. Large images may not save.</p><br><input type="file" id="productPictures" multiple accept="image/*"></div>
+<div class="previewGrid" id="previewGrid"></div>
 
-    <div class="previewGrid" id="previewGrid"></div>
-
-    <div id="accountFields" class="hidden">
-      <div class="grid2">
-        <div class="field"><label>Account Name</label><input id="accountName" placeholder="Premium Account"></div>
-        <div class="field"><label>Price</label><input id="accountPrice" type="number" placeholder="550"></div>
-        <div class="field"><label>Level</label><input id="accountLevel" placeholder="184"></div>
-        <div class="field"><label>UID</label><input id="accountUid" placeholder="361673204"></div>
-        <div class="field"><label>Region</label><input id="accountRegion" placeholder="TH"></div>
-      </div>
-      <div class="field"><label>Description</label><textarea id="accountDescription" placeholder="Skins, rare items, notes..."></textarea></div>
-    </div>
-
-    <div id="keyFields" class="hidden">
-      <div class="grid2">
-        <div class="field"><label>Key Name</label><input id="keyName" placeholder="VIP Key"></div>
-        <div class="field"><label>Price</label><input id="keyPrice" type="number" placeholder="250"></div>
-        <div class="field"><label>Duration</label><select id="keyDuration"><option value="">Select</option><option>1 Day</option><option>3 Days</option><option>7 Days</option><option>14 Days</option><option>30 Days</option><option>Lifetime</option></select></div>
-        <div class="field"><label>Game / Product</label><input id="keyGame" placeholder="PUBGM"></div>
-        <div class="field"><label>Platform</label><select id="keyPlatform"><option value="">Select</option><option>Android</option><option>iOS</option><option>PC</option><option>Android / iOS</option></select></div>
-      </div>
-      <div class="field"><label>Description</label><textarea id="keyDescription" placeholder="Supported version, rules, notes..."></textarea></div>
-    </div>
-
-    <div id="otherFields" class="hidden">
-      <div class="grid2">
-        <div class="field"><label>Service Name</label><input id="otherName" placeholder="Boosting Service"></div>
-        <div class="field"><label>Price</label><input id="otherPrice" type="number" placeholder="999"></div>
-        <div class="field"><label>Category</label><input id="otherCategory" placeholder="Service"></div>
-      </div>
-      <div class="field"><label>Description</label><textarea id="otherDescription" placeholder="Details, delivery time, inclusions..."></textarea></div>
-    </div>
-
-    <div class="live">
-      <div class="liveImg" id="liveImg">🔥</div>
-      <div class="liveBody">
-        <span class="tag" id="liveType">NO TYPE</span>
-        <h3 id="liveName">Product Name</h3>
-        <div class="price" id="livePrice">₱0</div>
-        <p class="muted" id="liveDetails">Product details will appear here.</p>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button class="btn primary" onclick="saveProduct()">Save Product</button>
-      <button class="btn ghost" onclick="clearForm()">Clear Form</button>
-    </div>
+<div id="accountFields" class="hidden">
+  <div class="grid2">
+    <div class="field"><label>Account Name</label><input id="accountName" placeholder="Premium Account"></div>
+    <div class="field"><label>Price</label><input id="accountPrice" type="number" placeholder="550"></div>
+    <div class="field"><label>Level</label><input id="accountLevel" placeholder="184"></div>
+    <div class="field"><label>UID</label><input id="accountUid" placeholder="361673204"></div>
+    <div class="field"><label>Region</label><input id="accountRegion" placeholder="TH"></div>
   </div>
-</section>
+  <div class="field"><label>Description</label><textarea id="accountDescription" placeholder="Skins, rare items, notes..."></textarea></div>
+</div>
 
-<section id="products">
-  <div class="title"><h2>Products</h2><p>Saved products shown on customer website.</p></div>
-  <div class="productGrid" id="productGrid"></div>
-  <div class="actions">
-    <button class="btn danger" onclick="clearProducts()">Clear Products</button>
-    <button class="btn ghost" onclick="loadData()">Refresh</button>
+<div id="keyFields" class="hidden">
+  <div class="grid2">
+    <div class="field"><label>Key Name</label><input id="keyName" placeholder="VIP Key"></div>
+    <div class="field"><label>Price</label><input id="keyPrice" type="number" placeholder="250"></div>
+    <div class="field"><label>Duration</label><select id="keyDuration"><option value="">Select</option><option>1 Day</option><option>3 Days</option><option>7 Days</option><option>14 Days</option><option>30 Days</option><option>Lifetime</option></select></div>
+    <div class="field"><label>Game / Product</label><input id="keyGame" placeholder="PUBGM"></div>
+    <div class="field"><label>Platform</label><select id="keyPlatform"><option value="">Select</option><option>Android</option><option>iOS</option><option>PC</option><option>Android / iOS</option></select></div>
   </div>
-</section>
+  <div class="field"><label>Description</label><textarea id="keyDescription" placeholder="Supported version, rules, notes..."></textarea></div>
+</div>
 
-<section id="alerts">
-  <div class="title"><h2>Alerts</h2><p>Orders, reports, and feedback from customers.</p></div>
-  <div class="alertList" id="alertList"></div>
-  <div class="actions">
-    <button class="btn danger" onclick="clearAlerts()">Clear Alerts</button>
-    <button class="btn ghost" onclick="loadData()">Refresh</button>
+<div id="otherFields" class="hidden">
+  <div class="grid2">
+    <div class="field"><label>Service Name</label><input id="otherName" placeholder="Boosting Service"></div>
+    <div class="field"><label>Price</label><input id="otherPrice" type="number" placeholder="999"></div>
+    <div class="field"><label>Category</label><input id="otherCategory" placeholder="Service"></div>
   </div>
-</section>
+  <div class="field"><label>Description</label><textarea id="otherDescription" placeholder="Details, delivery time, inclusions..."></textarea></div>
+</div>
+
+<div class="live"><div class="liveImg" id="liveImg">🔥</div><div class="liveBody"><span class="tag" id="liveType">NO TYPE</span><h3 id="liveName">Product Name</h3><div class="price" id="livePrice">₱0</div><p class="muted" id="liveDetails">Product details will appear here.</p></div></div>
+<div class="actions"><button class="btn primary" onclick="saveProduct()">Save Product to Firebase</button><button class="btn ghost" onclick="clearForm()">Clear Form</button></div>
+</div></section>
+
+<section id="products"><div class="title"><h2>Firebase Products</h2><p>These products are visible to customers from all devices.</p></div><div class="productGrid" id="productGrid"></div><div class="actions"><button class="btn danger" onclick="clearProducts()">Clear Firebase Products</button><button class="btn ghost" onclick="loadData()">Refresh</button></div></section>
+<section id="alerts"><div class="title"><h2>Local Alerts</h2><p>Current alert system is still local. Products are Firebase.</p></div><div class="alertList" id="alertList"></div><div class="actions"><button class="btn danger" onclick="clearAlerts()">Clear Alerts</button><button class="btn ghost" onclick="loadData()">Refresh</button></div></section>
 </main>
 
 <nav class="bottom">
@@ -152,16 +108,37 @@ label{display:block;color:#ffa0ae;font-size:13px;font-weight:900;margin:0 0 7px}
   <button class="nav" onclick="nav(this);location.href='index.html'"><span>🌐</span>Site</button>
 </nav>
 
-<script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import{getDatabase,ref,set,remove,onValue,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
 const ADMIN_USERNAME="xyloresselers";
 const ADMIN_PASSWORD="modtakels ni xylo";
+
+const firebaseConfig={
+  apiKey:"AIzaSyCpxfXFVrcKa-3wE6m4DLXN5j6kKW1d9Tk",
+  authDomain:"demiske-vault.firebaseapp.com",
+  databaseURL:"https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId:"demiske-vault",
+  storageBucket:"demiske-vault.firebasestorage.app",
+  messagingSenderId:"269369179527",
+  appId:"1:269369179527:web:1db8cd077345886234a722",
+  measurementId:"G-2JV5DSTMBG"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+const productsRef=ref(db,"products");
+
 let selectedType="";
 let savedImages=[];
+let firebaseProducts=[];
 
 function $(id){return document.getElementById(id)}
 function val(id){return ($(id)?.value||"").trim()}
+function icon(t){return t==="account"?"🎮":t==="key"?"🔑":t==="other"?"📦":"🔥"}
 
-function login(){
+window.login=function(){
   if(val("loginUser")===ADMIN_USERNAME&&val("loginPass")===ADMIN_PASSWORD){
     localStorage.setItem("adminLoggedIn","true");
     $("loginScreen").classList.add("hidden");
@@ -169,12 +146,12 @@ function login(){
   }else{
     $("loginError").classList.remove("hidden");
   }
-}
+};
 
-function logout(){
+window.logout=function(){
   localStorage.removeItem("adminLoggedIn");
   $("loginScreen").classList.remove("hidden");
-}
+};
 
 function checkLogin(){
   if(localStorage.getItem("adminLoggedIn")==="true"){
@@ -182,61 +159,45 @@ function checkLogin(){
   }
 }
 
-function nav(el){
+window.nav=function(el){
   document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));
   el.classList.add("active");
-}
+};
 
-function go(id){
+window.go=function(id){
   $(id).scrollIntoView({behavior:"smooth"});
-}
+};
 
-function icon(t){
-  return t==="account"?"🎮":t==="key"?"🔑":t==="other"?"📦":"🔥";
-}
-
-function selectType(type,btn){
+window.selectType=function(type,btn){
   selectedType=type;
   document.querySelectorAll(".typeBtn").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
-
   ["accountFields","keyFields","otherFields"].forEach(id=>$(id).classList.add("hidden"));
-
   if(type==="account")$("accountFields").classList.remove("hidden");
   if(type==="key")$("keyFields").classList.remove("hidden");
   if(type==="other")$("otherFields").classList.remove("hidden");
-
   updatePreview();
-}
+};
 
 function fileToDataUrl(file){
   return new Promise(resolve=>{
     const img=new Image();
     const reader=new FileReader();
-
     reader.onload=e=>{
       img.onload=()=>{
         const canvas=document.createElement("canvas");
-        const max=900;
+        const max=700;
         let w=img.width;
         let h=img.height;
-
-        if(w>h&&w>max){
-          h=Math.round(h*max/w);
-          w=max;
-        }else if(h>max){
-          w=Math.round(w*max/h);
-          h=max;
-        }
-
+        if(w>h&&w>max){h=Math.round(h*max/w);w=max}
+        else if(h>max){w=Math.round(w*max/h);h=max}
         canvas.width=w;
         canvas.height=h;
         canvas.getContext("2d").drawImage(img,0,0,w,h);
-        resolve(canvas.toDataURL("image/jpeg",.68));
+        resolve(canvas.toDataURL("image/jpeg",0.55));
       };
       img.src=e.target.result;
     };
-
     reader.readAsDataURL(file);
   });
 }
@@ -244,11 +205,9 @@ function fileToDataUrl(file){
 $("productPictures").addEventListener("change",async function(){
   savedImages=[];
   const files=Array.from(this.files).slice(0,3);
-
   for(const f of files){
     savedImages.push(await fileToDataUrl(f));
   }
-
   renderImagePreviews();
   updatePreview();
 });
@@ -256,51 +215,39 @@ $("productPictures").addEventListener("change",async function(){
 function renderImagePreviews(){
   $("previewGrid").innerHTML="";
   savedImages.forEach((src,i)=>{
-    $("previewGrid").innerHTML+=`
-      <div class="previewItem">
-        <img src="${src}">
-        <button class="removeImg" onclick="removeImage(${i})">×</button>
-      </div>
-    `;
+    $("previewGrid").innerHTML+=`<div class="previewItem"><img src="${src}"><button class="removeImg" onclick="removeImage(${i})">×</button></div>`;
   });
 }
 
-function removeImage(i){
+window.removeImage=function(i){
   savedImages.splice(i,1);
   renderImagePreviews();
   updatePreview();
-}
+};
 
 document.addEventListener("input",updatePreview);
 document.addEventListener("change",updatePreview);
 
 function updatePreview(){
-  let name="Product Name";
-  let price="0";
-  let details="Product details will appear here.";
-  let typeLabel="NO TYPE";
-
+  let name="Product Name",price="0",details="Product details will appear here.",typeLabel="NO TYPE";
   if(selectedType==="account"){
     typeLabel="ACCOUNT";
     name=val("accountName")||"Account Name";
     price=val("accountPrice")||"0";
     details=`Level: ${val("accountLevel")||"N/A"} • UID: ${val("accountUid")||"N/A"} • Region: ${val("accountRegion")||"N/A"}`;
   }
-
   if(selectedType==="key"){
     typeLabel="KEY";
     name=val("keyName")||"Key Name";
     price=val("keyPrice")||"0";
     details=`Duration: ${val("keyDuration")||"N/A"} • Game: ${val("keyGame")||"N/A"} • Platform: ${val("keyPlatform")||"N/A"}`;
   }
-
   if(selectedType==="other"){
     typeLabel="SERVICE";
     name=val("otherName")||"Service Name";
     price=val("otherPrice")||"0";
     details=`Category: ${val("otherCategory")||"N/A"}`;
   }
-
   $("liveType").innerText=typeLabel;
   $("liveName").innerText=name;
   $("livePrice").innerText="₱"+price;
@@ -308,199 +255,118 @@ function updatePreview(){
   $("liveImg").innerHTML=savedImages[0]?`<img src="${savedImages[0]}">`:icon(selectedType);
 }
 
-function saveProduct(){
+window.saveProduct=async function(){
   if(!selectedType){
     alert("Choose Account, Key, or Service first.");
     return;
   }
 
-  let p={
-    id:Date.now(),
+  const id=String(Date.now());
+  let product={
+    id:id,
     productType:selectedType,
     createdAt:new Date().toLocaleString(),
+    createdAtServer:serverTimestamp(),
     images:savedImages,
     imagesCount:savedImages.length
   };
 
   if(selectedType==="account"){
-    if(!val("accountName")||!val("accountPrice")){
-      alert("Add account name and price.");
-      return;
-    }
-    Object.assign(p,{
-      name:val("accountName"),
-      price:val("accountPrice"),
-      level:val("accountLevel"),
-      uid:val("accountUid"),
-      region:val("accountRegion"),
-      description:val("accountDescription")
-    });
+    if(!val("accountName")||!val("accountPrice")){alert("Add account name and price.");return}
+    Object.assign(product,{name:val("accountName"),price:val("accountPrice"),level:val("accountLevel"),uid:val("accountUid"),region:val("accountRegion"),description:val("accountDescription")});
   }
 
   if(selectedType==="key"){
-    if(!val("keyName")||!val("keyPrice")){
-      alert("Add key name and price.");
-      return;
-    }
-    Object.assign(p,{
-      name:val("keyName"),
-      price:val("keyPrice"),
-      duration:val("keyDuration"),
-      game:val("keyGame"),
-      platform:val("keyPlatform"),
-      description:val("keyDescription")
-    });
+    if(!val("keyName")||!val("keyPrice")){alert("Add key name and price.");return}
+    Object.assign(product,{name:val("keyName"),price:val("keyPrice"),duration:val("keyDuration"),game:val("keyGame"),platform:val("keyPlatform"),description:val("keyDescription")});
   }
 
   if(selectedType==="other"){
-    if(!val("otherName")||!val("otherPrice")){
-      alert("Add service name and price.");
-      return;
-    }
-    Object.assign(p,{
-      name:val("otherName"),
-      price:val("otherPrice"),
-      category:val("otherCategory"),
-      availability:"Available",
-      description:val("otherDescription")
-    });
+    if(!val("otherName")||!val("otherPrice")){alert("Add service name and price.");return}
+    Object.assign(product,{name:val("otherName"),price:val("otherPrice"),category:val("otherCategory"),availability:"Available",description:val("otherDescription")});
   }
 
   try{
-    const products=JSON.parse(localStorage.getItem("adminProducts"))||[];
-    products.unshift(p);
-    localStorage.setItem("adminProducts",JSON.stringify(products));
+    await set(ref(db,"products/"+id),product);
     clearForm();
-    loadData();
-    alert("Product saved with "+p.imagesCount+" image(s).");
-  }catch(e){
-    alert("Storage full. Use 1 smaller image.");
+    alert("Product saved to Firebase. Customers can now see it.");
+  }catch(error){
+    alert("Firebase save failed: "+error.message);
   }
-}
+};
 
-function clearForm(){
-  document.querySelectorAll("input,textarea,select").forEach(el=>{
-    if(el.type!=="file")el.value="";
-  });
-
+window.clearForm=function(){
+  document.querySelectorAll("input,textarea,select").forEach(el=>{if(el.type!=="file")el.value=""});
   $("productPictures").value="";
   selectedType="";
   savedImages=[];
-
   document.querySelectorAll(".typeBtn").forEach(b=>b.classList.remove("active"));
   ["accountFields","keyFields","otherFields"].forEach(id=>$(id).classList.add("hidden"));
-
   $("previewGrid").innerHTML="";
   updatePreview();
-}
+};
 
-function loadData(){
-  const products=JSON.parse(localStorage.getItem("adminProducts"))||[];
+window.loadData=function(){
   const alerts=JSON.parse(localStorage.getItem("adminNotifications"))||[];
-
-  $("statProducts").innerText=products.length;
+  $("statProducts").innerText=firebaseProducts.length;
   $("statAlerts").innerText=alerts.length;
   $("statOrders").innerText=alerts.filter(a=>a.notificationType==="New Order").length;
   $("statReports").innerText=alerts.filter(a=>a.notificationType==="Issue Report"||a.notificationType==="Feedback").length;
-
-  renderProducts(products);
+  renderProducts(firebaseProducts);
   renderAlerts(alerts);
-}
+};
 
 function renderProducts(products){
-  $("productGrid").innerHTML=products.length?"":`<div class="empty">No products saved yet.</div>`;
-
+  $("productGrid").innerHTML=products.length?"":`<div class="empty">No Firebase products yet.</div>`;
   products.forEach(p=>{
-    $("productGrid").innerHTML+=`
-      <div class="card">
-        <div class="img">${p.images&&p.images[0]?`<img src="${p.images[0]}">`:icon(p.productType)}</div>
-        <div class="info">
-          <span class="tag">${(p.productType||"PRODUCT").toUpperCase()}</span>
-          <h3>${p.name||"Unnamed Product"}</h3>
-          <div class="price">₱${p.price||0}</div>
-          <p class="muted">${p.imagesCount||0} image(s)</p>
-          <br>
-          <button class="btn danger" onclick="deleteProduct(${p.id})">Delete</button>
-        </div>
-      </div>
-    `;
+    $("productGrid").innerHTML+=`<div class="card"><div class="img">${p.images&&p.images[0]?`<img src="${p.images[0]}">`:icon(p.productType)}</div><div class="info"><span class="tag">${(p.productType||"PRODUCT").toUpperCase()}</span><h3>${p.name||"Unnamed Product"}</h3><div class="price">₱${p.price||0}</div><p class="muted">${p.imagesCount||0} image(s)</p><br><button class="btn danger" onclick="deleteProduct('${p.id}')">Delete from Firebase</button></div></div>`;
   });
 }
 
 function renderAlerts(alerts){
-  $("alertList").innerHTML=alerts.length?"":`<div class="empty">No alerts yet.</div>`;
-
+  $("alertList").innerHTML=alerts.length?"":`<div class="empty">No local alerts yet.</div>`;
   alerts.forEach(a=>{
-    $("alertList").innerHTML+=`
-      <div class="alert">
-        <div class="alertTop">
-          <span class="tag">${a.notificationType||"Alert"}</span>
-          <span class="date">${a.date||""}</span>
-        </div>
-        <h3>${a.title||"Notification"}</h3>
-        <p>${a.message||""}</p>
-        ${a.contact?`<p class="muted"><b>Contact:</b> ${a.contact}</p>`:""}
-        ${a.productName?`<p class="muted"><b>Product:</b> ${a.productName}</p>`:""}
-        ${a.notificationType==="New Order"?`<br><button class="btn primary" onclick="approveOrder(${a.id})">Approve Order</button>`:""}
-      </div>
-    `;
+    $("alertList").innerHTML+=`<div class="alert"><div class="alertTop"><span class="tag">${a.notificationType||"Alert"}</span><span class="date">${a.date||""}</span></div><h3>${a.title||"Notification"}</h3><p>${a.message||""}</p>${a.contact?`<p class="muted"><b>Contact:</b> ${a.contact}</p>`:""}${a.productName?`<p class="muted"><b>Product:</b> ${a.productName}</p>`:""}${a.notificationType==="New Order"?`<br><button class="btn primary" onclick="approveOrder(${a.id})">Approve Order</button>`:""}</div>`;
   });
 }
 
-function approveOrder(id){
-  const msg="hello this is the reseller send me the proof for confirmation";
+window.deleteProduct=async function(id){
+  if(!confirm("Delete this Firebase product?"))return;
+  await remove(ref(db,"products/"+id));
+};
 
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(msg);
+window.clearProducts=async function(){
+  if(!confirm("Clear ALL Firebase products?"))return;
+  await remove(ref(db,"products"));
+};
+
+window.clearAlerts=function(){
+  if(confirm("Clear local alerts?")){
+    localStorage.removeItem("adminNotifications");
+    loadData();
   }
+};
 
+window.approveOrder=function(id){
+  const msg="hello this is the reseller send me the proof for confirmation";
+  navigator.clipboard?.writeText(msg);
   const alerts=JSON.parse(localStorage.getItem("adminNotifications"))||[];
   const order=alerts.find(a=>a.id===id);
-
   if(order){
     order.orderStatus="Approved";
     localStorage.setItem("adminNotifications",JSON.stringify(alerts));
     loadData();
-
-    let u=(order.contact||"")
-      .replace("https://t.me/","")
-      .replace("http://t.me/","")
-      .replace("t.me/","")
-      .replace("@","")
-      .split(" ")[0]
-      .replace(/[^a-zA-Z0-9_]/g,"");
-
-    if(u){
-      location.href="https://t.me/"+u;
-    }else{
-      alert("Approved. Message copied. No Telegram username found.");
-    }
+    let u=(order.contact||"").replace("https://t.me/","").replace("http://t.me/","").replace("t.me/","").replace("@","").split(" ")[0].replace(/[^a-zA-Z0-9_]/g,"");
+    if(u)location.href="https://t.me/"+u;
+    else alert("Approved. Message copied. No Telegram username found.");
   }
-}
+};
 
-function deleteProduct(id){
-  if(!confirm("Delete product?"))return;
-
-  let p=JSON.parse(localStorage.getItem("adminProducts"))||[];
-  p=p.filter(x=>x.id!==id);
-
-  localStorage.setItem("adminProducts",JSON.stringify(p));
+onValue(productsRef,function(snapshot){
+  const data=snapshot.val()||{};
+  firebaseProducts=Object.values(data).sort((a,b)=>Number(b.id)-Number(a.id));
   loadData();
-}
-
-function clearProducts(){
-  if(confirm("Clear all products?")){
-    localStorage.removeItem("adminProducts");
-    loadData();
-  }
-}
-
-function clearAlerts(){
-  if(confirm("Clear all alerts?")){
-    localStorage.removeItem("adminNotifications");
-    loadData();
-  }
-}
+});
 
 checkLogin();
 loadData();
