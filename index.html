@@ -352,6 +352,7 @@ textarea{height:100px;resize:none}
 let activeCategory="all";
 let activeProduct=null;
 let activeImageIndex=0;
+let firebaseProducts=[];
 
 const demoProducts=[
   {
@@ -388,8 +389,7 @@ const demoProducts=[
 ];
 
 function getProducts(){
-  const saved=JSON.parse(localStorage.getItem("adminProducts"))||[];
-  return saved.length?saved:demoProducts;
+  return firebaseProducts.length ? firebaseProducts : demoProducts;
 }
 
 function icon(type){
@@ -816,6 +816,7 @@ refreshCustomerUI();
 renderProducts();
 </script>
 
+
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import{getDatabase,ref,push,set,onDisconnect,onValue,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
@@ -833,6 +834,8 @@ const firebaseConfig={
 
 const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
+
+/* Accurate online counter */
 const connectedRef=ref(db,".info/connected");
 const onlineUsersRef=ref(db,"onlineUsers");
 
@@ -856,6 +859,19 @@ onValue(onlineUsersRef,function(snapshot){
   const users=snapshot.val()||{};
   onlineCount.innerText=Object.keys(users).length;
 });
+
+/* Firebase products visible to all customers */
+const productsRef=ref(db,"products");
+
+onValue(productsRef,function(snapshot){
+  const data=snapshot.val()||{};
+  firebaseProducts=Object.values(data).sort(function(a,b){
+    return Number(b.id||0)-Number(a.id||0);
+  });
+
+  renderProducts();
+});
 </script>
+
 </body>
 </html>
