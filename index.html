@@ -1495,3 +1495,450 @@ if (!document.querySelector(".video-bg")) {
 })();
 </script>
 
+
+<style>
+/* TOP CATEGORY + PROMO + RIGHT 3-BAR MENU PATCH */
+
+/* hide old bottom nav because actions will move to 3-bar */
+.bottom {
+  display: none !important;
+}
+
+body {
+  padding-bottom: 25px !important;
+}
+
+/* top category tabs */
+.top-category-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 8px 0 16px;
+  padding: 8px;
+  border-radius: 22px;
+  background: rgba(8, 8, 14, 0.72);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 70, 95, 0.35);
+  box-shadow: 0 0 22px rgba(255, 0, 60, 0.18);
+}
+
+.top-cat-btn {
+  border: 1px solid rgba(255, 70, 95, 0.30);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  padding: 11px 8px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.top-cat-btn.active,
+.top-cat-btn:hover {
+  background: linear-gradient(135deg, #ff003c, #ff6a00);
+  border-color: transparent;
+  box-shadow: 0 0 16px rgba(255, 0, 60, 0.30);
+}
+
+/* promo banner */
+.promo-banner {
+  position: relative;
+  overflow: hidden;
+  margin: 16px 0 18px;
+  padding: 20px;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 70, 95, 0.45);
+  background:
+    radial-gradient(circle at top right, rgba(255, 106, 0, 0.32), transparent 38%),
+    radial-gradient(circle at bottom left, rgba(255, 0, 60, 0.30), transparent 40%),
+    rgba(10, 10, 18, 0.62);
+  backdrop-filter: blur(9px);
+  box-shadow: 0 0 28px rgba(255, 0, 60, 0.22);
+}
+
+.promo-banner::after {
+  content: "";
+  position: absolute;
+  inset: -80px;
+  background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.12), transparent 55%);
+  animation: promoShine 4s linear infinite;
+}
+
+@keyframes promoShine {
+  from {
+    transform: translateX(-55%);
+  }
+  to {
+    transform: translateX(55%);
+  }
+}
+
+.promo-content {
+  position: relative;
+  z-index: 2;
+}
+
+.promo-kicker {
+  display: inline-block;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(255, 0, 60, 0.22);
+  color: #ffd1d8;
+  font-size: 11px;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+.promo-banner h2 {
+  font-size: clamp(28px, 7vw, 48px);
+  line-height: 0.98;
+  margin-bottom: 8px;
+  color: white;
+}
+
+.promo-banner p {
+  color: #ffd1d8;
+  font-size: 14px;
+  line-height: 1.45;
+  max-width: 560px;
+}
+
+.promo-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* right hamburger */
+.right-menu-btn {
+  position: fixed;
+  right: 14px;
+  top: 92px;
+  z-index: 120;
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(255, 70, 95, 0.45);
+  border-radius: 18px;
+  background: rgba(8, 8, 14, 0.76);
+  backdrop-filter: blur(14px);
+  color: white;
+  font-size: 25px;
+  font-weight: 900;
+  box-shadow: 0 0 22px rgba(255, 0, 60, 0.26);
+}
+
+.right-menu-btn:hover {
+  background: linear-gradient(135deg, #ff003c, #ff6a00);
+}
+
+/* drawer */
+.side-drawer {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: min(310px, 88vw);
+  height: 100vh;
+  z-index: 130;
+  padding: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 0, 60, 0.22), transparent 36%),
+    rgba(8, 8, 14, 0.96);
+  backdrop-filter: blur(18px);
+  border-left: 1px solid rgba(255, 70, 95, 0.45);
+  box-shadow: -10px 0 35px rgba(0, 0, 0, 0.45);
+  transition: 0.28s ease;
+}
+
+.side-drawer.open {
+  right: 0;
+}
+
+.drawer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.drawer-top h2 {
+  font-size: 22px;
+  background: linear-gradient(90deg, #ff003c, #ff6a00);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.drawer-close {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  font-size: 24px;
+}
+
+.drawer-online {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 70, 95, 0.35);
+  background: rgba(255,255,255,0.06);
+  margin-bottom: 14px;
+  font-weight: 900;
+  color: #ffd1d8;
+}
+
+.drawer-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00ff88;
+  box-shadow: 0 0 12px #00ff88;
+}
+
+.drawer-links {
+  display: grid;
+  gap: 10px;
+}
+
+.drawer-link {
+  width: 100%;
+  border: 1px solid rgba(255, 70, 95, 0.32);
+  background: rgba(255,255,255,0.06);
+  color: white;
+  padding: 14px;
+  border-radius: 17px;
+  font-weight: 900;
+  text-align: left;
+}
+
+.drawer-link:hover {
+  background: linear-gradient(135deg, rgba(255,0,60,0.32), rgba(255,106,0,0.20));
+}
+
+.drawer-link.primary-link {
+  background: linear-gradient(135deg, #ff003c, #ff6a00);
+  border: none;
+}
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 125;
+  background: rgba(0,0,0,0.55);
+  display: none;
+}
+
+.drawer-backdrop.show {
+  display: block;
+}
+
+@media(max-width:720px) {
+  .top-category-tabs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .top-cat-btn {
+    font-size: 11px;
+    padding: 10px 5px;
+  }
+
+  .promo-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .right-menu-btn {
+    top: 82px;
+    right: 12px;
+  }
+}
+</style>
+
+<script>
+(function () {
+  function ready(fn) {
+    if (document.readyState !== "loading") fn();
+    else document.addEventListener("DOMContentLoaded", fn);
+  }
+
+  function clickCategory(type) {
+    const chips = document.querySelectorAll(".chip");
+    let target = null;
+
+    chips.forEach(function (chip) {
+      const text = chip.textContent.toLowerCase();
+
+      if (type === "all" && text.includes("all")) target = chip;
+      if (type === "account" && text.includes("account")) target = chip;
+      if (type === "key" && text.includes("key")) target = chip;
+      if (type === "other" && (text.includes("service") || text.includes("other"))) target = chip;
+    });
+
+    if (target) target.click();
+    else if (typeof setCategory === "function") setCategory(type, document.querySelector(".chip"));
+
+    const shop = document.getElementById("shop");
+    if (shop) shop.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function syncOnlineCount() {
+    const main = document.getElementById("onlineCount");
+    const drawer = document.getElementById("drawerOnlineCount");
+
+    if (main && drawer) {
+      drawer.textContent = main.textContent || "0";
+    }
+  }
+
+  ready(function () {
+    const header = document.querySelector(".top");
+
+    /* Add top category tabs */
+    if (header && !document.getElementById("topCategoryTabs")) {
+      const tabs = document.createElement("section");
+      tabs.id = "topCategoryTabs";
+      tabs.className = "top-category-tabs";
+      tabs.innerHTML = `
+        <button class="top-cat-btn active" data-type="all">🔥 All</button>
+        <button class="top-cat-btn" data-type="account">🎮 Acc</button>
+        <button class="top-cat-btn" data-type="key">🔑 Keys</button>
+        <button class="top-cat-btn" data-type="other">📦 Services</button>
+      `;
+
+      header.after(tabs);
+
+      tabs.querySelectorAll(".top-cat-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          tabs.querySelectorAll(".top-cat-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          clickCategory(btn.dataset.type);
+        });
+      });
+    }
+
+    /* Add promo banner in middle/top */
+    const hero = document.getElementById("home");
+
+    if (hero && !document.getElementById("promoBanner")) {
+      const promo = document.createElement("section");
+      promo.id = "promoBanner";
+      promo.className = "promo-banner";
+      promo.innerHTML = `
+        <div class="promo-content">
+          <span class="promo-kicker">🔥 LIMITED PROMO</span>
+          <h2>Big Deals Inside the Vault</h2>
+          <p>Find accounts, VIP keys, and services with fast delivery and trusted transaction flow.</p>
+          <div class="promo-actions">
+            <button class="btn primary" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">View Products</button>
+            <button class="btn ghost" onclick="contactAdmin()">Ask Admin</button>
+          </div>
+        </div>
+      `;
+
+      hero.after(promo);
+    }
+
+    /* Add right 3-bar button + drawer */
+    if (!document.getElementById("rightMenuBtn")) {
+      const btn = document.createElement("button");
+      btn.id = "rightMenuBtn";
+      btn.className = "right-menu-btn";
+      btn.innerHTML = "☰";
+      document.body.appendChild(btn);
+
+      const backdrop = document.createElement("div");
+      backdrop.id = "drawerBackdrop";
+      backdrop.className = "drawer-backdrop";
+      document.body.appendChild(backdrop);
+
+      const drawer = document.createElement("aside");
+      drawer.id = "sideDrawer";
+      drawer.className = "side-drawer";
+      drawer.innerHTML = `
+        <div class="drawer-top">
+          <h2>Menu</h2>
+          <button class="drawer-close" id="drawerClose">×</button>
+        </div>
+
+        <div class="drawer-online">
+          <span class="drawer-dot"></span>
+          <span><b id="drawerOnlineCount">0</b> customers online</span>
+        </div>
+
+        <div class="drawer-links">
+          <button class="drawer-link primary-link" id="drawerShop">🛒 Shop Products</button>
+          <button class="drawer-link" id="drawerFeedback">💬 Feedback</button>
+          <button class="drawer-link" id="drawerReport">⚠️ Report Issue</button>
+          <button class="drawer-link" id="drawerAdmin">📩 Contact Admin</button>
+          <button class="drawer-link" id="drawerHow">📌 How to Buy</button>
+          <button class="drawer-link" id="drawerPayments">💸 Payment Methods</button>
+        </div>
+      `;
+
+      document.body.appendChild(drawer);
+
+      function openDrawer() {
+        drawer.classList.add("open");
+        backdrop.classList.add("show");
+        syncOnlineCount();
+      }
+
+      function closeDrawer() {
+        drawer.classList.remove("open");
+        backdrop.classList.remove("show");
+      }
+
+      btn.addEventListener("click", openDrawer);
+      backdrop.addEventListener("click", closeDrawer);
+      drawer.querySelector("#drawerClose").addEventListener("click", closeDrawer);
+
+      drawer.querySelector("#drawerShop").addEventListener("click", function () {
+        closeDrawer();
+        const shop = document.getElementById("shop");
+        if (shop) shop.scrollIntoView({ behavior: "smooth" });
+      });
+
+      drawer.querySelector("#drawerFeedback").addEventListener("click", function () {
+        closeDrawer();
+        if (typeof openFeedback === "function") openFeedback();
+      });
+
+      drawer.querySelector("#drawerReport").addEventListener("click", function () {
+        closeDrawer();
+        if (typeof openReport === "function") openReport();
+      });
+
+      drawer.querySelector("#drawerAdmin").addEventListener("click", function () {
+        closeDrawer();
+        if (typeof contactAdmin === "function") contactAdmin();
+      });
+
+      drawer.querySelector("#drawerHow").addEventListener("click", function () {
+        closeDrawer();
+        const headings = Array.from(document.querySelectorAll("h2"));
+        const found = headings.find(h => h.textContent.toLowerCase().includes("how to buy"));
+        if (found) found.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      drawer.querySelector("#drawerPayments").addEventListener("click", function () {
+        closeDrawer();
+        const headings = Array.from(document.querySelectorAll("h2"));
+        const found = headings.find(h => h.textContent.toLowerCase().includes("payment"));
+        if (found) found.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      setInterval(syncOnlineCount, 1000);
+      syncOnlineCount();
+    }
+  });
+})();
+</script>
+
