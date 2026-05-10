@@ -176,10 +176,120 @@ textarea{height:100px;resize:none}
   }
 }
 
+
+/* Neon moving background only */
+.neon-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 0, 80, 0.22), transparent 32%),
+    radial-gradient(circle at 85% 15%, rgba(0, 130, 255, 0.18), transparent 30%),
+    radial-gradient(circle at 50% 90%, rgba(255, 0, 60, 0.15), transparent 36%),
+    linear-gradient(135deg, #020207, #08000a 45%, #000);
+}
+
+.neon-bg::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background:
+    linear-gradient(115deg, transparent 0 43%, rgba(255, 0, 70, 0.42) 45%, transparent 48%),
+    linear-gradient(65deg, transparent 0 48%, rgba(0, 150, 255, 0.35) 50%, transparent 53%),
+    linear-gradient(155deg, transparent 0 52%, rgba(255, 40, 120, 0.28) 54%, transparent 57%);
+  filter: blur(1px);
+  animation: neonLines 9s linear infinite;
+  opacity: 0.75;
+}
+
+.neon-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(circle at center, black, transparent 78%);
+  animation: gridMove 15s linear infinite;
+  opacity: 0.35;
+}
+
+.neon-orb {
+  position: fixed;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  z-index: -2;
+  pointer-events: none;
+  filter: blur(55px);
+  opacity: 0.42;
+  animation: orbFloat 10s ease-in-out infinite alternate;
+}
+
+.neon-orb.red {
+  left: -120px;
+  top: 18%;
+  background: rgba(255, 0, 70, 0.45);
+}
+
+.neon-orb.blue {
+  right: -130px;
+  top: 8%;
+  background: rgba(0, 120, 255, 0.38);
+  animation-delay: 2s;
+}
+
+.neon-orb.orange {
+  right: 8%;
+  bottom: -120px;
+  background: rgba(255, 106, 0, 0.28);
+  animation-delay: 4s;
+}
+
+@keyframes neonLines {
+  from {
+    transform: translate3d(-8%, -6%, 0) rotate(0deg);
+  }
+  to {
+    transform: translate3d(8%, 6%, 0) rotate(3deg);
+  }
+}
+
+@keyframes gridMove {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 220px 180px, 220px 180px;
+  }
+}
+
+@keyframes orbFloat {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(55px, -35px, 0) scale(1.15);
+  }
+}
+
+/* make body background transparent enough so the neon bg shows */
+body {
+  background: transparent !important;
+}
+
 </style>
 </head>
 
 <body>
+
+<div class="neon-bg"></div>
+<div class="neon-orb red"></div>
+<div class="neon-orb blue"></div>
+<div class="neon-orb orange"></div>
+
 
 <div class="bg-animation"></div>
 <div class="bg-particles"></div>
