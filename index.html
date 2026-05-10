@@ -104,10 +104,86 @@ textarea{height:100px;resize:none}
   .actions,.buyerGrid,.accountGrid,.filterGrid,.infoGrid{grid-template-columns:1fr}
   .productGrid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr))}
 }
+
+/* Moving animated background */
+.bg-animation {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 0, 60, 0.22), transparent 28%),
+    radial-gradient(circle at 80% 10%, rgba(255, 106, 0, 0.14), transparent 30%),
+    radial-gradient(circle at 50% 90%, rgba(255, 0, 60, 0.16), transparent 35%),
+    linear-gradient(145deg, #050507, #140008, #000);
+}
+
+.bg-animation::before,
+.bg-animation::after {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  filter: blur(45px);
+  opacity: 0.55;
+  animation: floatGlow 12s ease-in-out infinite alternate;
+}
+
+.bg-animation::before {
+  background: rgba(255, 0, 60, 0.32);
+  left: -120px;
+  top: 12%;
+}
+
+.bg-animation::after {
+  background: rgba(255, 106, 0, 0.22);
+  right: -140px;
+  bottom: 8%;
+  animation-delay: 2s;
+}
+
+.bg-particles {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.22) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255, 0, 60, 0.35) 1px, transparent 1px);
+  background-size: 38px 38px, 72px 72px;
+  animation: moveParticles 18s linear infinite;
+  opacity: 0.22;
+}
+
+@keyframes floatGlow {
+  from {
+    transform: translateY(0) translateX(0) scale(1);
+  }
+
+  to {
+    transform: translateY(-55px) translateX(45px) scale(1.12);
+  }
+}
+
+@keyframes moveParticles {
+  from {
+    background-position: 0 0, 0 0;
+  }
+
+  to {
+    background-position: 220px 260px, -180px 220px;
+  }
+}
+
 </style>
 </head>
 
 <body>
+
+<div class="bg-animation"></div>
+<div class="bg-particles"></div>
+
 <main class="wrap">
 <header class="top">
   <div class="logo">D</div>
