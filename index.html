@@ -1099,3 +1099,399 @@ if (!document.querySelector(".video-bg")) {
 }
 </script>
 
+
+<style>
+/* FINAL SALES/UI IMPROVEMENT PATCH */
+
+/* Make main sections cleaner */
+.wrap {
+  max-width: 1080px !important;
+}
+
+.hero {
+  padding: 20px !important;
+  margin-bottom: 14px !important;
+  background:
+    radial-gradient(circle at top right, rgba(255, 0, 60, 0.18), transparent 42%),
+    rgba(10, 10, 18, 0.56) !important;
+  backdrop-filter: blur(9px) !important;
+}
+
+.hero h2 {
+  font-size: clamp(32px, 8vw, 50px) !important;
+  line-height: 0.98 !important;
+}
+
+.hero p {
+  max-width: 620px !important;
+}
+
+.accountBox,
+.buyerBox {
+  background: rgba(10, 10, 18, 0.52) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+/* Quick trust strip */
+.quick-trust-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 11px;
+  margin: 14px 0 18px;
+}
+
+.quick-trust-item {
+  border: 1px solid rgba(255, 70, 95, 0.35);
+  background: rgba(10, 10, 18, 0.56);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  padding: 13px;
+  box-shadow: 0 0 16px rgba(255, 0, 60, 0.10);
+}
+
+.quick-trust-item strong {
+  display: block;
+  font-size: 14px;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.quick-trust-item span {
+  color: #ffb8c2;
+  font-size: 12px;
+}
+
+/* Products should be the focus */
+.searchBox {
+  margin-top: 8px !important;
+  background: rgba(10, 10, 18, 0.58) !important;
+  backdrop-filter: blur(9px) !important;
+}
+
+#featuredSection.demi-hidden {
+  display: none !important;
+}
+
+/* Better product cards */
+.card {
+  background: rgba(8, 8, 14, 0.64) !important;
+  backdrop-filter: blur(9px) !important;
+  border: 1px solid rgba(255, 70, 95, 0.38) !important;
+  box-shadow: 0 0 18px rgba(255, 0, 60, 0.14) !important;
+}
+
+.card .img {
+  height: 150px !important;
+}
+
+.card .info {
+  padding: 14px !important;
+}
+
+.productQuick {
+  display: grid;
+  gap: 4px;
+  margin: 8px 0 10px;
+  color: #d6d6dc;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.productCTA {
+  display: block;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #ff003c, #ff6a00);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  text-align: center;
+}
+
+/* Compact store info / how to buy / payment sections */
+.title {
+  margin: 22px 0 10px !important;
+}
+
+.infoGrid,
+.paymentGrid,
+.proofGrid,
+.faqGrid {
+  gap: 10px !important;
+}
+
+.infoBox,
+.miniCard,
+.proofCard,
+.faqItem {
+  background: rgba(10, 10, 18, 0.58) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.steps {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 10px !important;
+}
+
+.step {
+  min-height: 105px;
+  background: rgba(10, 10, 18, 0.58) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.stepNum {
+  min-width: 30px !important;
+  height: 30px !important;
+}
+
+/* Better modal readability */
+.box {
+  background:
+    radial-gradient(circle at top, rgba(255, 0, 60, 0.16), transparent 42%),
+    rgba(10, 10, 18, 0.94) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.detailImg {
+  height: 230px !important;
+}
+
+.buyerBox .buyerTitle {
+  font-size: 15px !important;
+}
+
+/* Make video bg visible but readable */
+.video-bg {
+  opacity: 1 !important;
+  filter: brightness(1.12) saturate(1.2) !important;
+}
+
+.video-bg-overlay {
+  background:
+    radial-gradient(circle at center, rgba(255,0,60,0.05), transparent 45%),
+    linear-gradient(145deg, rgba(0,0,0,0.22), rgba(0,0,0,0.58)) !important;
+}
+
+@media(max-width:720px) {
+  .quick-trust-strip {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .quick-trust-item:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  .steps {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .card .img {
+    height: 135px !important;
+  }
+}
+</style>
+
+<script>
+(function () {
+  function ready(fn) {
+    if (document.readyState !== "loading") fn();
+    else document.addEventListener("DOMContentLoaded", fn);
+  }
+
+  function peso(value) {
+    return Number(value || 0).toLocaleString("en-PH");
+  }
+
+  function safe(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function productMeta(product) {
+    if (!product) return "";
+
+    if (product.productType === "account") {
+      return `
+        <span>Level: ${safe(product.level || "N/A")}</span>
+        <span>Region: ${safe(product.region || "N/A")}</span>
+      `;
+    }
+
+    if (product.productType === "key") {
+      return `
+        <span>Duration: ${safe(product.duration || "N/A")}</span>
+        <span>Platform: ${safe(product.platform || "N/A")}</span>
+      `;
+    }
+
+    return `
+      <span>Category: ${safe(product.category || "Service")}</span>
+      <span>Status: ${safe(product.availability || "Available")}</span>
+    `;
+  }
+
+  function getIcon(type) {
+    if (typeof icon === "function") return icon(type);
+    if (type === "account") return "🎮";
+    if (type === "key") return "🔑";
+    if (type === "other") return "📦";
+    return "🔥";
+  }
+
+  function getStatusText(status) {
+    if (typeof statusText === "function") return statusText(status);
+    return String(status || "available").toUpperCase();
+  }
+
+  function getStatusClass(status) {
+    if (typeof statusClass === "function") return statusClass(status);
+    status = String(status || "available").toLowerCase();
+    if (status === "sold") return "sold";
+    if (status === "reserved") return "reserved";
+    return "available";
+  }
+
+  ready(function () {
+    /* Add quick trust strip */
+    const hero = document.getElementById("home");
+
+    if (hero && !document.getElementById("quickTrustStrip")) {
+      const strip = document.createElement("section");
+      strip.id = "quickTrustStrip";
+      strip.className = "quick-trust-strip";
+      strip.innerHTML = `
+        <div class="quick-trust-item">
+          <strong>⚡ Fast Delivery</strong>
+          <span>Usually 5–30 minutes</span>
+        </div>
+        <div class="quick-trust-item">
+          <strong>🛡 Trusted Process</strong>
+          <span>Order proof before release</span>
+        </div>
+        <div class="quick-trust-item">
+          <strong>📩 Active Support</strong>
+          <span>Demi / Ske buyer options</span>
+        </div>
+      `;
+      hero.after(strip);
+    }
+
+    /* Move products higher */
+    const quickStrip = document.getElementById("quickTrustStrip");
+    const shop = document.getElementById("shop");
+    const featured = document.getElementById("featuredSection");
+    const productGrid = document.getElementById("productGrid");
+    const productsSection = productGrid ? productGrid.closest("section") : null;
+
+    if (quickStrip && shop) quickStrip.after(shop);
+    if (shop && featured) shop.after(featured);
+    if (featured && productsSection) featured.after(productsSection);
+
+    /* Improve proof/vouches content */
+    const proofCards = document.querySelectorAll(".proofCard");
+
+    if (proofCards[0]) {
+      proofCards[0].innerHTML = `
+        <h3>✅ Successful Orders</h3>
+        <p>Orders are handled through official Demi/Ske channels only.</p>
+      `;
+    }
+
+    if (proofCards[1]) {
+      proofCards[1].innerHTML = `
+        <h3>⭐ Buyer Confidence</h3>
+        <p>Customers can submit feedback, reports, and order details directly.</p>
+      `;
+    }
+
+    if (proofCards[2]) {
+      proofCards[2].innerHTML = `
+        <h3>🔒 Safer Buying Flow</h3>
+        <p>Choose product, choose buyer, send proof, then wait for confirmation.</p>
+      `;
+    }
+
+    /* Override product card rendering for better sales layout */
+    if (typeof window.renderGrid === "function") {
+      window.renderGrid = function (gridId, products, featuredOnly) {
+        const grid = document.getElementById(gridId);
+        if (!grid) return;
+
+        grid.innerHTML = "";
+
+        if (!products || !products.length) {
+          grid.innerHTML = `<div class="empty">${featuredOnly ? "No featured products yet." : "No products found."}</div>`;
+          return;
+        }
+
+        products.forEach(function (product) {
+          const img = product.images && product.images[0]
+            ? `<img src="${product.images[0]}">`
+            : getIcon(product.productType);
+
+          const card = document.createElement("div");
+          card.className = "card";
+          card.onclick = function () {
+            if (typeof openProduct === "function") openProduct(product.id);
+          };
+
+          card.innerHTML = `
+            ${product.featured ? `<div class="featuredBadge">⭐ Featured</div>` : ""}
+            <div class="img">${img}</div>
+            <div class="info">
+              <span class="tag">${safe((product.productType || "PRODUCT").toUpperCase())}</span>
+              <span class="statusBadge ${getStatusClass(product.status)}">${getStatusText(product.status)}</span>
+              <h3>${safe(product.name || "Unnamed Product")}</h3>
+              <div class="price">₱${peso(product.price)}</div>
+              <div class="productQuick">
+                ${productMeta(product)}
+              </div>
+              <span class="productCTA">View Details</span>
+            </div>
+          `;
+
+          grid.appendChild(card);
+        });
+      };
+    }
+
+    /* Hide featured section if empty */
+    window.hideEmptyFeaturedSection = function () {
+      const section = document.getElementById("featuredSection");
+      const grid = document.getElementById("featuredGrid");
+      if (!section || !grid) return;
+
+      const hasCards = grid.querySelectorAll(".card").length > 0;
+      section.classList.toggle("demi-hidden", !hasCards);
+    };
+
+    const oldRenderProducts = window.renderProducts;
+
+    if (typeof oldRenderProducts === "function") {
+      window.renderProducts = function () {
+        oldRenderProducts();
+        setTimeout(function () {
+          if (typeof hideEmptyFeaturedSection === "function") {
+            hideEmptyFeaturedSection();
+          }
+        }, 50);
+      };
+
+      window.renderProducts();
+    }
+
+    setTimeout(function () {
+      if (typeof hideEmptyFeaturedSection === "function") {
+        hideEmptyFeaturedSection();
+      }
+    }, 500);
+  });
+})();
+</script>
+
