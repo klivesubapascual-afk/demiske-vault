@@ -1020,3 +1020,82 @@ if (!document.querySelector(".thunder-image-bg")) {
 }
 </script>
 
+
+<style>
+/* FINAL VIDEO BACKGROUND */
+.video-bg {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+}
+
+.video-bg-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  background:
+    radial-gradient(circle at center, rgba(255,0,60,0.06), transparent 45%),
+    linear-gradient(145deg, rgba(0,0,0,0.18), rgba(0,0,0,0.55)) !important;
+}
+
+.thunder-image-bg,
+.real-moving-bg,
+.animated-image-bg,
+.animated-image-overlay,
+.neon-bg,
+.neon-orb {
+  display: none !important;
+}
+
+main,
+.wrap,
+.bottom,
+.modal {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.hero,
+.searchBox,
+.card,
+.buyerBox,
+.accountBox,
+.infoBox,
+.proofCard,
+.faqItem,
+.miniCard {
+  background: rgba(10, 10, 18, 0.50) !important;
+  backdrop-filter: blur(7px) !important;
+}
+
+body {
+  background: #000 !important;
+  overflow-x: hidden !important;
+}
+</style>
+
+<script>
+if (!document.querySelector(".video-bg")) {
+  const video = document.createElement("video");
+  video.className = "video-bg";
+  video.autoplay = true;
+  video.muted = true;
+  video.loop = true;
+  video.playsInline = true;
+  video.innerHTML = '<source src="bg.mp4" type="video/mp4">';
+  document.body.prepend(video);
+
+  const overlay = document.createElement("div");
+  overlay.className = "video-bg-overlay";
+  video.after(overlay);
+}
+</script>
+
