@@ -811,3 +811,72 @@ onValue(productsRef,function(snapshot){
 </script>
 </body>
 </html>
+
+<style>
+/* FORCE OVERRIDE: stronger moving neon background */
+.neon-bg {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -5 !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 0, 90, 0.55), transparent 30%),
+    radial-gradient(circle at 85% 18%, rgba(0, 140, 255, 0.42), transparent 32%),
+    radial-gradient(circle at 50% 90%, rgba(255, 106, 0, 0.38), transparent 36%),
+    linear-gradient(135deg, #010106, #09000d 45%, #000) !important;
+}
+
+.neon-bg::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: -60% !important;
+  background:
+    linear-gradient(115deg, transparent 0 40%, rgba(255, 0, 85, 0.75) 42%, transparent 45%),
+    linear-gradient(65deg, transparent 0 46%, rgba(0, 155, 255, 0.65) 48%, transparent 51%),
+    linear-gradient(155deg, transparent 0 53%, rgba(255, 90, 0, 0.48) 55%, transparent 58%),
+    linear-gradient(25deg, transparent 0 60%, rgba(255, 255, 255, 0.13) 61%, transparent 63%) !important;
+  filter: blur(1px) !important;
+  opacity: 1 !important;
+  animation: neonLinesStrong 5s linear infinite alternate !important;
+}
+
+.neon-bg::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px) !important;
+  background-size: 38px 38px !important;
+  animation: gridMoveStrong 8s linear infinite !important;
+  opacity: 0.55 !important;
+}
+
+.neon-orb {
+  z-index: -4 !important;
+  opacity: 0.75 !important;
+  filter: blur(45px) !important;
+}
+
+@keyframes neonLinesStrong {
+  from {
+    transform: translate3d(-14%, -10%, 0) rotate(-2deg);
+  }
+  to {
+    transform: translate3d(14%, 10%, 0) rotate(4deg);
+  }
+}
+
+@keyframes gridMoveStrong {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 260px 220px, 260px 220px;
+  }
+}
+
+body {
+  background: transparent !important;
+}
+</style>
