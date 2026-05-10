@@ -1942,3 +1942,97 @@ body {
 })();
 </script>
 
+
+<style>
+/* FORCE TOP CATEGORY NAVIGATION FILTER */
+.top-category-tabs {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 80 !important;
+}
+
+.top-cat-btn.active {
+  background: linear-gradient(135deg, #ff003c, #ff6a00) !important;
+  border-color: transparent !important;
+  color: white !important;
+  box-shadow: 0 0 18px rgba(255, 0, 60, 0.35) !important;
+}
+
+/* optional: hide old category chips below search because top nav is now the main filter */
+.chips {
+  display: none !important;
+}
+</style>
+
+<script>
+(function () {
+  function updateTitle(type) {
+    const title = document.getElementById("shopTitle");
+    if (!title) return;
+
+    if (type === "all") title.innerText = "All Products";
+    if (type === "account") title.innerText = "Game Accounts";
+    if (type === "key") title.innerText = "VIP Keys";
+    if (type === "other") title.innerText = "Other Services";
+  }
+
+  function forceCategoryFilter(type) {
+    // This directly controls the product filter
+    activeCategory = type;
+
+    document.querySelectorAll(".top-cat-btn").forEach(function (btn) {
+      btn.classList.remove("active");
+      if (btn.dataset.type === type) {
+        btn.classList.add("active");
+      }
+    });
+
+    document.querySelectorAll(".chip").forEach(function (chip) {
+      chip.classList.remove("active");
+    });
+
+    updateTitle(type);
+
+    if (typeof renderProducts === "function") {
+      renderProducts();
+    }
+
+    const shop = document.getElementById("shop");
+    if (shop) {
+      shop.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  // Make it available globally
+  window.forceCategoryFilter = forceCategoryFilter;
+
+  // Override top category buttons
+  document.addEventListener("click", function (event) {
+    const btn = event.target.closest(".top-cat-btn");
+    if (!btn) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const type = btn.dataset.type || "all";
+    forceCategoryFilter(type);
+  }, true);
+
+  // Make sure buttons have correct labels and values
+  document.addEventListener("DOMContentLoaded", function () {
+    const tabs = document.getElementById("topCategoryTabs");
+
+    if (tabs) {
+      tabs.innerHTML = `
+        <button class="top-cat-btn active" data-type="all">🔥 All</button>
+        <button class="top-cat-btn" data-type="account">🎮 Accounts</button>
+        <button class="top-cat-btn" data-type="key">🔑 Keys</button>
+        <button class="top-cat-btn" data-type="other">📦 Services</button>
+      `;
+    }
+
+    forceCategoryFilter("all");
+  });
+})();
+</script>
+
