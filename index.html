@@ -2036,3 +2036,89 @@ body {
 })();
 </script>
 
+
+<style>
+/* SELLER BUTTON CONTROL */
+.seller-hidden {
+  display: none !important;
+}
+
+.seller-badge {
+  display: inline-block;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(255, 106, 0, 0.18);
+  color: #ffd1d8;
+  font-size: 10px;
+  font-weight: 900;
+  margin-bottom: 8px;
+  margin-left: 4px;
+}
+</style>
+
+<script>
+(function () {
+  function getSellerLabel(seller) {
+    seller = String(seller || "both").toLowerCase();
+
+    if (seller === "demi") return "DEMI ONLY";
+    if (seller === "ske") return "SKE ONLY";
+    return "DEMI & SKE";
+  }
+
+  function applySellerButtons(product) {
+    if (!product) return;
+
+    const seller = String(product.seller || "both").toLowerCase();
+    const modal = document.getElementById("productModal");
+    if (!modal) return;
+
+    const buttons = Array.from(modal.querySelectorAll("button"));
+    const demiBtn = buttons.find(btn => btn.textContent.toLowerCase().includes("demi"));
+    const skeBtn = buttons.find(btn => btn.textContent.toLowerCase().includes("ske"));
+
+    if (demiBtn) {
+      demiBtn.classList.toggle("seller-hidden", seller === "ske");
+    }
+
+    if (skeBtn) {
+      skeBtn.classList.toggle("seller-hidden", seller === "demi");
+    }
+
+    let badge = document.getElementById("detailSellerBadge");
+    const status = document.getElementById("detailStatus");
+
+    if (!badge && status) {
+      badge = document.createElement("span");
+      badge.id = "detailSellerBadge";
+      badge.className = "seller-badge";
+      status.after(badge);
+    }
+
+    if (badge) {
+      badge.innerText = getSellerLabel(seller);
+    }
+  }
+
+  const oldOpenProduct = window.openProduct;
+
+  if (typeof oldOpenProduct === "function" && !window.__sellerPatchApplied) {
+    window.__sellerPatchApplied = true;
+
+    window.openProduct = function (id) {
+      oldOpenProduct(id);
+
+      setTimeout(function () {
+        let product = null;
+
+        if (typeof getProducts === "function") {
+          product = getProducts().find(item => String(item.id) === String(id));
+        }
+
+        applySellerButtons(product);
+      }, 80);
+    };
+  }
+})();
+</script>
+
