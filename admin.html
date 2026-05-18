@@ -914,3 +914,289 @@ window.saveProduct = async function () {
 };
 </script>
 
+
+<script type="module">
+/* FINAL ADMIN FIX: TYPE DETECTION + LIVE PREVIEW + FIREBASE SAVE */
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const dgFirebaseConfig = {
+  apiKey: "AIzaSyCpxfXFVrcKa-3wE6m4DLXN5j6kKW1d9Tk",
+  authDomain: "demiske-vault.firebaseapp.com",
+  databaseURL: "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "demiske-vault",
+  storageBucket: "demiske-vault.firebasestorage.app",
+  messagingSenderId: "269369179527",
+  appId: "1:269369179527:web:1db8cd077345886234a722",
+  measurementId: "G-2JV5DSTMBG"
+};
+
+const dgApp = getApps().length ? getApp() : initializeApp(dgFirebaseConfig);
+const dgDb = getDatabase(dgApp);
+
+function dg$(id) {
+  return document.getElementById(id);
+}
+
+function dgVal(id) {
+  return (dg$(id)?.value || "").trim();
+}
+
+function dgHasValue(ids) {
+  return ids.some(id => dgVal(id));
+}
+
+function dgDetectType() {
+  const activeBtn = document.querySelector(".typeBtn.active");
+  const activeText = (activeBtn?.textContent || "").toLowerCase();
+
+  if (activeText.includes("account")) return "account";
+  if (activeText.includes("key")) return "key";
+  if (activeText.includes("service") || activeText.includes("other")) return "other";
+
+  if (dgHasValue(["accountName", "accountPrice", "accountLevel", "accountUid", "accountRegion", "accountDescription"])) {
+    return "account";
+  }
+
+  if (dgHasValue(["keyName", "keyPrice", "keyDuration", "keyGame", "keyPlatform", "keyDescription"])) {
+    return "key";
+  }
+
+  if (dgHasValue(["otherName", "otherPrice", "otherCategory", "otherDescription"])) {
+    return "other";
+  }
+
+  if (dg$("accountFields") && !dg$("accountFields").classList.contains("hidden")) return "account";
+  if (dg$("keyFields") && !dg$("keyFields").classList.contains("hidden")) return "key";
+  if (dg$("otherFields") && !dg$("otherFields").classList.contains("hidden")) return "other";
+
+  return "";
+}
+
+function dgIcon(type) {
+  if (type === "account") return "🎮";
+  if (type === "key") return "🔑";
+  if (type === "other") return "📦";
+  return "🔥";
+}
+
+function dgShowFields(type) {
+  ["accountFields", "keyFields", "otherFields"].forEach(id => {
+    const el = dg$(id);
+    if (el) el.classList.add("hidden");
+  });
+
+  if (type === "account" && dg$("accountFields")) dg$("accountFields").classList.remove("hidden");
+  if (type === "key" && dg$("keyFields")) dg$("keyFields").classList.remove("hidden");
+  if (type === "other" && dg$("otherFields")) dg$("otherFields").classList.remove("hidden");
+}
+
+window.selectType = function(type, btn) {
+  window.dgSelectedType = type;
+
+  document.querySelectorAll(".typeBtn").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+
+  dgShowFields(type);
+  window.dgUpdatePreview();
+};
+
+window.dgUpdatePreview = function() {
+  const type = window.dgSelectedType || dgDetectType();
+
+  let name = "Product Name";
+  let price = "0";
+  let tag = "NO TYPE";
+  let details = "Product details will appear here.";
+
+  if (type === "account") {
+    tag = "ACCOUNT";
+    name = dgVal("accountName") || "Account Name";
+    price = dgVal("accountPrice") || "0";
+    details = `Level: ${dgVal("accountLevel") || "N/A"} • UID: ${dgVal("accountUid") || "N/A"} • Region: ${dgVal("accountRegion") || "N/A"}`;
+  }
+
+  if (type === "key") {
+    tag = "KEY";
+    name = dgVal("keyName") || "Key Name";
+    price = dgVal("keyPrice") || "0";
+    details = `Duration: ${dgVal("keyDuration") || "N/A"} • Game: ${dgVal("keyGame") || "N/A"} • Platform: ${dgVal("keyPlatform") || "N/A"}`;
+  }
+
+  if (type === "other") {
+    tag = "SERVICE";
+    name = dgVal("otherName") || "Service Name";
+    price = dgVal("otherPrice") || "0";
+    details = `Category: ${dgVal("otherCategory") || "N/A"}`;
+  }
+
+  if (dg$("liveType")) dg$("liveType").innerText = tag;
+  if (dg$("liveName")) dg$("liveName").innerText = name;
+  if (dg$("livePrice")) dg$("livePrice").innerText = "₱" + price;
+  if (dg$("liveDetails")) dg$("liveDetails").innerText = details;
+
+  const firstImg = document.querySelector("#previewGrid img")?.src;
+
+  if (dg$("liveImg")) {
+    dg$("liveImg").innerHTML = firstImg
+      ? `<img src="${firstImg}" style="width:100%;height:100%;object-fit:cover;">`
+      : dgIcon(type);
+  }
+};
+
+function dgFileToDataUrl(file) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = e => {
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const max = 700;
+
+        let w = img.width;
+        let h = img.height;
+
+        if (w > h && w > max) {
+          h = Math.round(h * max / w);
+          w = max;
+        } else if (h > max) {
+          w = Math.round(w * max / h);
+          h = max;
+        }
+
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+
+        resolve(canvas.toDataURL("image/jpeg", 0.55));
+      };
+
+      img.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+async function dgGetImages() {
+  const images = [];
+  const input = dg$("productPictures");
+
+  if (input && input.files && input.files.length) {
+    const files = Array.from(input.files).slice(0, 3);
+
+    for (const file of files) {
+      images.push(await dgFileToDataUrl(file));
+    }
+
+    return images;
+  }
+
+  document.querySelectorAll("#previewGrid img").forEach(img => {
+    if (img.src) images.push(img.src);
+  });
+
+  return images.slice(0, 3);
+}
+
+window.saveProduct = async function() {
+  const type = window.dgSelectedType || dgDetectType();
+
+  if (!type) {
+    alert("Choose Account, Key, or Service first.");
+    return;
+  }
+
+  const id = String(Date.now());
+  const images = await dgGetImages();
+
+  let product = {
+    id,
+    productType: type,
+    images,
+    imagesCount: images.length,
+    seller: "demi",
+    status: "available",
+    featured: false,
+    createdAt: new Date().toLocaleString(),
+    createdAtServer: serverTimestamp()
+  };
+
+  if (type === "account") {
+    if (!dgVal("accountName") || !dgVal("accountPrice")) {
+      alert("Account name and price are required.");
+      return;
+    }
+
+    product.name = dgVal("accountName");
+    product.price = dgVal("accountPrice");
+    product.level = dgVal("accountLevel");
+    product.uid = dgVal("accountUid");
+    product.region = dgVal("accountRegion");
+    product.description = dgVal("accountDescription");
+  }
+
+  if (type === "key") {
+    if (!dgVal("keyName") || !dgVal("keyPrice")) {
+      alert("Key name and price are required.");
+      return;
+    }
+
+    product.name = dgVal("keyName");
+    product.price = dgVal("keyPrice");
+    product.duration = dgVal("keyDuration");
+    product.game = dgVal("keyGame");
+    product.platform = dgVal("keyPlatform");
+    product.description = dgVal("keyDescription");
+  }
+
+  if (type === "other") {
+    if (!dgVal("otherName") || !dgVal("otherPrice")) {
+      alert("Service name and price are required.");
+      return;
+    }
+
+    product.name = dgVal("otherName");
+    product.price = dgVal("otherPrice");
+    product.category = dgVal("otherCategory");
+    product.availability = "Available";
+    product.description = dgVal("otherDescription");
+  }
+
+  try {
+    await set(ref(dgDb, "products/" + id), product);
+    alert("Product saved to Firebase successfully.");
+
+    if (typeof loadData === "function") loadData();
+  } catch (error) {
+    alert("Firebase save failed: " + error.message);
+  }
+};
+
+document.addEventListener("input", function() {
+  window.dgUpdatePreview();
+});
+
+document.addEventListener("change", function() {
+  window.dgUpdatePreview();
+});
+
+document.addEventListener("click", function(e) {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+
+  const text = (btn.textContent || "").toLowerCase();
+
+  if (text.includes("save product")) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    window.saveProduct();
+  }
+}, true);
+
+setInterval(function() {
+  window.dgUpdatePreview();
+}, 800);
+</script>
+
