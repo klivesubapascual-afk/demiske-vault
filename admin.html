@@ -411,3 +411,316 @@ window.adminLogin = function () {
 })();
 </script>
 
+
+<script>
+/* FINAL ORDER FLOW FIX:
+   - Accept opens buyer Telegram
+   - Complete archives order then removes it from active orders
+   - Leaderboard counts completed archive
+*/
+(function () {
+  const DB = "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+  function safe(v) {
+    return String(v ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+  }
+
+  function money(v) {
+    return "₱" + Number(v || 0).toLocaleString("en-PH");
+  }
+
+  function telegramLink(contact) {
+    contact = String(contact || "").trim();
+
+    if (!contact) return "https://t.me/Demixyloadmin";
+
+    if (contact.includes("t.me/")) {
+      if (contact.startsWith("http")) return contact;
+      return "https://" + contact.replace(/^\/+/, "");
+    }
+
+    if (contact.startsWith("@")) {
+      return "https://t.me/" + contact.slice(1);
+    }
+
+    // remove spaces and symbols for username fallback
+    const cleaned = contact.replace(/[^a-zA-Z0-9_]/g, "");
+
+    if (cleaned) {
+      return "https://t.me/" + cleaned;
+    }
+
+    return "https://t.me/Demixyloadmin";
+  }
+
+  async function getOrder(orderId) {
+    const res = await fetch(DB + "/orders/" + orderId + ".json?ts=" + Date.now());
+    return await res.json();
+  }
+
+  async function patchOrder(orderId, data) {
+    return fetch(DB + "/orders/" + orderId + ".json", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+  }
+
+  async function deleteActiveOrder(orderId) {
+    return fetch(DB + "/orders/" + orderId + ".json", {
+      method: "DELETE"
+    });
+  }
+
+  async function archiveCompletedOrder(orderId, order) {
+    return fetch(DB + "/completedOrders/" + orderId + ".json", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...order,
+        status: "Completed",
+        completedAt: new Date().toLocaleString(),
+        completedAtMs: Date.now()
+      })
+    });
+  }
+
+  window.messageBuyer = function (contact) {
+    location.href = telegramLink(contact);
+  };
+
+  window.acceptOrder = async function (orderId) {
+    const order = await getOrder(orderId);
+
+    if (!order) {
+      alert("Order not found.");
+      return;
+    }
+
+    const res = await patchOrder(orderId, {
+      status: "Accepted",
+      acceptedAt: new Date().toLocaleString(),
+      acceptedAtMs: Date.now()
+    });
+
+    if (!res.ok) {
+      alert("Failed to accept order: " + await res.text());
+      return;
+    }
+
+    alert("Order accepted. Opening buyer Telegram...");
+    location.href = telegramLink(order.contact);
+
+    if (typeof loadOrders === "function") {
+      setTimeout(loadOrders, 500);
+    }
+  };
+
+  window.completeOrder = async function (orderId) {
+    const order = await getOrder(orderId);
+
+    if (!order) {
+      alert("Order not found.");
+      return;
+    }
+
+    if (!confirm("Mark this order as complete and remove it from active orders?")) {
+      return;
+    }
+
+    const archiveRes = await archiveCompletedOrder(orderId, order);
+
+    if (!archiveRes.ok) {
+      alert("Failed to archive completed order: " + await archiveRes.text());
+      return;
+    }
+
+    const deleteRes = await deleteActiveOrder(orderId);
+
+    if (!deleteRes.ok) {
+      alert("Archived, but failed to delete active order: " + await deleteRes.text());
+      return;
+    }
+
+    alert("Order completed and removed from active orders.");
+
+    if (typeof loadOrders === "function") {
+      loadOrders();
+    }
+  };
+
+  window.cancelOrder = async function (orderId) {
+    if (!confirm("Cancel and delete this order?")) return;
+
+    const order = await getOrder(orderId);
+
+    await fetch(DB + "/cancelledOrders/" + orderId + ".json", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...(order || {}),
+        status: "Cancelled",
+        cancelledAt: new Date().toLocaleString(),
+        cancelledAtMs: Date.now()
+      })
+    });
+
+    await deleteActiveOrder(orderId);
+
+    alert("Order cancelled and removed.");
+
+    if (typeof loadOrders === "function") {
+      loadOrders();
+    }
+  };
+
+  async function loadActiveOrders() {
+    const res = await fetch(DB + "/orders.json?ts=" + Date.now());
+    const data = await res.json() || {};
+    return Object.values(data).sort((a, b) => Number(b.createdAtMs || 0) - Number(a.createdAtMs || 0));
+  }
+
+  async function loadCompletedOrders() {
+    const res = await fetch(DB + "/completedOrders.json?ts=" + Date.now());
+    const data = await res.json() || {};
+    return Object.values(data).sort((a, b) => Number(b.completedAtMs || 0) - Number(a.completedAtMs || 0));
+  }
+
+  function statusClass(s) {
+    s = String(s || "Pending").toLowerCase();
+    if (s === "accepted") return "accepted";
+    if (s === "completed") return "completed";
+    if (s === "cancelled") return "cancelled";
+    return "pending";
+  }
+
+  function renderActiveOrders(orders) {
+    const box = document.getElementById("ordersList") || document.getElementById("orders");
+    if (!box) return;
+
+    if (!orders.length) {
+      box.innerHTML = `<div class="panel">No active orders.</div>`;
+      return;
+    }
+
+    box.innerHTML = orders.map(o => {
+      const status = o.status || "Pending";
+      return `
+        <div class="order-card">
+          <h3>${safe(o.orderId || "Order")} — ${safe(o.productName || "Product")}</h3>
+          <span class="order-status ${statusClass(status)}">${safe(status).toUpperCase()}</span>
+
+          <p>
+            <b>Customer:</b> ${safe(o.customerName || "Unknown")}<br>
+            <b>Telegram:</b> ${safe(o.contact || "N/A")}<br>
+            <b>Payment:</b> ${safe(o.paymentMethod || "N/A")}<br>
+            <b>Price:</b> ${money(o.price)}<br>
+            <b>Note:</b> ${safe(o.note || "None")}<br>
+            <b>Date:</b> ${safe(o.createdAt || "N/A")}
+          </p>
+
+          <div class="order-actions">
+            <button class="blue" onclick="acceptOrder('${safe(o.orderId)}')">Accept + TG</button>
+            <button class="green" onclick="completeOrder('${safe(o.orderId)}')">Complete</button>
+            <button class="danger" onclick="cancelOrder('${safe(o.orderId)}')">Cancel</button>
+          </div>
+
+          <button style="width:100%;margin-top:8px" onclick="messageBuyer('${safe(o.contact || "")}')">
+            📩 Message Buyer on Telegram
+          </button>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderLeaderboardFromCompleted(completed, active) {
+    const box = document.getElementById("leaderList") || document.getElementById("customerLeaderboardBox");
+    if (!box) return;
+
+    const map = {};
+
+    completed.forEach(o => {
+      const key = String(o.contact || o.customerName || "unknown").toLowerCase();
+
+      if (!map[key]) {
+        map[key] = {
+          name: o.customerName || "Unknown",
+          contact: o.contact || "No contact",
+          completed: 0,
+          pending: 0,
+          total: 0
+        };
+      }
+
+      map[key].completed++;
+      map[key].total += Number(o.price || 0);
+    });
+
+    active.forEach(o => {
+      const key = String(o.contact || o.customerName || "unknown").toLowerCase();
+
+      if (!map[key]) {
+        map[key] = {
+          name: o.customerName || "Unknown",
+          contact: o.contact || "No contact",
+          completed: 0,
+          pending: 0,
+          total: 0
+        };
+      }
+
+      map[key].pending++;
+    });
+
+    const leaders = Object.values(map)
+      .sort((a, b) => b.total - a.total || b.completed - a.completed)
+      .slice(0, 10);
+
+    if (!leaders.length) {
+      box.innerHTML = `<div class="panel">No leaderboard data yet.</div>`;
+      return;
+    }
+
+    box.innerHTML = leaders.map((c, i) => `
+      <div class="leader-card">
+        <div class="rank">${i + 1}</div>
+        <div>
+          <h3>${safe(c.name)}</h3>
+          <p>
+            ${safe(c.contact)}<br>
+            ${c.completed} completed • ${c.pending} active/pending
+          </p>
+        </div>
+        <div class="total">
+          <strong>${money(c.total)}</strong>
+          <span>Completed spent</span>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  window.loadOrders = async function () {
+    const active = await loadActiveOrders();
+    const completed = await loadCompletedOrders();
+
+    renderActiveOrders(active);
+    renderLeaderboardFromCompleted(completed, active);
+
+    const stats = document.getElementById("orderSummaryStats");
+    if (stats) {
+      stats.innerHTML = `
+        <div class="stat"><strong>${active.length}</strong><span>Active orders</span></div>
+        <div class="stat"><strong>${active.filter(o => String(o.status || "Pending").toLowerCase() === "pending").length}</strong><span>Pending</span></div>
+        <div class="stat"><strong>${completed.length}</strong><span>Completed archived</span></div>
+      `;
+    }
+  };
+
+  setTimeout(window.loadOrders, 500);
+  setInterval(window.loadOrders, 6000);
+})();
+</script>
+
