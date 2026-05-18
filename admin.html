@@ -1421,3 +1421,246 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+
+<style>
+/* FINAL DIRECT UPLOAD STATUS */
+#directUploadStatus {
+  margin-top: 12px;
+  padding: 13px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,70,95,0.35);
+  background: rgba(255,255,255,0.06);
+  color: #ffd1d8;
+  font-weight: 800;
+  display: none;
+}
+</style>
+
+<script>
+/* FINAL FIX: DIRECT FIREBASE REST UPLOAD - NO SDK */
+(function () {
+  const DB_URL = "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+  function $(id) {
+    return document.getElementById(id);
+  }
+
+  function val(id) {
+    return ($(id)?.value || "").trim();
+  }
+
+  function setStatus(msg) {
+    let box = document.getElementById("directUploadStatus");
+
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "directUploadStatus";
+
+      const saveBtn = Array.from(document.querySelectorAll("button"))
+        .find(btn => (btn.textContent || "").toLowerCase().includes("save product"));
+
+      if (saveBtn) saveBtn.after(box);
+      else document.body.appendChild(box);
+    }
+
+    box.style.display = "block";
+    box.innerText = msg;
+  }
+
+  function detectType() {
+    if (val("accountName") || val("accountPrice") || val("accountLevel") || val("accountUid") || val("accountRegion") || val("accountDescription")) {
+      return "account";
+    }
+
+    if (val("keyName") || val("keyPrice") || val("keyDuration") || val("keyGame") || val("keyPlatform") || val("keyDescription")) {
+      return "key";
+    }
+
+    if (val("otherName") || val("otherPrice") || val("otherCategory") || val("otherDescription")) {
+      return "other";
+    }
+
+    const active = document.querySelector(".typeBtn.active");
+    const text = (active?.textContent || "").toLowerCase();
+
+    if (text.includes("account")) return "account";
+    if (text.includes("key")) return "key";
+    if (text.includes("service") || text.includes("other")) return "other";
+
+    return "";
+  }
+
+  function compressFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      const img = new Image();
+
+      reader.onload = e => {
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const max = 520;
+
+          let w = img.width;
+          let h = img.height;
+
+          if (w > h && w > max) {
+            h = Math.round(h * max / w);
+            w = max;
+          } else if (h > max) {
+            w = Math.round(w * max / h);
+            h = max;
+          }
+
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+
+          resolve(canvas.toDataURL("image/jpeg", 0.38));
+        };
+
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function getImages() {
+    const input = $("productPictures");
+    const images = [];
+
+    if (input && input.files && input.files.length) {
+      const files = Array.from(input.files).slice(0, 3);
+
+      for (let i = 0; i < files.length; i++) {
+        setStatus("Compressing image " + (i + 1) + " of " + files.length + "...");
+        images.push(await compressFile(files[i]));
+      }
+
+      return images;
+    }
+
+    document.querySelectorAll("#previewGrid img").forEach(img => {
+      if (img.src) images.push(img.src);
+    });
+
+    return images.slice(0, 3);
+  }
+
+  async function directUploadProduct() {
+    try {
+      const type = detectType();
+
+      if (!type) {
+        alert("Choose/fill Account, Key, or Service first.");
+        return;
+      }
+
+      const id = String(Date.now());
+      const images = await getImages();
+
+      let product = {
+        id: id,
+        productType: type,
+        images: images,
+        imagesCount: images.length,
+        seller: "demi",
+        status: "available",
+        featured: false,
+        createdAt: new Date().toLocaleString()
+      };
+
+      if (type === "account") {
+        if (!val("accountName") || !val("accountPrice")) {
+          alert("Account Name and Price are required.");
+          return;
+        }
+
+        product.name = val("accountName");
+        product.price = Number(val("accountPrice")) || 0;
+        product.level = val("accountLevel");
+        product.uid = val("accountUid");
+        product.region = val("accountRegion");
+        product.description = val("accountDescription");
+      }
+
+      if (type === "key") {
+        if (!val("keyName") || !val("keyPrice")) {
+          alert("Key Name and Price are required.");
+          return;
+        }
+
+        product.name = val("keyName");
+        product.price = Number(val("keyPrice")) || 0;
+        product.duration = val("keyDuration");
+        product.game = val("keyGame");
+        product.platform = val("keyPlatform");
+        product.description = val("keyDescription");
+      }
+
+      if (type === "other") {
+        if (!val("otherName") || !val("otherPrice")) {
+          alert("Service Name and Price are required.");
+          return;
+        }
+
+        product.name = val("otherName");
+        product.price = Number(val("otherPrice")) || 0;
+        product.category = val("otherCategory");
+        product.description = val("otherDescription");
+        product.availability = "Available";
+      }
+
+      setStatus("Uploading to Firebase... Please wait.");
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 20000);
+
+      const res = await fetch(DB_URL + "/products/" + id + ".json", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(product),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeout);
+
+      const resultText = await res.text();
+
+      if (!res.ok) {
+        setStatus("Upload failed: " + resultText);
+        alert("❌ Upload failed: " + resultText);
+        return;
+      }
+
+      setStatus("✅ Uploaded successfully. Product ID: " + id);
+      alert("✅ Product uploaded successfully. Check customer website.");
+
+    } catch (err) {
+      setStatus("Upload error: " + err.message);
+      alert("❌ Upload error: " + err.message);
+    }
+  }
+
+  window.saveProduct = directUploadProduct;
+  window.forceUploadProduct = directUploadProduct;
+
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+
+    const text = (btn.textContent || "").toLowerCase();
+
+    if (text.includes("save product") || text.includes("force upload")) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      directUploadProduct();
+    }
+  }, true);
+})();
+</script>
+
