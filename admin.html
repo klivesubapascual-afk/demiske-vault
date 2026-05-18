@@ -1329,3 +1329,118 @@ window.adminLogin = function () {
 })();
 </script>
 
+
+<script>
+/* AUTO DELETE PRODUCT WHEN ORDER IS COMPLETED */
+(function () {
+  const DB = "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+  async function getOrder(orderId) {
+    const res = await fetch(DB + "/orders/" + orderId + ".json?ts=" + Date.now());
+    return await res.json();
+  }
+
+  async function getProducts() {
+    const res = await fetch(DB + "/products.json?ts=" + Date.now());
+    return await res.json() || {};
+  }
+
+  async function archiveCompletedOrder(orderId, order, productDeleted) {
+    return fetch(DB + "/completedOrders/" + orderId + ".json", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        ...order,
+        status: "Completed",
+        productDeleted: productDeleted,
+        completedAt: new Date().toLocaleString(),
+        completedAtMs: Date.now()
+      })
+    });
+  }
+
+  async function deleteActiveOrder(orderId) {
+    return fetch(DB + "/orders/" + orderId + ".json", {
+      method: "DELETE"
+    });
+  }
+
+  async function deleteProductFromCustomerShop(order) {
+    if (!order) return false;
+
+    // Best way: delete by productId
+    if (order.productId) {
+      const res = await fetch(DB + "/products/" + order.productId + ".json", {
+        method: "DELETE"
+      });
+
+      return res.ok;
+    }
+
+    // Backup way: delete by matching product name
+    const products = await getProducts();
+    const entries = Object.entries(products);
+
+    const found = entries.find(([id, product]) => {
+      return String(product.name || "").trim().toLowerCase() === String(order.productName || "").trim().toLowerCase();
+    });
+
+    if (!found) return false;
+
+    const productId = found[0];
+
+    const res = await fetch(DB + "/products/" + productId + ".json", {
+      method: "DELETE"
+    });
+
+    return res.ok;
+  }
+
+  window.completeOrder = async function (orderId) {
+    const order = await getOrder(orderId);
+
+    if (!order) {
+      alert("Order not found.");
+      return;
+    }
+
+    if (!confirm("Complete this order? This will also delete the product from the customer shop.")) {
+      return;
+    }
+
+    let productDeleted = false;
+
+    try {
+      productDeleted = await deleteProductFromCustomerShop(order);
+    } catch (error) {
+      productDeleted = false;
+    }
+
+    const archiveRes = await archiveCompletedOrder(orderId, order, productDeleted);
+
+    if (!archiveRes.ok) {
+      alert("Failed to archive completed order: " + await archiveRes.text());
+      return;
+    }
+
+    const deleteOrderRes = await deleteActiveOrder(orderId);
+
+    if (!deleteOrderRes.ok) {
+      alert("Archived, but failed to remove active order: " + await deleteOrderRes.text());
+      return;
+    }
+
+    if (productDeleted) {
+      alert("✅ Order completed. Product deleted from customer shop.");
+    } else {
+      alert("✅ Order completed, but product was not found/deleted. Check product list manually.");
+    }
+
+    if (typeof loadOrders === "function") loadOrders();
+    if (typeof loadProducts === "function") loadProducts();
+  };
+})();
+</script>
+
