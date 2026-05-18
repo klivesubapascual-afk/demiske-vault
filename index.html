@@ -4274,3 +4274,311 @@ window.submitOrder = async function () {
 })();
 </script>
 
+
+<style>
+/* FIX BUY BUTTON - CLEAN ORDER MODAL */
+.dg-order-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 99999999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0,0,0,0.82);
+  backdrop-filter: blur(9px);
+}
+
+.dg-order-modal.show {
+  display: flex !important;
+}
+
+.dg-order-box {
+  width: 100%;
+  max-width: 440px;
+  max-height: 92vh;
+  overflow-y: auto;
+  border-radius: 28px;
+  border: 1px solid rgba(255,70,95,0.45);
+  background:
+    radial-gradient(circle at top, rgba(255,0,60,0.18), transparent 42%),
+    rgba(10,10,18,0.96);
+  box-shadow: 0 0 40px rgba(255,0,60,0.35);
+  padding: 18px;
+}
+
+.dg-order-close {
+  float: right;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.10);
+  color: white;
+  font-size: 24px;
+}
+
+.dg-order-title {
+  font-size: 27px;
+  margin: 6px 45px 8px 0;
+  color: white;
+}
+
+.dg-order-summary {
+  padding: 13px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,70,95,0.35);
+  background: rgba(255,255,255,0.06);
+  color: #ffd1d8;
+  margin: 14px 0;
+  line-height: 1.45;
+}
+
+.dg-order-field {
+  margin-bottom: 13px;
+}
+
+.dg-order-field label {
+  display: block;
+  color: #ffb8c2;
+  font-weight: 900;
+  margin-bottom: 7px;
+}
+
+.dg-order-field input,
+.dg-order-field select,
+.dg-order-field textarea {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(255,70,95,0.35);
+  background: rgba(0,0,0,0.35);
+  color: white;
+  padding: 14px;
+  outline: none;
+}
+
+.dg-order-submit {
+  width: 100%;
+  border: 0;
+  border-radius: 18px;
+  padding: 16px;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff003c, #ff6a00);
+  margin-top: 8px;
+}
+
+.dg-order-status {
+  display: none;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,70,95,0.35);
+  background: rgba(255,255,255,0.06);
+  color: #ffd1d8;
+  font-weight: 800;
+}
+</style>
+
+<div class="dg-order-modal" id="dgOrderModal">
+  <div class="dg-order-box">
+    <button class="dg-order-close" onclick="dgCloseOrder()">×</button>
+
+    <h2 class="dg-order-title">Submit Order</h2>
+
+    <div class="dg-order-summary" id="dgOrderSummary">
+      Product details loading...
+    </div>
+
+    <div class="dg-order-field">
+      <label>Your Name</label>
+      <input id="dgBuyerName" placeholder="Enter your name">
+    </div>
+
+    <div class="dg-order-field">
+      <label>Telegram / Contact</label>
+      <input id="dgBuyerContact" placeholder="@username or phone number">
+    </div>
+
+    <div class="dg-order-field">
+      <label>Payment Method</label>
+      <select id="dgPaymentMethod">
+        <option value="">Choose payment method</option>
+        <option value="GCash">GCash</option>
+        <option value="Maya">Maya</option>
+        <option value="Bank Transfer">Bank Transfer</option>
+      </select>
+    </div>
+
+    <div class="dg-order-field">
+      <label>Message / Proof Note</label>
+      <textarea id="dgOrderNote" rows="3" placeholder="Optional note or payment proof details"></textarea>
+    </div>
+
+    <button class="dg-order-submit" onclick="dgSubmitOrder()">🔥 Submit Order</button>
+
+    <div class="dg-order-status" id="dgOrderStatus"></div>
+  </div>
+</div>
+
+<script>
+/* FINAL FIX: BUY SELECTED PRODUCT PROPERLY */
+(function () {
+  const DB_URL = "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+  function money(value) {
+    return "₱" + Number(value || 0).toLocaleString("en-PH");
+  }
+
+  function safe(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+  }
+
+  function getSelectedProduct() {
+    return window.dgCleanActive || window.dgActiveDetailProduct || window.activeProduct || null;
+  }
+
+  function setOrderStatus(message) {
+    const box = document.getElementById("dgOrderStatus");
+    if (!box) return;
+
+    box.style.display = "block";
+    box.innerText = message;
+  }
+
+  window.dgOpenOrder = function () {
+    const product = getSelectedProduct();
+
+    if (!product) {
+      alert("Please open a product first.");
+      return;
+    }
+
+    window.dgOrderProduct = product;
+    window.activeProduct = product;
+
+    const summary = document.getElementById("dgOrderSummary");
+
+    if (summary) {
+      summary.innerHTML = `
+        <b>Product:</b> ${safe(product.name || "Unnamed Product")}<br>
+        <b>Type:</b> ${safe((product.productType || "PRODUCT").toUpperCase())}<br>
+        <b>Price:</b> ${money(product.price)}<br>
+        <b>Status:</b> ${safe(product.status || "available")}
+      `;
+    }
+
+    const status = document.getElementById("dgOrderStatus");
+    if (status) {
+      status.style.display = "none";
+      status.innerText = "";
+    }
+
+    const modal = document.getElementById("dgOrderModal");
+    if (modal) modal.classList.add("show");
+  };
+
+  window.dgCloseOrder = function () {
+    const modal = document.getElementById("dgOrderModal");
+    if (modal) modal.classList.remove("show");
+  };
+
+  window.dgSubmitOrder = async function () {
+    const product = window.dgOrderProduct || getSelectedProduct();
+
+    if (!product) {
+      alert("Product missing. Please open product details again.");
+      return;
+    }
+
+    const name = document.getElementById("dgBuyerName").value.trim();
+    const contact = document.getElementById("dgBuyerContact").value.trim();
+    const payment = document.getElementById("dgPaymentMethod").value.trim();
+    const note = document.getElementById("dgOrderNote").value.trim();
+
+    if (!name || !contact || !payment) {
+      alert("Please fill name, contact, and payment method.");
+      return;
+    }
+
+    const orderId = "DG-" + Date.now();
+
+    const order = {
+      orderId: orderId,
+      customerName: name,
+      contact: contact,
+      paymentMethod: payment,
+      note: note,
+      productId: product.id || "",
+      productName: product.name || "Unnamed Product",
+      productType: product.productType || "product",
+      price: Number(product.price || 0),
+      seller: "Demi",
+      status: "Pending",
+      createdAt: new Date().toLocaleString(),
+      createdAtMs: Date.now()
+    };
+
+    try {
+      setOrderStatus("Submitting order to Firebase...");
+
+      const res = await fetch(DB_URL + "/orders/" + orderId + ".json", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(order)
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        setOrderStatus("Order failed: " + text);
+        alert("Order failed: " + text);
+        return;
+      }
+
+      setOrderStatus("✅ Order submitted. Order ID: " + orderId);
+      alert("✅ Order submitted successfully. Order ID: " + orderId);
+
+      document.getElementById("dgBuyerName").value = "";
+      document.getElementById("dgBuyerContact").value = "";
+      document.getElementById("dgPaymentMethod").value = "";
+      document.getElementById("dgOrderNote").value = "";
+
+      setTimeout(function () {
+        dgCloseOrder();
+      }, 700);
+
+    } catch (error) {
+      setOrderStatus("Order error: " + error.message);
+      alert("Order error: " + error.message);
+    }
+  };
+
+  /* Override broken buy functions */
+  window.dgCleanBuy = function () {
+    window.dgOpenOrder();
+  };
+
+  window.buyFromDemi = function () {
+    window.dgOpenOrder();
+  };
+
+  document.addEventListener("click", function (event) {
+    const btn = event.target.closest("button");
+    if (!btn) return;
+
+    const text = (btn.textContent || "").toLowerCase();
+
+    if (text.includes("buy / submit") || text.includes("submit order")) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      window.dgOpenOrder();
+    }
+  }, true);
+})();
+</script>
+
