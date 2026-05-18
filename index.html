@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DemiSke Vault</title>
+<title>DemiGods</title>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
@@ -298,10 +298,10 @@ body {
 <header class="top">
   <div class="logo">D</div>
   <div class="brand">
-    <h1>DemiSke Vault</h1>
+    <h1>DemiGods</h1>
     <p>Premium accounts, keys, and services</p>
   </div>
-  <div class="pill">DEMISKE</div>
+  <div class="pill">DEMIGODS</div>
 </header>
 
 <section class="hero" id="home">
@@ -338,7 +338,7 @@ body {
     <div class="buyerTitle">Choose who you want to buy from:</div>
     <div class="buyerGrid">
       <button class="buyerBtn demi" onclick="chooseBuyer('demi')">🔥 Demi - Website Order</button>
-      <button class="buyerBtn" onclick="chooseBuyer('ske')">⚡ Ske - Telegram</button>
+      <button class="buyerBtn" onclick="chooseBuyer('ske')">⚡ Demi - Website Order</button>
     </div>
   </div>
 </section>
@@ -362,7 +362,7 @@ body {
   </div>
   <div class="steps">
     <div class="step"><div class="stepNum">1</div><div><strong>Choose a product</strong><p class="muted">Tap the account, key, or service you want.</p></div></div>
-    <div class="step"><div class="stepNum">2</div><div><strong>Choose buyer</strong><p class="muted">Pick Demi for website order or Ske for Telegram.</p></div></div>
+    <div class="step"><div class="stepNum">2</div><div><strong>Choose buyer</strong><p class="muted">Pick Demi and submit your order on the website.</p></div></div>
     <div class="step"><div class="stepNum">3</div><div><strong>Send payment proof</strong><p class="muted">Wait for confirmation before receiving the product.</p></div></div>
     <div class="step"><div class="stepNum">4</div><div><strong>Receive product</strong><p class="muted">Delivery is processed after payment confirmation.</p></div></div>
   </div>
@@ -477,7 +477,7 @@ body {
         <div class="buyerTitle">Choose buyer for this product:</div>
         <div class="buyerGrid">
           <button class="buyerBtn demi" onclick="buyFromDemi()">🔥 Demi - Website Order</button>
-          <button class="buyerBtn" onclick="buyFromSke()">⚡ Ske - Telegram</button>
+          <button class="buyerBtn" onclick="buyFromSke()">⚡ Demi - Website Order</button>
         </div>
       </div>
     </div>
@@ -680,7 +680,7 @@ function changeImage(direction){
 
 function chooseBuyer(buyer){
   if(buyer==="demi"){scrollToShop();alert("Choose a product, then tap Demi - Website Order.")}
-  if(buyer==="ske")location.href="https://t.me/kaizxns";
+  if(buyer==="ske")location.href="https://t.me/Demixyloadmin";
 }
 
 function buyFromDemi(){
@@ -693,7 +693,7 @@ function buyFromDemi(){
   openModal("buyModal");
 }
 
-function buyFromSke(){location.href="https://t.me/kaizxns"}
+function buyFromSke(){location.href="https://t.me/Demixyloadmin"}
 function contactAdmin(){location.href="https://t.me/Demixyloadmin"}
 
 function submitOrder(){
@@ -773,10 +773,10 @@ import{getDatabase,ref,push,set,onDisconnect,onValue,serverTimestamp}from"https:
 
 const firebaseConfig={
   apiKey:"AIzaSyCpxfXFVrcKa-3wE6m4DLXN5j6kKW1d9Tk",
-  authDomain:"demiske-vault.firebaseapp.com",
-  databaseURL:"https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId:"demiske-vault",
-  storageBucket:"demiske-vault.firebasestorage.app",
+  authDomain:"demigods-vault.firebaseapp.com",
+  databaseURL:"https://demigods-vault-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId:"demigods-vault",
+  storageBucket:"demigods-vault.firebasestorage.app",
   messagingSenderId:"269369179527",
   appId:"1:269369179527:web:1db8cd077345886234a722",
   measurementId:"G-2JV5DSTMBG"
@@ -1376,7 +1376,7 @@ if (!document.querySelector(".video-bg")) {
         </div>
         <div class="quick-trust-item">
           <strong>📩 Active Support</strong>
-          <span>Demi / Ske buyer options</span>
+          <span>Demi buyer options</span>
         </div>
       `;
       hero.after(strip);
@@ -1399,7 +1399,7 @@ if (!document.querySelector(".video-bg")) {
     if (proofCards[0]) {
       proofCards[0].innerHTML = `
         <h3>✅ Successful Orders</h3>
-        <p>Orders are handled through official Demi/Ske channels only.</p>
+        <p>Orders are handled through official Demi channels only.</p>
       `;
     }
 
@@ -2062,7 +2062,7 @@ body {
     seller = String(seller || "both").toLowerCase();
 
     if (seller === "demi") return "DEMI ONLY";
-    if (seller === "ske") return "SKE ONLY";
+    if (seller === "ske") return "DEMI ONLY";
     return "DEMI & SKE";
   }
 
@@ -2599,6 +2599,63 @@ body.customer-auth-locked #registerModal {
   setTimeout(function () {
     window.checkCustomerAuthGate();
   }, 250);
+})();
+</script>
+
+
+<style>
+/* DEMIGODS FINAL OVERRIDE - REMOVE SKE */
+button,
+.buyerBtn,
+.drawer-link {
+  text-transform: none;
+}
+
+.seller-hidden,
+.ske-button,
+button[data-seller="ske"] {
+  display: none !important;
+}
+</style>
+
+<script>
+(function () {
+  function removeSkeEverywhere() {
+    document.title = "DemiGods";
+
+    document.querySelectorAll("h1, h2, h3, p, span, div, button, a").forEach(function (el) {
+      if (!el.childElementCount && el.textContent) {
+        el.textContent = el.textContent
+          .replaceAll("DemiSke Vault", "DemiGods")
+          .replaceAll("DemiSke", "DemiGods")
+          .replaceAll("DEMISKE", "DEMIGODS")
+          .replaceAll("Demi / Ske", "Demi")
+          .replaceAll("Demi & Ske", "Demi")
+          .replaceAll("Ske - Telegram", "Demi - Website Order")
+          .replaceAll("⚡ Ske - Telegram", "🔥 Demi - Website Order")
+          .replaceAll("Pick Demi for website order or Ske for Telegram.", "Pick Demi and submit your order on the website.")
+          .replaceAll("SKE ONLY", "DEMI ONLY")
+          .replaceAll("Ske only", "Demi only")
+          .replaceAll("@kaizxns", "@Demixyloadmin");
+      }
+    });
+
+    document.querySelectorAll("button, a").forEach(function (el) {
+      const txt = (el.textContent || "").toLowerCase();
+      const href = (el.getAttribute("href") || "").toLowerCase();
+
+      if (txt.includes("ske") || href.includes("kaizxns")) {
+        el.style.display = "none";
+      }
+    });
+  }
+
+  setInterval(removeSkeEverywhere, 800);
+  document.addEventListener("DOMContentLoaded", removeSkeEverywhere);
+
+  window.buyFromSke = function () {
+    if (typeof buyFromDemi === "function") buyFromDemi();
+  };
 })();
 </script>
 
