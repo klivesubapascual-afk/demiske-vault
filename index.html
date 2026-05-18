@@ -3768,3 +3768,509 @@ window.submitOrder = async function () {
 })();
 </script>
 
+
+<style>
+/* CLEAN STORE FIX - BYPASS OLD BROKEN VIEW DETAILS */
+.dg-clean-store {
+  position: relative;
+  z-index: 5;
+  margin: 22px 0;
+}
+
+.dg-clean-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.dg-clean-top h2 {
+  font-size: 32px;
+  color: white;
+}
+
+.dg-clean-top p {
+  color: #aaa;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.dg-clean-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: 14px;
+}
+
+.dg-clean-card {
+  border: 1px solid rgba(255,70,95,0.40);
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(10,10,18,0.66);
+  backdrop-filter: blur(9px);
+  box-shadow: 0 0 18px rgba(255,0,60,0.14);
+}
+
+.dg-clean-img {
+  height: 145px;
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 45px;
+  overflow: hidden;
+}
+
+.dg-clean-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dg-clean-info {
+  padding: 14px;
+}
+
+.dg-clean-tag {
+  display: inline-block;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(255,0,60,0.20);
+  color: #ffd1d8;
+  font-size: 10px;
+  font-weight: 900;
+  margin-bottom: 7px;
+}
+
+.dg-clean-status {
+  display: inline-block;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(0,255,136,0.16);
+  color: #aaffd3;
+  font-size: 10px;
+  font-weight: 900;
+  margin-left: 4px;
+}
+
+.dg-clean-info h3 {
+  font-size: 17px;
+  margin: 7px 0;
+  color: white;
+}
+
+.dg-clean-price {
+  font-size: 23px;
+  font-weight: 900;
+  color: #ffb8c2;
+  margin: 8px 0;
+}
+
+.dg-clean-meta {
+  color: #aaa;
+  font-size: 12px;
+  line-height: 1.4;
+  min-height: 34px;
+}
+
+.dg-clean-btn {
+  width: 100%;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 14px;
+  padding: 12px;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff003c, #ff6a00);
+}
+
+.dg-clean-empty {
+  grid-column: 1 / -1;
+  padding: 25px;
+  text-align: center;
+  border-radius: 22px;
+  border: 1px solid rgba(255,70,95,0.35);
+  background: rgba(10,10,18,0.58);
+  color: #ffb8c2;
+}
+
+.dg-clean-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0,0,0,0.80);
+  backdrop-filter: blur(8px);
+}
+
+.dg-clean-modal.show {
+  display: flex !important;
+}
+
+.dg-clean-box {
+  width: 100%;
+  max-width: 460px;
+  max-height: 92vh;
+  overflow-y: auto;
+  border-radius: 28px;
+  border: 1px solid rgba(255,70,95,0.45);
+  background: rgba(10,10,18,0.96);
+  box-shadow: 0 0 40px rgba(255,0,60,0.35);
+}
+
+.dg-clean-detail-img {
+  height: 250px;
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  overflow: hidden;
+}
+
+.dg-clean-detail-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dg-clean-pad {
+  padding: 18px;
+}
+
+.dg-clean-close {
+  float: right;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.10);
+  color: white;
+  font-size: 25px;
+}
+
+.dg-clean-title {
+  font-size: 29px;
+  line-height: 1.1;
+  margin: 6px 48px 8px 0;
+}
+
+.dg-clean-detail-price {
+  font-size: 31px;
+  font-weight: 900;
+  color: #ffb8c2;
+  margin: 10px 0;
+}
+
+.dg-clean-detail-info {
+  color: #ddd;
+  line-height: 1.55;
+  font-size: 15px;
+  margin: 12px 0 18px;
+}
+
+.dg-clean-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.dg-clean-buy {
+  border: 0;
+  border-radius: 18px;
+  padding: 15px;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff003c, #ff6a00);
+}
+
+.dg-clean-contact {
+  border: 1px solid rgba(255,70,95,0.35);
+  border-radius: 18px;
+  padding: 15px;
+  color: white;
+  font-weight: 900;
+  background: rgba(255,255,255,0.06);
+}
+
+/* hide old broken product grids */
+#productGrid,
+#featuredGrid {
+  display: none !important;
+}
+</style>
+
+<section class="dg-clean-store" id="dgCleanStore">
+  <div class="dg-clean-top">
+    <div>
+      <h2 id="dgCleanTitle">All Products</h2>
+      <p>Tap View Details to buy or check full information.</p>
+    </div>
+  </div>
+
+  <div class="dg-clean-grid" id="dgCleanGrid">
+    <div class="dg-clean-empty">Loading products...</div>
+  </div>
+</section>
+
+<div class="dg-clean-modal" id="dgCleanModal">
+  <div class="dg-clean-box">
+    <div class="dg-clean-detail-img" id="dgCleanDetailImg">🎮</div>
+
+    <div class="dg-clean-pad">
+      <button class="dg-clean-close" onclick="dgCleanClose()">×</button>
+
+      <h2 class="dg-clean-title" id="dgCleanName">Product</h2>
+
+      <span class="dg-clean-tag" id="dgCleanType">PRODUCT</span>
+      <span class="dg-clean-status" id="dgCleanStatus">AVAILABLE</span>
+
+      <div class="dg-clean-detail-price" id="dgCleanPrice">₱0</div>
+
+      <div class="dg-clean-detail-info" id="dgCleanInfo">
+        Product details.
+      </div>
+
+      <div class="dg-clean-actions">
+        <button class="dg-clean-buy" onclick="dgCleanBuy()">🔥 Buy / Submit Order</button>
+        <button class="dg-clean-contact" onclick="contactAdmin()">📩 Contact Admin</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* CLEAN STORE JS - SELF CONTAINED */
+(function () {
+  const DB_URL = "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+  window.dgCleanProducts = [];
+  window.dgCleanActive = null;
+  window.dgCleanCategory = "all";
+
+  function safe(v) {
+    return String(v ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+  }
+
+  function money(v) {
+    return "₱" + Number(v || 0).toLocaleString("en-PH");
+  }
+
+  function icon(type) {
+    if (type === "account") return "🎮";
+    if (type === "key") return "🔑";
+    if (type === "other") return "📦";
+    return "🔥";
+  }
+
+  function maskUid(uid) {
+    uid = String(uid || "");
+    if (uid.length <= 6) return uid || "Hidden";
+    return uid.slice(0, 3) + "****" + uid.slice(-3);
+  }
+
+  function meta(p) {
+    if (p.productType === "account") {
+      return `Level: ${safe(p.level || "N/A")}<br>Region: ${safe(p.region || "N/A")}`;
+    }
+
+    if (p.productType === "key") {
+      return `Duration: ${safe(p.duration || "N/A")}<br>Platform: ${safe(p.platform || "N/A")}`;
+    }
+
+    return `Category: ${safe(p.category || "Service")}<br>Status: ${safe(p.availability || "Available")}`;
+  }
+
+  function detailInfo(p) {
+    if (p.productType === "account") {
+      return `
+        <b>Level:</b> ${safe(p.level || "N/A")}<br>
+        <b>UID:</b> ${safe(maskUid(p.uid))}<br>
+        <b>Region:</b> ${safe(p.region || "N/A")}<br><br>
+        ${safe(p.description || "No description.")}<br><br>
+        <b>Note:</b> Full account details after payment confirmation.
+      `;
+    }
+
+    if (p.productType === "key") {
+      return `
+        <b>Duration:</b> ${safe(p.duration || "N/A")}<br>
+        <b>Game:</b> ${safe(p.game || "N/A")}<br>
+        <b>Platform:</b> ${safe(p.platform || "N/A")}<br><br>
+        ${safe(p.description || "No description.")}
+      `;
+    }
+
+    return `
+      <b>Category:</b> ${safe(p.category || "Service")}<br>
+      <b>Status:</b> ${safe(p.availability || "Available")}<br><br>
+      ${safe(p.description || "No description.")}
+    `;
+  }
+
+  function filteredProducts() {
+    if (window.dgCleanCategory === "all") return window.dgCleanProducts;
+
+    return window.dgCleanProducts.filter(function (p) {
+      return String(p.productType || "") === window.dgCleanCategory;
+    });
+  }
+
+  window.dgCleanRender = function () {
+    const grid = document.getElementById("dgCleanGrid");
+    if (!grid) return;
+
+    const list = filteredProducts();
+
+    if (!list.length) {
+      grid.innerHTML = `<div class="dg-clean-empty">No products found.</div>`;
+      return;
+    }
+
+    grid.innerHTML = list.map(function (p) {
+      const image = p.images && p.images[0]
+        ? `<img src="${p.images[0]}">`
+        : icon(p.productType);
+
+      return `
+        <div class="dg-clean-card">
+          <div class="dg-clean-img">${image}</div>
+          <div class="dg-clean-info">
+            <span class="dg-clean-tag">${safe((p.productType || "product").toUpperCase())}</span>
+            <span class="dg-clean-status">${safe((p.status || "available").toUpperCase())}</span>
+            <h3>${safe(p.name || "Unnamed Product")}</h3>
+            <div class="dg-clean-price">${money(p.price)}</div>
+            <div class="dg-clean-meta">${meta(p)}</div>
+            <button class="dg-clean-btn" data-dg-clean-id="${safe(p.id)}">View Details</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  };
+
+  async function loadProducts() {
+    const grid = document.getElementById("dgCleanGrid");
+    if (grid && !window.dgCleanProducts.length) {
+      grid.innerHTML = `<div class="dg-clean-empty">Loading products...</div>`;
+    }
+
+    try {
+      const res = await fetch(DB_URL + "/products.json?ts=" + Date.now());
+      const data = await res.json() || {};
+
+      window.dgCleanProducts = Object.values(data).sort(function (a, b) {
+        return Number(b.id || 0) - Number(a.id || 0);
+      });
+
+      window.dgCleanRender();
+    } catch (e) {
+      if (grid) grid.innerHTML = `<div class="dg-clean-empty">Failed to load products.</div>`;
+    }
+  }
+
+  window.dgCleanOpen = function (id) {
+    const p = window.dgCleanProducts.find(function (x) {
+      return String(x.id) === String(id);
+    });
+
+    if (!p) {
+      alert("Product not found. Refresh the page.");
+      return;
+    }
+
+    window.dgCleanActive = p;
+    window.activeProduct = p;
+
+    const img = p.images && p.images[0]
+      ? `<img src="${p.images[0]}">`
+      : icon(p.productType);
+
+    document.getElementById("dgCleanDetailImg").innerHTML = img;
+    document.getElementById("dgCleanName").innerText = p.name || "Unnamed Product";
+    document.getElementById("dgCleanType").innerText = (p.productType || "PRODUCT").toUpperCase();
+    document.getElementById("dgCleanStatus").innerText = (p.status || "available").toUpperCase();
+    document.getElementById("dgCleanPrice").innerText = money(p.price);
+    document.getElementById("dgCleanInfo").innerHTML = detailInfo(p);
+
+    document.getElementById("dgCleanModal").classList.add("show");
+  };
+
+  window.dgCleanClose = function () {
+    document.getElementById("dgCleanModal").classList.remove("show");
+  };
+
+  window.dgCleanBuy = function () {
+    if (!window.dgCleanActive) {
+      alert("No product selected.");
+      return;
+    }
+
+    window.activeProduct = window.dgCleanActive;
+    dgCleanClose();
+
+    if (typeof buyFromDemi === "function") {
+      buyFromDemi();
+    } else {
+      contactAdmin();
+    }
+  };
+
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest("[data-dg-clean-id]");
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    dgCleanOpen(btn.getAttribute("data-dg-clean-id"));
+  }, true);
+
+  document.addEventListener("click", function (e) {
+    const tab = e.target.closest(".top-cat-btn");
+    if (!tab) return;
+
+    const type = tab.dataset.type || "all";
+
+    window.dgCleanCategory = type;
+    document.getElementById("dgCleanTitle").innerText =
+      type === "all" ? "All Products" :
+      type === "account" ? "Game Accounts" :
+      type === "key" ? "VIP Keys" :
+      "Services";
+
+    document.querySelectorAll(".top-cat-btn").forEach(function (b) {
+      b.classList.remove("active");
+    });
+
+    tab.classList.add("active");
+
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    dgCleanRender();
+
+    const store = document.getElementById("dgCleanStore");
+    if (store) store.scrollIntoView({ behavior: "smooth" });
+  }, true);
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const shop = document.getElementById("shop");
+    const clean = document.getElementById("dgCleanStore");
+
+    if (shop && clean) {
+      shop.after(clean);
+    }
+
+    loadProducts();
+    setInterval(loadProducts, 8000);
+  });
+
+  setTimeout(loadProducts, 1000);
+})();
+</script>
+
