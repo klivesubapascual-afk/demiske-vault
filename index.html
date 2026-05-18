@@ -2122,3 +2122,322 @@ body {
 })();
 </script>
 
+
+<style>
+/* PREMIUM GLASS LOGIN SYSTEM */
+#loginModal,
+#registerModal {
+  backdrop-filter: blur(10px);
+  background:
+    radial-gradient(circle at bottom right, rgba(100,140,255,0.20), transparent 35%),
+    radial-gradient(circle at top left, rgba(255,0,80,0.20), transparent 35%),
+    rgba(0,0,0,0.72) !important;
+}
+
+#loginModal .box,
+#registerModal .box {
+  max-width: 430px !important;
+  border: 1px solid rgba(255,255,255,0.20) !important;
+  border-radius: 34px !important;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06)) !important;
+  backdrop-filter: blur(22px) !important;
+  box-shadow:
+    0 0 35px rgba(255,0,60,0.20),
+    inset 0 0 18px rgba(255,255,255,0.08) !important;
+  overflow: hidden !important;
+}
+
+.premium-login-card {
+  padding: 30px 28px 28px;
+  position: relative;
+}
+
+.premium-close {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.10);
+  color: white;
+  font-size: 24px;
+}
+
+.login-avatar {
+  width: 105px;
+  height: 105px;
+  margin: 10px auto 28px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,0.35), rgba(255,255,255,0.07)),
+    linear-gradient(145deg, rgba(255,0,60,0.20), rgba(100,140,255,0.24));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 28px rgba(255,255,255,0.12),
+    inset 0 0 20px rgba(255,255,255,0.12);
+}
+
+.login-avatar span {
+  font-size: 54px;
+  opacity: 0.82;
+}
+
+.login-field {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  border-bottom: 2px solid rgba(255,255,255,0.62);
+  margin-bottom: 26px;
+  padding: 3px 0 11px;
+}
+
+.login-field-icon {
+  font-size: 20px;
+  width: 28px;
+  text-align: center;
+}
+
+.login-field input {
+  border: 0 !important;
+  background: transparent !important;
+  padding: 8px 0 !important;
+  border-radius: 0 !important;
+  color: white !important;
+  font-size: 16px !important;
+  outline: none !important;
+}
+
+.login-field input::placeholder {
+  color: rgba(255,255,255,0.74);
+}
+
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: -6px 0 26px;
+  color: rgba(255,255,255,0.80);
+  font-size: 13px;
+}
+
+.login-options label {
+  display: flex !important;
+  align-items: center;
+  gap: 7px;
+  margin: 0 !important;
+  color: rgba(255,255,255,0.80) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+.login-options input {
+  width: auto !important;
+}
+
+.login-options button {
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,0.78);
+  font-weight: 800;
+}
+
+.premium-login-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 18px;
+  padding: 16px;
+  color: white;
+  font-weight: 900;
+  letter-spacing: 4px;
+  background:
+    linear-gradient(135deg, rgba(255,0,60,0.96), rgba(90,120,255,0.92));
+  box-shadow:
+    0 0 24px rgba(255,0,60,0.24),
+    0 0 24px rgba(90,120,255,0.18);
+}
+
+.login-switch {
+  text-align: center;
+  margin-top: 18px;
+  color: rgba(255,255,255,0.78);
+  font-size: 13px;
+}
+
+.login-switch button {
+  border: 0;
+  background: transparent;
+  color: #ffd1d8;
+  font-weight: 900;
+}
+
+.login-title {
+  text-align: center;
+  margin: -8px 0 22px;
+}
+
+.login-title h2 {
+  font-size: 25px;
+  margin-bottom: 6px;
+  background: linear-gradient(90deg, #ff003c, #ffffff, #7a8cff);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.login-title p {
+  color: rgba(255,255,255,0.72);
+  font-size: 13px;
+}
+</style>
+
+<script>
+(function () {
+  function ready(fn) {
+    if (document.readyState !== "loading") fn();
+    else document.addEventListener("DOMContentLoaded", fn);
+  }
+
+  function openLogin() {
+    closeModal("registerModal");
+    openModal("loginModal");
+  }
+
+  function openRegister() {
+    closeModal("loginModal");
+    openModal("registerModal");
+  }
+
+  window.openPremiumLogin = openLogin;
+  window.openPremiumRegister = openRegister;
+
+  ready(function () {
+    const loginModal = document.getElementById("loginModal");
+    const registerModal = document.getElementById("registerModal");
+
+    if (loginModal && !document.getElementById("premiumLoginForm")) {
+      loginModal.innerHTML = `
+        <div class="box">
+          <div class="premium-login-card" id="premiumLoginForm">
+            <button class="premium-close" onclick="closeModal('loginModal')">×</button>
+
+            <div class="login-avatar">
+              <span>👤</span>
+            </div>
+
+            <div class="login-field">
+              <div class="login-field-icon">✉️</div>
+              <input id="loginUsername" placeholder="Email ID / Username">
+            </div>
+
+            <div class="login-field">
+              <div class="login-field-icon">🔒</div>
+              <input id="loginPassword" type="password" placeholder="Password">
+            </div>
+
+            <div class="login-options">
+              <label>
+                <input id="rememberCustomer" type="checkbox" checked>
+                Remember me
+              </label>
+              <button onclick="forgotCustomerPassword()">Forgot Password?</button>
+            </div>
+
+            <button class="premium-login-btn" onclick="loginCustomer()">LOGIN</button>
+
+            <div class="login-switch">
+              No account yet?
+              <button onclick="openPremiumRegister()">Create one</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    if (registerModal && !document.getElementById("premiumRegisterForm")) {
+      registerModal.innerHTML = `
+        <div class="box">
+          <div class="premium-login-card" id="premiumRegisterForm">
+            <button class="premium-close" onclick="closeModal('registerModal')">×</button>
+
+            <div class="login-title">
+              <h2>Create Account</h2>
+              <p>Register your customer account</p>
+            </div>
+
+            <div class="login-field">
+              <div class="login-field-icon">👤</div>
+              <input id="registerName" placeholder="Display Name">
+            </div>
+
+            <div class="login-field">
+              <div class="login-field-icon">✉️</div>
+              <input id="registerUsername" placeholder="Email ID / Username">
+            </div>
+
+            <div class="login-field">
+              <div class="login-field-icon">🔒</div>
+              <input id="registerPassword" type="password" placeholder="Password">
+            </div>
+
+            <div class="login-field">
+              <div class="login-field-icon">✅</div>
+              <input id="registerConfirm" type="password" placeholder="Confirm Password">
+            </div>
+
+            <button class="premium-login-btn" onclick="registerCustomer()">REGISTER</button>
+
+            <div class="login-switch">
+              Already have an account?
+              <button onclick="openPremiumLogin()">Login</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    window.forgotCustomerPassword = function () {
+      const account = JSON.parse(localStorage.getItem("customerAccount")) || null;
+
+      if (!account) {
+        alert("No saved account on this device. Please register again.");
+        return;
+      }
+
+      alert("Saved account on this device:\\nUsername: " + account.username + "\\nIf you forgot the password, create a new account.");
+    };
+
+    /* Allow login using saved username/email */
+    const oldLogin = window.loginCustomer;
+
+    window.loginCustomer = function () {
+      const username = document.getElementById("loginUsername").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+      const account = JSON.parse(localStorage.getItem("customerAccount")) || null;
+
+      if (!account) {
+        alert("No account found on this device. Please register first.");
+        return;
+      }
+
+      if (username === account.username && password === account.password) {
+        localStorage.setItem("customerSession", JSON.stringify({ username: account.username }));
+        closeModal("loginModal");
+
+        if (typeof refreshCustomerUI === "function") {
+          refreshCustomerUI();
+        }
+
+        alert("Login successful.");
+      } else {
+        alert("Wrong email/username or password.");
+      }
+    };
+  });
+})();
+</script>
+
