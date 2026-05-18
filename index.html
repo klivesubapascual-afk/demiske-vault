@@ -3379,3 +3379,392 @@ window.submitOrder = async function () {
 })();
 </script>
 
+
+<style>
+/* FINAL FIX: PRODUCT VIEW DETAILS MODAL */
+.dg-detail-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0,0,0,0.78);
+  backdrop-filter: blur(8px);
+}
+
+.dg-detail-overlay.show {
+  display: flex !important;
+}
+
+.dg-detail-box {
+  width: 100%;
+  max-width: 460px;
+  max-height: 92vh;
+  overflow-y: auto;
+  border-radius: 28px;
+  border: 1px solid rgba(255,70,95,0.45);
+  background:
+    radial-gradient(circle at top, rgba(255,0,60,0.20), transparent 42%),
+    rgba(10,10,18,0.96);
+  box-shadow: 0 0 40px rgba(255,0,60,0.35);
+}
+
+.dg-detail-img {
+  height: 260px;
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  overflow: hidden;
+  position: relative;
+}
+
+.dg-detail-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dg-detail-pad {
+  padding: 18px;
+}
+
+.dg-detail-close {
+  float: right;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.10);
+  color: white;
+  font-size: 24px;
+}
+
+.dg-detail-title {
+  font-size: 28px;
+  line-height: 1.1;
+  margin: 6px 45px 8px 0;
+  color: white;
+}
+
+.dg-detail-tag,
+.dg-detail-status {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  margin: 0 5px 8px 0;
+}
+
+.dg-detail-tag {
+  background: rgba(255,0,60,0.22);
+  color: #ffd1d8;
+}
+
+.dg-detail-status {
+  background: rgba(0,255,136,0.16);
+  color: #aaffd3;
+}
+
+.dg-detail-price {
+  font-size: 30px;
+  font-weight: 900;
+  color: #ffb8c2;
+  margin: 10px 0;
+}
+
+.dg-detail-info {
+  color: #ddd;
+  font-size: 15px;
+  line-height: 1.55;
+  margin: 12px 0 18px;
+}
+
+.dg-detail-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.dg-detail-buy {
+  border: 0;
+  border-radius: 18px;
+  padding: 15px;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff003c, #ff6a00);
+}
+
+.dg-detail-admin {
+  border: 1px solid rgba(255,70,95,0.38);
+  border-radius: 18px;
+  padding: 15px;
+  color: white;
+  font-weight: 900;
+  background: rgba(255,255,255,0.06);
+}
+
+.dg-img-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(0,0,0,0.55);
+  color: white;
+  font-size: 25px;
+  font-weight: 900;
+}
+
+.dg-img-prev {
+  left: 12px;
+}
+
+.dg-img-next {
+  right: 12px;
+}
+
+.dg-img-count {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.65);
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+}
+</style>
+
+<div class="dg-detail-overlay" id="dgDetailOverlay">
+  <div class="dg-detail-box">
+    <div class="dg-detail-img" id="dgDetailImg">🎮</div>
+
+    <div class="dg-detail-pad">
+      <button class="dg-detail-close" onclick="closeDgDetails()">×</button>
+
+      <h2 class="dg-detail-title" id="dgDetailName">Product</h2>
+
+      <span class="dg-detail-tag" id="dgDetailType">PRODUCT</span>
+      <span class="dg-detail-status" id="dgDetailStatus">AVAILABLE</span>
+
+      <div class="dg-detail-price" id="dgDetailPrice">₱0</div>
+
+      <div class="dg-detail-info" id="dgDetailInfo">
+        Product details will appear here.
+      </div>
+
+      <div class="dg-detail-actions">
+        <button class="dg-detail-buy" onclick="dgBuyProduct()">🔥 Buy / Submit Order</button>
+        <button class="dg-detail-admin" onclick="contactAdmin()">📩 Contact Admin</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* FINAL FIX: PRODUCT DETAILS LOGIC */
+(function () {
+  const DB_URL = "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+  window.dgDetailProducts = window.dgDetailProducts || [];
+  window.dgActiveDetailProduct = null;
+  window.dgActiveImageIndex = 0;
+
+  function safe(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+  }
+
+  function icon(type) {
+    if (type === "account") return "🎮";
+    if (type === "key") return "🔑";
+    if (type === "other") return "📦";
+    return "🔥";
+  }
+
+  function money(value) {
+    return "₱" + Number(value || 0).toLocaleString("en-PH");
+  }
+
+  function maskUid(uid) {
+    uid = String(uid || "");
+    if (uid.length <= 6) return uid || "Hidden";
+    return uid.slice(0, 3) + "****" + uid.slice(-3);
+  }
+
+  async function loadProductsForDetails() {
+    try {
+      const res = await fetch(DB_URL + "/products.json?ts=" + Date.now());
+      const data = await res.json() || {};
+
+      window.dgDetailProducts = Object.values(data).sort(function (a, b) {
+        return Number(b.id || 0) - Number(a.id || 0);
+      });
+
+      return window.dgDetailProducts;
+    } catch (e) {
+      return window.dgDetailProducts || [];
+    }
+  }
+
+  function getDetails(product) {
+    if (!product) return "No details.";
+
+    if (product.productType === "account") {
+      return `
+        <b>Level:</b> ${safe(product.level || "N/A")}<br>
+        <b>UID:</b> ${safe(maskUid(product.uid))}<br>
+        <b>Region:</b> ${safe(product.region || "N/A")}<br><br>
+        ${safe(product.description || "No description.")}<br><br>
+        <b>Note:</b> Full account details will be given after payment confirmation.
+      `;
+    }
+
+    if (product.productType === "key") {
+      return `
+        <b>Duration:</b> ${safe(product.duration || "N/A")}<br>
+        <b>Game:</b> ${safe(product.game || "N/A")}<br>
+        <b>Platform:</b> ${safe(product.platform || "N/A")}<br><br>
+        ${safe(product.description || "No description.")}
+      `;
+    }
+
+    return `
+      <b>Category:</b> ${safe(product.category || "Service")}<br>
+      <b>Status:</b> ${safe(product.availability || "Available")}<br><br>
+      ${safe(product.description || "No description.")}
+    `;
+  }
+
+  function renderDetailImage() {
+    const product = window.dgActiveDetailProduct;
+    const imgBox = document.getElementById("dgDetailImg");
+
+    if (!product || !imgBox) return;
+
+    const images = product.images || [];
+
+    if (!images.length) {
+      imgBox.innerHTML = icon(product.productType);
+      return;
+    }
+
+    const index = window.dgActiveImageIndex || 0;
+
+    imgBox.innerHTML = `
+      <img src="${images[index]}">
+      ${images.length > 1 ? `
+        <button class="dg-img-nav dg-img-prev" onclick="dgChangeImage(-1)">‹</button>
+        <button class="dg-img-nav dg-img-next" onclick="dgChangeImage(1)">›</button>
+        <div class="dg-img-count">${index + 1}/${images.length}</div>
+      ` : ""}
+    `;
+  }
+
+  window.dgChangeImage = function (dir) {
+    const product = window.dgActiveDetailProduct;
+    if (!product || !product.images || !product.images.length) return;
+
+    const total = product.images.length;
+    window.dgActiveImageIndex += dir;
+
+    if (window.dgActiveImageIndex < 0) window.dgActiveImageIndex = total - 1;
+    if (window.dgActiveImageIndex >= total) window.dgActiveImageIndex = 0;
+
+    renderDetailImage();
+  };
+
+  window.openDgDetails = async function (productId, productName) {
+    let products = window.dgDetailProducts || [];
+
+    if (!products.length) {
+      products = await loadProductsForDetails();
+    }
+
+    let product = products.find(p => String(p.id) === String(productId));
+
+    if (!product && productName) {
+      product = products.find(p => String(p.name || "").trim() === String(productName).trim());
+    }
+
+    if (!product) {
+      alert("Product details not found. Please refresh the page.");
+      return;
+    }
+
+    window.dgActiveDetailProduct = product;
+    window.activeProduct = product;
+    window.dgActiveImageIndex = 0;
+
+    document.getElementById("dgDetailName").innerText = product.name || "Unnamed Product";
+    document.getElementById("dgDetailType").innerText = (product.productType || "PRODUCT").toUpperCase();
+    document.getElementById("dgDetailStatus").innerText = (product.status || "available").toUpperCase();
+    document.getElementById("dgDetailPrice").innerText = money(product.price);
+    document.getElementById("dgDetailInfo").innerHTML = getDetails(product);
+
+    renderDetailImage();
+
+    document.getElementById("dgDetailOverlay").classList.add("show");
+  };
+
+  window.closeDgDetails = function () {
+    document.getElementById("dgDetailOverlay").classList.remove("show");
+  };
+
+  window.dgBuyProduct = function () {
+    const product = window.dgActiveDetailProduct;
+
+    if (!product) {
+      alert("No product selected.");
+      return;
+    }
+
+    window.activeProduct = product;
+    closeDgDetails();
+
+    if (typeof buyFromDemi === "function") {
+      buyFromDemi();
+    } else if (typeof openModal === "function") {
+      openModal("buyModal");
+    } else {
+      contactAdmin();
+    }
+  };
+
+  document.addEventListener("click", async function (event) {
+    const card = event.target.closest(".card");
+    const viewBtn = event.target.closest(".productCTA");
+
+    if (!card && !viewBtn) return;
+
+    const targetCard = card || viewBtn.closest(".card");
+    if (!targetCard) return;
+
+    const productName = targetCard.querySelector("h3")?.textContent?.trim();
+
+    if (!productName) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    await window.openDgDetails(null, productName);
+  }, true);
+
+  document.addEventListener("DOMContentLoaded", function () {
+    loadProductsForDetails();
+    setInterval(loadProductsForDetails, 8000);
+  });
+
+  setTimeout(loadProductsForDetails, 1000);
+})();
+</script>
+
