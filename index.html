@@ -3140,3 +3140,127 @@ window.submitOrder = async function () {
 };
 </script>
 
+
+<script>
+/* EMERGENCY FIX: PRODUCT DETAILS CLICK */
+(function () {
+  function safe(v) {
+    return String(v ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+  }
+
+  function iconFix(type) {
+    if (type === "account") return "🎮";
+    if (type === "key") return "🔑";
+    if (type === "other") return "📦";
+    return "🔥";
+  }
+
+  function getAllProductsFix() {
+    try {
+      if (typeof getProducts === "function") return getProducts();
+    } catch (e) {}
+
+    try {
+      if (typeof firebaseProducts !== "undefined" && Array.isArray(firebaseProducts)) return firebaseProducts;
+    } catch (e) {}
+
+    return [];
+  }
+
+  function maskUidFix(uid) {
+    uid = String(uid || "");
+    if (uid.length <= 6) return uid || "Hidden";
+    return uid.slice(0, 3) + "****" + uid.slice(-3);
+  }
+
+  function productDetailsFix(product) {
+    if (product.productType === "account") {
+      return `
+        Level: ${safe(product.level || "N/A")}<br>
+        UID: ${safe(maskUidFix(product.uid))}<br>
+        Region: ${safe(product.region || "N/A")}<br><br>
+        ${safe(product.description || "No description.")}<br><br>
+        <b>Note:</b> Full details after payment confirmation.
+      `;
+    }
+
+    if (product.productType === "key") {
+      return `
+        Duration: ${safe(product.duration || "N/A")}<br>
+        Game: ${safe(product.game || "N/A")}<br>
+        Platform: ${safe(product.platform || "N/A")}<br><br>
+        ${safe(product.description || "No description.")}
+      `;
+    }
+
+    return `
+      Category: ${safe(product.category || "Service")}<br>
+      Status: ${safe(product.availability || "Available")}<br><br>
+      ${safe(product.description || "No description.")}
+    `;
+  }
+
+  window.openProduct = function (id) {
+    const products = getAllProductsFix();
+    const product = products.find(p => String(p.id) === String(id));
+
+    if (!product) {
+      alert("Product not found. Please refresh the page.");
+      return;
+    }
+
+    window.activeProduct = product;
+    window.activeImageIndex = 0;
+
+    const modal = document.getElementById("productModal");
+    if (!modal) {
+      alert("Product modal missing.");
+      return;
+    }
+
+    const detailName = document.getElementById("detailName");
+    const detailType = document.getElementById("detailType");
+    const detailStatus = document.getElementById("detailStatus");
+    const detailPrice = document.getElementById("detailPrice");
+    const detailInfo = document.getElementById("detailInfo");
+    const detailImg = document.getElementById("detailImg");
+
+    if (detailName) detailName.innerText = product.name || "Unnamed Product";
+    if (detailType) detailType.innerText = (product.productType || "PRODUCT").toUpperCase();
+    if (detailStatus) detailStatus.innerText = (product.status || "available").toUpperCase();
+    if (detailPrice) detailPrice.innerText = "₱" + (product.price || 0);
+    if (detailInfo) detailInfo.innerHTML = productDetailsFix(product);
+
+    if (detailImg) {
+      if (product.images && product.images[0]) {
+        detailImg.innerHTML = `<img src="${product.images[0]}" style="width:100%;height:100%;object-fit:cover;">`;
+      } else {
+        detailImg.innerHTML = iconFix(product.productType);
+      }
+    }
+
+    modal.classList.add("active");
+    modal.style.display = "flex";
+  };
+
+  /* Reconnect product cards */
+  document.addEventListener("click", function (e) {
+    const card = e.target.closest(".card");
+    if (!card) return;
+
+    const name = card.querySelector("h3")?.textContent?.trim();
+    if (!name) return;
+
+    const product = getAllProductsFix().find(p => String(p.name || "").trim() === name);
+    if (!product) return;
+
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    window.openProduct(product.id);
+  }, true);
+})();
+</script>
+

@@ -720,3 +720,197 @@ onValue(ref(db, "orders"), snapshot => {
 });
 </script>
 
+
+<script type="module">
+/* EMERGENCY FIX: ADMIN SAVE PRODUCT TO FIREBASE */
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const firebaseConfigFix = {
+  apiKey: "AIzaSyCpxfXFVrcKa-3wE6m4DLXN5j6kKW1d9Tk",
+  authDomain: "demiske-vault.firebaseapp.com",
+  databaseURL: "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "demiske-vault",
+  storageBucket: "demiske-vault.firebasestorage.app",
+  messagingSenderId: "269369179527",
+  appId: "1:269369179527:web:1db8cd077345886234a722",
+  measurementId: "G-2JV5DSTMBG"
+};
+
+const appFix = getApps().length ? getApp() : initializeApp(firebaseConfigFix);
+const dbFix = getDatabase(appFix);
+
+function $(id) {
+  return document.getElementById(id);
+}
+
+function val(id) {
+  return ($(id)?.value || "").trim();
+}
+
+function detectProductTypeFix() {
+  if (window.__dgProductType) return window.__dgProductType;
+
+  const accountFields = $("accountFields");
+  const keyFields = $("keyFields");
+  const otherFields = $("otherFields");
+
+  if (accountFields && !accountFields.classList.contains("hidden")) return "account";
+  if (keyFields && !keyFields.classList.contains("hidden")) return "key";
+  if (otherFields && !otherFields.classList.contains("hidden")) return "other";
+
+  const active = document.querySelector(".typeBtn.active");
+  const text = (active?.textContent || "").toLowerCase();
+
+  if (text.includes("account")) return "account";
+  if (text.includes("key")) return "key";
+  if (text.includes("service") || text.includes("other")) return "other";
+
+  return "";
+}
+
+function fileToDataUrlFix(file) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = e => {
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const max = 700;
+        let w = img.width;
+        let h = img.height;
+
+        if (w > h && w > max) {
+          h = Math.round(h * max / w);
+          w = max;
+        } else if (h > max) {
+          w = Math.round(w * max / h);
+          h = max;
+        }
+
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", 0.55));
+      };
+
+      img.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+async function getImagesFix() {
+  const input = $("productPictures");
+  const images = [];
+
+  if (input && input.files && input.files.length) {
+    const files = Array.from(input.files).slice(0, 3);
+
+    for (const file of files) {
+      images.push(await fileToDataUrlFix(file));
+    }
+
+    return images;
+  }
+
+  document.querySelectorAll("#previewGrid img").forEach(img => {
+    if (img.src) images.push(img.src);
+  });
+
+  return images.slice(0, 3);
+}
+
+window.selectType = function (type, btn) {
+  window.__dgProductType = type;
+
+  document.querySelectorAll(".typeBtn").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+
+  ["accountFields", "keyFields", "otherFields"].forEach(id => {
+    const el = $(id);
+    if (el) el.classList.add("hidden");
+  });
+
+  if (type === "account" && $("accountFields")) $("accountFields").classList.remove("hidden");
+  if (type === "key" && $("keyFields")) $("keyFields").classList.remove("hidden");
+  if (type === "other" && $("otherFields")) $("otherFields").classList.remove("hidden");
+};
+
+window.saveProduct = async function () {
+  const type = detectProductTypeFix();
+
+  if (!type) {
+    alert("Please choose Account, Key, or Service first.");
+    return;
+  }
+
+  const id = String(Date.now());
+  const images = await getImagesFix();
+
+  let product = {
+    id: id,
+    productType: type,
+    images: images,
+    imagesCount: images.length,
+    seller: "demi",
+    status: "available",
+    featured: false,
+    createdAt: new Date().toLocaleString(),
+    createdAtServer: serverTimestamp()
+  };
+
+  if (type === "account") {
+    if (!val("accountName") || !val("accountPrice")) {
+      alert("Please add account name and price.");
+      return;
+    }
+
+    product.name = val("accountName");
+    product.price = val("accountPrice");
+    product.level = val("accountLevel");
+    product.uid = val("accountUid");
+    product.region = val("accountRegion");
+    product.description = val("accountDescription");
+  }
+
+  if (type === "key") {
+    if (!val("keyName") || !val("keyPrice")) {
+      alert("Please add key name and price.");
+      return;
+    }
+
+    product.name = val("keyName");
+    product.price = val("keyPrice");
+    product.duration = val("keyDuration");
+    product.game = val("keyGame");
+    product.platform = val("keyPlatform");
+    product.description = val("keyDescription");
+  }
+
+  if (type === "other") {
+    if (!val("otherName") || !val("otherPrice")) {
+      alert("Please add service name and price.");
+      return;
+    }
+
+    product.name = val("otherName");
+    product.price = val("otherPrice");
+    product.category = val("otherCategory");
+    product.availability = "Available";
+    product.description = val("otherDescription");
+  }
+
+  try {
+    await set(ref(dbFix, "products/" + id), product);
+    alert("Product saved to Firebase successfully.");
+
+    if ($("productPictures")) $("productPictures").value = "";
+  } catch (error) {
+    alert("Firebase save failed: " + error.message);
+  }
+};
+</script>
+
