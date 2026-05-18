@@ -3264,3 +3264,71 @@ window.submitOrder = async function () {
 })();
 </script>
 
+
+<script>
+/* NO-SDK ONLINE COUNTER FIX */
+(function () {
+  const DB = "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app";
+  let id = localStorage.getItem("dg_online_id");
+
+  if (!id) {
+    id = "visitor_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+    localStorage.setItem("dg_online_id", id);
+  }
+
+  async function pingOnline() {
+    try {
+      await fetch(DB + "/onlineUsers/" + id + ".json", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          online: true,
+          page: location.href,
+          lastSeen: Date.now()
+        })
+      });
+    } catch (e) {}
+  }
+
+  async function updateOnlineCount() {
+    try {
+      const res = await fetch(DB + "/onlineUsers.json?ts=" + Date.now());
+      const data = await res.json() || {};
+      const now = Date.now();
+
+      let count = 0;
+
+      Object.values(data).forEach(function (user) {
+        if (user && user.lastSeen && now - user.lastSeen < 45000) {
+          count++;
+        }
+      });
+
+      const onlineCount = document.getElementById("onlineCount");
+      const drawerOnlineCount = document.getElementById("drawerOnlineCount");
+
+      if (onlineCount) onlineCount.innerText = count;
+      if (drawerOnlineCount) drawerOnlineCount.innerText = count;
+    } catch (e) {}
+  }
+
+  async function startOnlineCounter() {
+    await pingOnline();
+    await updateOnlineCount();
+
+    setInterval(pingOnline, 10000);
+    setInterval(updateOnlineCount, 5000);
+  }
+
+  window.addEventListener("beforeunload", function () {
+    fetch(DB + "/onlineUsers/" + id + ".json", {
+      method: "DELETE"
+    });
+  });
+
+  startOnlineCounter();
+})();
+</script>
+
