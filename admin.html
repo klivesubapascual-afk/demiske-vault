@@ -1272,3 +1272,60 @@ window.adminLogin = function () {
 })();
 </script>
 
+
+<script>
+/* MAKE LEADERBOARD REGION / NATIONAL / GLOBAL TABS CLICKABLE */
+(function () {
+  window.currentLeaderboardTab = "Region";
+
+  window.switchLeaderboardTab = function (tabName, btn) {
+    window.currentLeaderboardTab = tabName;
+
+    document.querySelectorAll(".lb-tab").forEach(function (tab) {
+      tab.classList.remove("active");
+    });
+
+    if (btn) {
+      btn.classList.add("active");
+    }
+
+    const title = document.querySelector(".lb-title");
+    if (title) {
+      title.innerText = tabName + " Leaderboard";
+    }
+
+    // Re-render same leaderboard data for now
+    if (typeof openPremiumLeaderboard === "function") {
+      openPremiumLeaderboard();
+      setTimeout(function () {
+        const tabs = document.querySelectorAll(".lb-tab");
+
+        tabs.forEach(function (tab) {
+          tab.classList.remove("active");
+
+          if (tab.textContent.trim() === tabName) {
+            tab.classList.add("active");
+          }
+        });
+
+        const newTitle = document.querySelector(".lb-title");
+        if (newTitle) {
+          newTitle.innerText = tabName + " Leaderboard";
+        }
+      }, 300);
+    }
+  };
+
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest(".lb-tab");
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    const tabName = btn.textContent.trim();
+    switchLeaderboardTab(tabName, btn);
+  }, true);
+})();
+</script>
+
