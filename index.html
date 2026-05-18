@@ -3332,3 +3332,50 @@ window.submitOrder = async function () {
 })();
 </script>
 
+
+<script>
+/* FINAL FIX: LOAD PRODUCTS DIRECTLY FROM FIREBASE REST */
+(function () {
+  const DB_URL = "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+  async function loadFirebaseProductsDirect() {
+    try {
+      const res = await fetch(DB_URL + "/products.json?ts=" + Date.now());
+
+      if (!res.ok) {
+        console.log("Firebase product read failed:", await res.text());
+        return;
+      }
+
+      const data = await res.json() || {};
+      const products = Object.values(data).sort(function (a, b) {
+        return Number(b.id || 0) - Number(a.id || 0);
+      });
+
+      try {
+        firebaseProducts = products;
+      } catch (e) {
+        window.firebaseProducts = products;
+      }
+
+      if (typeof renderProducts === "function") {
+        renderProducts();
+      }
+
+      console.log("Loaded Firebase products:", products.length);
+    } catch (error) {
+      console.log("Direct Firebase product load error:", error.message);
+    }
+  }
+
+  window.loadFirebaseProductsDirect = loadFirebaseProductsDirect;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(loadFirebaseProductsDirect, 800);
+    setInterval(loadFirebaseProductsDirect, 7000);
+  });
+
+  setTimeout(loadFirebaseProductsDirect, 1200);
+})();
+</script>
+

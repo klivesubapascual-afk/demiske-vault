@@ -1664,3 +1664,200 @@ document.addEventListener("DOMContentLoaded", function () {
 })();
 </script>
 
+
+<style>
+/* DIRECT FIREBASE PRODUCTS LIST FIX */
+.direct-product-list {
+  display: grid;
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.direct-product-card {
+  display: grid;
+  grid-template-columns: 95px 1fr;
+  gap: 13px;
+  padding: 13px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,70,95,0.35);
+  background: rgba(10,10,18,0.58);
+  backdrop-filter: blur(8px);
+}
+
+.direct-product-img {
+  width: 95px;
+  height: 95px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+}
+
+.direct-product-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.direct-product-info h3 {
+  margin: 0 0 5px;
+  font-size: 17px;
+}
+
+.direct-product-info p {
+  margin: 3px 0;
+  color: #bbb;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.direct-delete-btn {
+  margin-top: 9px;
+  border: 0;
+  border-radius: 13px;
+  padding: 10px 12px;
+  color: white;
+  font-weight: 900;
+  background: rgba(255,0,60,0.72);
+}
+</style>
+
+<script>
+/* FINAL FIX: ADMIN READ PRODUCTS DIRECTLY FROM FIREBASE REST */
+(function () {
+  const DB_URL = "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+  function icon(type) {
+    if (type === "account") return "🎮";
+    if (type === "key") return "🔑";
+    if (type === "other") return "📦";
+    return "🔥";
+  }
+
+  function safe(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+  }
+
+  function money(value) {
+    return "₱" + Number(value || 0).toLocaleString("en-PH");
+  }
+
+  function findFirebaseProductsArea() {
+    let area = document.getElementById("directFirebaseProductsList");
+
+    if (!area) {
+      area = document.createElement("div");
+      area.id = "directFirebaseProductsList";
+      area.className = "direct-product-list";
+
+      const headings = Array.from(document.querySelectorAll("h2"));
+      const firebaseHeading = headings.find(h => h.textContent.toLowerCase().includes("firebase products"));
+
+      if (firebaseHeading && firebaseHeading.parentElement) {
+        firebaseHeading.parentElement.appendChild(area);
+      } else {
+        document.body.appendChild(area);
+      }
+    }
+
+    return area;
+  }
+
+  async function loadAdminProductsDirect() {
+    const area = findFirebaseProductsArea();
+    area.innerHTML = "<div class='empty'>Loading Firebase products...</div>";
+
+    try {
+      const res = await fetch(DB_URL + "/products.json?ts=" + Date.now());
+
+      if (!res.ok) {
+        area.innerHTML = "<div class='empty'>Firebase read failed. Check rules.</div>";
+        return;
+      }
+
+      const data = await res.json() || {};
+      const products = Object.values(data).sort(function (a, b) {
+        return Number(b.id || 0) - Number(a.id || 0);
+      });
+
+      if (!products.length) {
+        area.innerHTML = "<div class='empty'>No Firebase products yet.</div>";
+        return;
+      }
+
+      area.innerHTML = products.map(function (p) {
+        const img = p.images && p.images[0]
+          ? `<img src="${p.images[0]}">`
+          : icon(p.productType);
+
+        return `
+          <div class="direct-product-card">
+            <div class="direct-product-img">${img}</div>
+            <div class="direct-product-info">
+              <h3>${safe(p.name || "Unnamed Product")}</h3>
+              <p>
+                <b>Type:</b> ${safe((p.productType || "product").toUpperCase())}<br>
+                <b>Price:</b> ${money(p.price)}<br>
+                <b>Status:</b> ${safe(p.status || "available")}<br>
+                <b>ID:</b> ${safe(p.id)}
+              </p>
+              <button class="direct-delete-btn" onclick="deleteFirebaseProductDirect('${safe(p.id)}')">Delete Product</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      console.log("Admin loaded products:", products.length);
+    } catch (error) {
+      area.innerHTML = "<div class='empty'>Load error: " + safe(error.message) + "</div>";
+    }
+  }
+
+  window.loadAdminProductsDirect = loadAdminProductsDirect;
+
+  window.deleteFirebaseProductDirect = async function (id) {
+    if (!confirm("Delete this product?")) return;
+
+    try {
+      const res = await fetch(DB_URL + "/products/" + id + ".json", {
+        method: "DELETE"
+      });
+
+      if (!res.ok) {
+        alert("Delete failed: " + await res.text());
+        return;
+      }
+
+      alert("Deleted.");
+      loadAdminProductsDirect();
+    } catch (error) {
+      alert("Delete error: " + error.message);
+    }
+  };
+
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+
+    const text = (btn.textContent || "").toLowerCase();
+
+    if (text === "refresh" || text.includes("refresh")) {
+      setTimeout(loadAdminProductsDirect, 200);
+    }
+  }, true);
+
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(loadAdminProductsDirect, 800);
+    setInterval(loadAdminProductsDirect, 8000);
+  });
+
+  setTimeout(loadAdminProductsDirect, 1200);
+})();
+</script>
+
