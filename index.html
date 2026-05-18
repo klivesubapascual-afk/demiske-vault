@@ -2659,3 +2659,320 @@ button[data-seller="ske"] {
 })();
 </script>
 
+
+<style>
+/* FIXED LOGIN-FIRST OVERLAY */
+.auth-gate-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background:
+    radial-gradient(circle at top left, rgba(255,0,60,0.30), transparent 35%),
+    radial-gradient(circle at bottom right, rgba(100,120,255,0.22), transparent 35%),
+    rgba(0,0,0,0.82);
+  backdrop-filter: blur(10px);
+}
+
+.auth-gate-overlay.show {
+  display: flex !important;
+}
+
+.auth-gate-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 32px 28px;
+  border-radius: 34px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.17), rgba(255,255,255,0.06));
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 0 40px rgba(255,0,60,0.24),
+    inset 0 0 20px rgba(255,255,255,0.08);
+}
+
+.auth-avatar {
+  width: 105px;
+  height: 105px;
+  margin: 0 auto 26px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,0.35), rgba(255,255,255,0.06)),
+    linear-gradient(145deg, rgba(255,0,60,0.25), rgba(100,140,255,0.25));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 54px;
+}
+
+.auth-title {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.auth-title h2 {
+  font-size: 28px;
+  margin-bottom: 6px;
+  background: linear-gradient(90deg, #ff003c, #ffffff, #7a8cff);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.auth-title p {
+  color: rgba(255,255,255,0.75);
+  font-size: 13px;
+}
+
+.auth-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid rgba(255,255,255,0.62);
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+}
+
+.auth-field span {
+  font-size: 20px;
+  width: 25px;
+}
+
+.auth-field input {
+  border: 0 !important;
+  background: transparent !important;
+  padding: 8px 0 !important;
+  color: white !important;
+  outline: none !important;
+  width: 100%;
+  font-size: 16px;
+}
+
+.auth-field input::placeholder {
+  color: rgba(255,255,255,0.72);
+}
+
+.auth-options {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -4px 0 24px;
+  color: rgba(255,255,255,0.78);
+  font-size: 13px;
+}
+
+.auth-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 18px;
+  padding: 16px;
+  color: white;
+  font-weight: 900;
+  letter-spacing: 3px;
+  background: linear-gradient(135deg, #ff003c, #6d7cff);
+  box-shadow: 0 0 26px rgba(255,0,60,0.24);
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 18px;
+  color: rgba(255,255,255,0.78);
+  font-size: 13px;
+}
+
+.auth-switch button,
+.auth-options button {
+  border: 0;
+  background: transparent;
+  color: #ffd1d8;
+  font-weight: 900;
+}
+
+body.auth-required main,
+body.auth-required .right-menu-btn,
+body.auth-required .bottom,
+body.auth-required .side-drawer,
+body.auth-required .drawer-backdrop {
+  filter: blur(10px) brightness(0.45) !important;
+  pointer-events: none !important;
+}
+</style>
+
+<div class="auth-gate-overlay" id="authGateOverlay">
+  <div class="auth-gate-card">
+    <div class="auth-avatar">👤</div>
+
+    <div class="auth-title">
+      <h2 id="authGateTitle">DemiGods Login</h2>
+      <p id="authGateSubtitle">Login before viewing the store</p>
+    </div>
+
+    <div id="authNameField" class="auth-field" style="display:none;">
+      <span>👤</span>
+      <input id="authDisplayName" placeholder="Display Name">
+    </div>
+
+    <div class="auth-field">
+      <span>✉️</span>
+      <input id="authUsername" placeholder="Email ID / Username">
+    </div>
+
+    <div class="auth-field">
+      <span>🔒</span>
+      <input id="authPassword" type="password" placeholder="Password">
+    </div>
+
+    <div id="authConfirmField" class="auth-field" style="display:none;">
+      <span>✅</span>
+      <input id="authConfirmPassword" type="password" placeholder="Confirm Password">
+    </div>
+
+    <div class="auth-options">
+      <label><input type="checkbox" checked> Remember me</label>
+      <button onclick="authForgotPassword()">Forgot Password?</button>
+    </div>
+
+    <button class="auth-btn" id="authActionBtn" onclick="authLogin()">LOGIN</button>
+
+    <div class="auth-switch">
+      <span id="authSwitchText">No account yet?</span>
+      <button onclick="toggleAuthMode()" id="authSwitchBtn">Create one</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let authMode = "login";
+
+function authAccount() {
+  try {
+    return JSON.parse(localStorage.getItem("customerAccount")) || null;
+  } catch(e) {
+    return null;
+  }
+}
+
+function authSession() {
+  try {
+    return JSON.parse(localStorage.getItem("customerSession")) || null;
+  } catch(e) {
+    return null;
+  }
+}
+
+function isAuthLoggedIn() {
+  const account = authAccount();
+  const session = authSession();
+  return !!(account && session && session.username === account.username);
+}
+
+function showAuthGate() {
+  document.body.classList.add("auth-required");
+  document.getElementById("authGateOverlay").classList.add("show");
+}
+
+function hideAuthGate() {
+  document.body.classList.remove("auth-required");
+  document.getElementById("authGateOverlay").classList.remove("show");
+}
+
+function checkAuthGate() {
+  if (isAuthLoggedIn()) {
+    hideAuthGate();
+  } else {
+    showAuthGate();
+  }
+}
+
+function toggleAuthMode() {
+  authMode = authMode === "login" ? "register" : "login";
+
+  const isRegister = authMode === "register";
+
+  document.getElementById("authNameField").style.display = isRegister ? "flex" : "none";
+  document.getElementById("authConfirmField").style.display = isRegister ? "flex" : "none";
+
+  document.getElementById("authGateTitle").innerText = isRegister ? "Create Account" : "DemiGods Login";
+  document.getElementById("authGateSubtitle").innerText = isRegister ? "Register before viewing the store" : "Login before viewing the store";
+  document.getElementById("authActionBtn").innerText = isRegister ? "REGISTER" : "LOGIN";
+  document.getElementById("authActionBtn").setAttribute("onclick", isRegister ? "authRegister()" : "authLogin()");
+  document.getElementById("authSwitchText").innerText = isRegister ? "Already have an account?" : "No account yet?";
+  document.getElementById("authSwitchBtn").innerText = isRegister ? "Login" : "Create one";
+}
+
+function authRegister() {
+  const displayName = document.getElementById("authDisplayName").value.trim();
+  const username = document.getElementById("authUsername").value.trim();
+  const password = document.getElementById("authPassword").value.trim();
+  const confirm = document.getElementById("authConfirmPassword").value.trim();
+
+  if (!displayName || !username || !password || !confirm) {
+    alert("Please complete all fields.");
+    return;
+  }
+
+  if (password !== confirm) {
+    alert("Passwords do not match.");
+    return;
+  }
+
+  const account = {
+    displayName,
+    username,
+    password,
+    createdAt: new Date().toLocaleString()
+  };
+
+  localStorage.setItem("customerAccount", JSON.stringify(account));
+  localStorage.setItem("customerSession", JSON.stringify({ username }));
+
+  if (typeof refreshCustomerUI === "function") refreshCustomerUI();
+
+  hideAuthGate();
+  alert("Account created. Welcome to DemiGods.");
+}
+
+function authLogin() {
+  const username = document.getElementById("authUsername").value.trim();
+  const password = document.getElementById("authPassword").value.trim();
+  const account = authAccount();
+
+  if (!account) {
+    alert("No account found on this device. Please create one.");
+    toggleAuthMode();
+    return;
+  }
+
+  if (username === account.username && password === account.password) {
+    localStorage.setItem("customerSession", JSON.stringify({ username: account.username }));
+
+    if (typeof refreshCustomerUI === "function") refreshCustomerUI();
+
+    hideAuthGate();
+    alert("Login successful.");
+  } else {
+    alert("Wrong email/username or password.");
+  }
+}
+
+function authForgotPassword() {
+  const account = authAccount();
+
+  if (!account) {
+    alert("No saved account on this device. Please create a new account.");
+    return;
+  }
+
+  alert("Saved username: " + account.username + "\\nIf you forgot your password, create a new account.");
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(checkAuthGate, 300);
+});
+
+setTimeout(checkAuthGate, 500);
+</script>
+
