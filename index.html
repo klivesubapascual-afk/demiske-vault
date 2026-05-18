@@ -3062,3 +3062,81 @@ body:not(.auth-required):not(.customer-auth-locked) #registerModal {
 })();
 </script>
 
+
+<script type="module">
+/* SAVE CUSTOMER ORDERS TO FIREBASE FOR ADMIN LEADERBOARD */
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCpxfXFVrcKa-3wE6m4DLXN5j6kKW1d9Tk",
+  authDomain: "demiske-vault.firebaseapp.com",
+  databaseURL: "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "demiske-vault",
+  storageBucket: "demiske-vault.firebasestorage.app",
+  messagingSenderId: "269369179527",
+  appId: "1:269369179527:web:1db8cd077345886234a722",
+  measurementId: "G-2JV5DSTMBG"
+};
+
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window.submitOrder = async function () {
+  const name = document.getElementById("buyerName")?.value.trim();
+  const contact = document.getElementById("buyerContact")?.value.trim();
+  const payment = document.getElementById("paymentMethod")?.value.trim();
+
+  if (!activeProduct) {
+    alert("No product selected.");
+    return;
+  }
+
+  if (!name || !contact || !payment) {
+    alert("Please complete your name, Telegram, and payment method.");
+    return;
+  }
+
+  const orderId = "DG-" + Date.now().toString().slice(-6);
+
+  const orderData = {
+    orderId: orderId,
+    customerName: name,
+    contact: contact,
+    paymentMethod: payment,
+    productId: activeProduct.id || "",
+    productName: activeProduct.name || "Unnamed Product",
+    productType: activeProduct.productType || "product",
+    price: Number(activeProduct.price || 0),
+    seller: "Demi",
+    status: "Pending",
+    createdAt: new Date().toLocaleString(),
+    timestamp: serverTimestamp()
+  };
+
+  try {
+    await set(ref(db, "orders/" + orderId), orderData);
+
+    if (typeof closeModal === "function") closeModal("buyModal");
+
+    const success = document.getElementById("orderSuccessText");
+    if (success) {
+      success.innerHTML =
+        `Your order has been submitted.<br><br>` +
+        `<b>Order ID:</b> ${orderId}<br>` +
+        `<b>Status:</b> Pending<br><br>` +
+        `Please wait for confirmation.`;
+    }
+
+    if (typeof openModal === "function") openModal("orderSuccessModal");
+    else alert("Order submitted. Order ID: " + orderId);
+
+    document.getElementById("buyerName").value = "";
+    document.getElementById("buyerContact").value = "";
+    document.getElementById("paymentMethod").value = "";
+  } catch (error) {
+    alert("Order failed to save: " + error.message);
+  }
+};
+</script>
+

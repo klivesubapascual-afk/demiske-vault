@@ -490,3 +490,233 @@ setInterval(function () {
 }, 500);
 </script>
 
+
+<style>
+/* ADMIN CUSTOMER LEADERBOARD */
+.leaderboard-section {
+  margin: 24px 0 110px;
+}
+
+.leaderboard-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.leaderboard-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 15px;
+  border-radius: 22px;
+  border: 1px solid rgba(255,70,95,0.38);
+  background: rgba(10,10,18,0.58);
+  backdrop-filter: blur(9px);
+  box-shadow: 0 0 18px rgba(255,0,60,0.12);
+}
+
+.leader-rank {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: linear-gradient(135deg,#ff003c,#ff6a00);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 18px;
+}
+
+.leader-info h3 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.leader-info p {
+  color: #aaa;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.leader-stats {
+  text-align: right;
+}
+
+.leader-stats strong {
+  display: block;
+  color: #ffb8c2;
+  font-size: 18px;
+}
+
+.leader-stats span {
+  color: #aaa;
+  font-size: 12px;
+}
+
+.admin-order-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.admin-order-card {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,70,95,0.32);
+  background: rgba(255,255,255,0.05);
+}
+
+.admin-order-card h3 {
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.admin-order-card p {
+  color: #ccc;
+  font-size: 13px;
+  line-height: 1.45;
+}
+</style>
+
+<section class="wrap leaderboard-section" id="adminLeaderboardSection">
+  <div class="title">
+    <h2>🏆 Customer Leaderboard</h2>
+    <p>Top customers based on Firebase website orders.</p>
+  </div>
+
+  <div class="leaderboard-grid" id="customerLeaderboard">
+    <div class="empty">Loading leaderboard...</div>
+  </div>
+
+  <div class="title">
+    <h2>📦 Recent Orders</h2>
+    <p>Latest orders submitted from the customer website.</p>
+  </div>
+
+  <div class="admin-order-list" id="adminRecentOrders">
+    <div class="empty">Loading orders...</div>
+  </div>
+</section>
+
+<script type="module">
+/* ADMIN FIREBASE ORDER LEADERBOARD */
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCpxfXFVrcKa-3wE6m4DLXN5j6kKW1d9Tk",
+  authDomain: "demiske-vault.firebaseapp.com",
+  databaseURL: "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "demiske-vault",
+  storageBucket: "demiske-vault.firebasestorage.app",
+  messagingSenderId: "269369179527",
+  appId: "1:269369179527:web:1db8cd077345886234a722",
+  measurementId: "G-2JV5DSTMBG"
+};
+
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+function money(n) {
+  return "₱" + Number(n || 0).toLocaleString("en-PH");
+}
+
+function safe(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+function renderLeaderboard(orders) {
+  const board = document.getElementById("customerLeaderboard");
+  if (!board) return;
+
+  const map = {};
+
+  orders.forEach(order => {
+    const key = (order.contact || order.customerName || "Unknown").toLowerCase();
+
+    if (!map[key]) {
+      map[key] = {
+        name: order.customerName || "Unknown Customer",
+        contact: order.contact || "No contact",
+        orders: 0,
+        pending: 0,
+        total: 0,
+        latest: order.createdAt || "N/A"
+      };
+    }
+
+    map[key].orders += 1;
+    map[key].total += Number(order.price || 0);
+
+    if ((order.status || "Pending").toLowerCase() === "pending") {
+      map[key].pending += 1;
+    }
+
+    map[key].latest = order.createdAt || map[key].latest;
+  });
+
+  const leaders = Object.values(map)
+    .sort((a, b) => b.total - a.total || b.orders - a.orders)
+    .slice(0, 10);
+
+  if (!leaders.length) {
+    board.innerHTML = `<div class="empty">No customer orders yet.</div>`;
+    return;
+  }
+
+  board.innerHTML = leaders.map((c, i) => `
+    <div class="leaderboard-card">
+      <div class="leader-rank">${i + 1}</div>
+      <div class="leader-info">
+        <h3>${safe(c.name)}</h3>
+        <p>${safe(c.contact)}<br>${c.orders} order(s) • ${c.pending} pending</p>
+      </div>
+      <div class="leader-stats">
+        <strong>${money(c.total)}</strong>
+        <span>Total spent</span>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderRecentOrders(orders) {
+  const list = document.getElementById("adminRecentOrders");
+  if (!list) return;
+
+  const recent = orders.slice(0, 12);
+
+  if (!recent.length) {
+    list.innerHTML = `<div class="empty">No recent orders yet.</div>`;
+    return;
+  }
+
+  list.innerHTML = recent.map(order => `
+    <div class="admin-order-card">
+      <h3>${safe(order.orderId || "Order")} — ${safe(order.productName || "Product")}</h3>
+      <p>
+        <b>Customer:</b> ${safe(order.customerName || "Unknown")}<br>
+        <b>Contact:</b> ${safe(order.contact || "N/A")}<br>
+        <b>Price:</b> ${money(order.price)}<br>
+        <b>Status:</b> ${safe(order.status || "Pending")}<br>
+        <b>Date:</b> ${safe(order.createdAt || "N/A")}
+      </p>
+    </div>
+  `).join("");
+}
+
+onValue(ref(db, "orders"), snapshot => {
+  const data = snapshot.val() || {};
+  const orders = Object.values(data).sort((a, b) => {
+    const ax = String(a.orderId || "").replace(/\D/g, "");
+    const bx = String(b.orderId || "").replace(/\D/g, "");
+    return Number(bx) - Number(ax);
+  });
+
+  renderLeaderboard(orders);
+  renderRecentOrders(orders);
+});
+</script>
+
