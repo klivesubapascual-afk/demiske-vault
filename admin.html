@@ -27,3 +27,387 @@ window.adminLogin = function () {
 };
 </script>
 
+
+<style>
+/* ORDER MANAGEMENT + LEADERBOARD */
+.order-tools {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.order-card {
+  border: 1px solid rgba(255,70,95,.38);
+  background: rgba(10,10,18,.66);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 15px;
+}
+
+.order-card h3 {
+  font-size: 17px;
+  margin-bottom: 8px;
+}
+
+.order-card p {
+  color: #bbb;
+  line-height: 1.45;
+  font-size: 13px;
+}
+
+.order-status {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  margin: 5px 0 9px;
+}
+
+.status-pending {
+  background: rgba(255, 180, 0, .18);
+  color: #ffe0a0;
+}
+
+.status-accepted {
+  background: rgba(0, 150, 255, .18);
+  color: #a8dcff;
+}
+
+.status-completed {
+  background: rgba(0, 255, 136, .16);
+  color: #aaffd3;
+}
+
+.status-cancelled {
+  background: rgba(255, 0, 60, .18);
+  color: #ffb8c2;
+}
+
+.order-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.order-actions button {
+  padding: 11px 8px;
+  font-size: 12px;
+}
+
+.accept-btn {
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+}
+
+.complete-btn {
+  background: linear-gradient(135deg, #00c853, #00ff88);
+}
+
+.cancel-btn {
+  background: rgba(255,0,60,.70);
+}
+
+.leaderboard-card {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid rgba(255,70,95,.38);
+  background: rgba(10,10,18,.66);
+  backdrop-filter: blur(10px);
+  border-radius: 22px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.leader-rank {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff003c, #ff6a00);
+}
+
+.leader-info h3 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.leader-info p {
+  color: #aaa;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.leader-total {
+  text-align: right;
+}
+
+.leader-total strong {
+  display: block;
+  color: #ffb8c2;
+  font-size: 18px;
+}
+
+.leader-total span {
+  color: #aaa;
+  font-size: 11px;
+}
+
+@media(max-width:720px) {
+  .order-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .leaderboard-card {
+    grid-template-columns: 44px 1fr;
+  }
+
+  .leader-total {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+}
+</style>
+
+<script>
+/* ADMIN ORDER ACCEPT + LEADERBOARD FIX */
+(function () {
+  const DB = "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+  function safe(v) {
+    return String(v ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+  }
+
+  function money(v) {
+    return "₱" + Number(v || 0).toLocaleString("en-PH");
+  }
+
+  function statusClass(status) {
+    status = String(status || "Pending").toLowerCase();
+
+    if (status === "accepted") return "status-accepted";
+    if (status === "completed") return "status-completed";
+    if (status === "cancelled") return "status-cancelled";
+
+    return "status-pending";
+  }
+
+  async function getOrders() {
+    const res = await fetch(DB + "/orders.json?ts=" + Date.now());
+    const data = await res.json() || {};
+
+    return Object.values(data).sort(function (a, b) {
+      return Number(b.createdAtMs || String(b.orderId || "").replace(/\D/g, "") || 0)
+        - Number(a.createdAtMs || String(a.orderId || "").replace(/\D/g, "") || 0);
+    });
+  }
+
+  async function updateOrderStatus(orderId, status) {
+    if (!orderId) {
+      alert("Order ID missing.");
+      return;
+    }
+
+    const res = await fetch(DB + "/orders/" + orderId + ".json", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        status: status,
+        updatedAt: new Date().toLocaleString(),
+        updatedAtMs: Date.now()
+      })
+    });
+
+    if (!res.ok) {
+      alert("Failed to update order: " + await res.text());
+      return;
+    }
+
+    alert("Order marked as " + status + ".");
+    loadAdminOrdersAndLeaderboard();
+  }
+
+  window.acceptOrder = function (orderId) {
+    updateOrderStatus(orderId, "Accepted");
+  };
+
+  window.completeOrder = function (orderId) {
+    updateOrderStatus(orderId, "Completed");
+  };
+
+  window.cancelOrder = function (orderId) {
+    if (!confirm("Cancel this order?")) return;
+    updateOrderStatus(orderId, "Cancelled");
+  };
+
+  function renderOrders(orders) {
+    const box = document.getElementById("orders");
+    if (!box) return;
+
+    if (!orders.length) {
+      box.innerHTML = `<div class="panel">No orders yet.</div>`;
+      return;
+    }
+
+    box.innerHTML = `
+      <div class="order-tools">
+        ${orders.map(function (o) {
+          const status = o.status || "Pending";
+
+          return `
+            <div class="order-card">
+              <h3>${safe(o.orderId || "Order")} — ${safe(o.productName || "Product")}</h3>
+
+              <span class="order-status ${statusClass(status)}">${safe(status).toUpperCase()}</span>
+
+              <p>
+                <b>Customer:</b> ${safe(o.customerName || "Unknown")}<br>
+                <b>Contact:</b> ${safe(o.contact || "N/A")}<br>
+                <b>Payment:</b> ${safe(o.paymentMethod || "N/A")}<br>
+                <b>Price:</b> ${money(o.price)}<br>
+                <b>Note:</b> ${safe(o.note || "None")}<br>
+                <b>Date:</b> ${safe(o.createdAt || "N/A")}
+              </p>
+
+              <div class="order-actions">
+                <button class="accept-btn" onclick="acceptOrder('${safe(o.orderId)}')">Accept</button>
+                <button class="complete-btn" onclick="completeOrder('${safe(o.orderId)}')">Complete</button>
+                <button class="cancel-btn" onclick="cancelOrder('${safe(o.orderId)}')">Cancel</button>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  function ensureLeaderboardBox() {
+    let box = document.getElementById("customerLeaderboardBox");
+
+    if (!box) {
+      const section = document.createElement("section");
+      section.innerHTML = `
+        <div class="title">
+          <h2>🏆 Customer Leaderboard</h2>
+          <p>Top customers by orders and total spent.</p>
+        </div>
+        <div id="customerLeaderboardBox">
+          <div class="panel">Loading leaderboard...</div>
+        </div>
+      `;
+
+      const ordersBox = document.getElementById("orders");
+
+      if (ordersBox && ordersBox.parentElement) {
+        ordersBox.parentElement.after(section);
+      } else {
+        document.querySelector("main")?.appendChild(section);
+      }
+
+      box = document.getElementById("customerLeaderboardBox");
+    }
+
+    return box;
+  }
+
+  function renderLeaderboard(orders) {
+    const box = ensureLeaderboardBox();
+
+    const map = {};
+
+    orders.forEach(function (o) {
+      const key = String(o.contact || o.customerName || "unknown").toLowerCase();
+      const status = String(o.status || "Pending").toLowerCase();
+
+      if (!map[key]) {
+        map[key] = {
+          name: o.customerName || "Unknown Customer",
+          contact: o.contact || "No contact",
+          total: 0,
+          orders: 0,
+          pending: 0,
+          accepted: 0,
+          completed: 0,
+          cancelled: 0
+        };
+      }
+
+      map[key].orders += 1;
+
+      if (status === "completed") {
+        map[key].completed += 1;
+        map[key].total += Number(o.price || 0);
+      } else if (status === "accepted") {
+        map[key].accepted += 1;
+      } else if (status === "cancelled") {
+        map[key].cancelled += 1;
+      } else {
+        map[key].pending += 1;
+      }
+    });
+
+    const leaders = Object.values(map)
+      .sort(function (a, b) {
+        return b.total - a.total || b.completed - a.completed || b.orders - a.orders;
+      })
+      .slice(0, 10);
+
+    if (!leaders.length) {
+      box.innerHTML = `<div class="panel">No leaderboard data yet.</div>`;
+      return;
+    }
+
+    box.innerHTML = leaders.map(function (c, index) {
+      return `
+        <div class="leaderboard-card">
+          <div class="leader-rank">${index + 1}</div>
+
+          <div class="leader-info">
+            <h3>${safe(c.name)}</h3>
+            <p>
+              ${safe(c.contact)}<br>
+              ${c.orders} total order(s) • ${c.completed} completed • ${c.pending} pending
+            </p>
+          </div>
+
+          <div class="leader-total">
+            <strong>${money(c.total)}</strong>
+            <span>Completed spent</span>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  window.loadAdminOrdersAndLeaderboard = async function () {
+    try {
+      const orders = await getOrders();
+      renderOrders(orders);
+      renderLeaderboard(orders);
+    } catch (error) {
+      const box = document.getElementById("orders");
+      if (box) box.innerHTML = `<div class="panel">Order load error: ${safe(error.message)}</div>`;
+    }
+  };
+
+  // Override old loadOrders if present
+  window.loadOrders = window.loadAdminOrdersAndLeaderboard;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(loadAdminOrdersAndLeaderboard, 500);
+    setInterval(loadAdminOrdersAndLeaderboard, 6000);
+  });
+
+  setTimeout(loadAdminOrdersAndLeaderboard, 800);
+})();
+</script>
+
