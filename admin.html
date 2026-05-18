@@ -1200,3 +1200,224 @@ setInterval(function() {
 }, 800);
 </script>
 
+
+<style>
+/* FORCE ADMIN UPLOAD FIX */
+#productPictures {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.force-upload-btn {
+  width: 100%;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 18px;
+  padding: 16px;
+  color: white;
+  font-weight: 900;
+  font-size: 16px;
+  background: linear-gradient(135deg, #00c853, #00ff88);
+  box-shadow: 0 0 25px rgba(0,255,136,0.25);
+}
+</style>
+
+<script type="module">
+/* FINAL FORCE UPLOAD PRODUCT TO FIREBASE */
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const finalFirebaseConfig = {
+  apiKey: "AIzaSyCpxfXFVrcKa-3wE6m4DLXN5j6kKW1d9Tk",
+  authDomain: "demiske-vault.firebaseapp.com",
+  databaseURL: "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "demiske-vault",
+  storageBucket: "demiske-vault.firebasestorage.app",
+  messagingSenderId: "269369179527",
+  appId: "1:269369179527:web:1db8cd077345886234a722",
+  measurementId: "G-2JV5DSTMBG"
+};
+
+const finalApp = getApps().length ? getApp() : initializeApp(finalFirebaseConfig);
+const finalDb = getDatabase(finalApp);
+
+function f$(id) {
+  return document.getElementById(id);
+}
+
+function fVal(id) {
+  return (f$(id)?.value || "").trim();
+}
+
+function detectFinalType() {
+  if (fVal("accountName") || fVal("accountPrice") || fVal("accountLevel") || fVal("accountUid") || fVal("accountRegion")) {
+    return "account";
+  }
+
+  if (fVal("keyName") || fVal("keyPrice") || fVal("keyDuration") || fVal("keyGame") || fVal("keyPlatform")) {
+    return "key";
+  }
+
+  if (fVal("otherName") || fVal("otherPrice") || fVal("otherCategory")) {
+    return "other";
+  }
+
+  const active = document.querySelector(".typeBtn.active");
+  const text = (active?.textContent || "").toLowerCase();
+
+  if (text.includes("account")) return "account";
+  if (text.includes("key")) return "key";
+  if (text.includes("service") || text.includes("other")) return "other";
+
+  return "";
+}
+
+function compressImage(file) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = e => {
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const max = 650;
+
+        let w = img.width;
+        let h = img.height;
+
+        if (w > h && w > max) {
+          h = Math.round(h * max / w);
+          w = max;
+        } else if (h > max) {
+          w = Math.round(w * max / h);
+          h = max;
+        }
+
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+
+        resolve(canvas.toDataURL("image/jpeg", 0.50));
+      };
+
+      img.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+async function getFinalImages() {
+  const images = [];
+  const input = f$("productPictures");
+
+  if (input && input.files && input.files.length) {
+    const files = Array.from(input.files).slice(0, 3);
+
+    for (const file of files) {
+      images.push(await compressImage(file));
+    }
+  }
+
+  if (!images.length) {
+    document.querySelectorAll("#previewGrid img").forEach(img => {
+      if (img.src) images.push(img.src);
+    });
+  }
+
+  return images.slice(0, 3);
+}
+
+window.forceUploadProduct = async function () {
+  const type = detectFinalType();
+
+  if (!type) {
+    alert("Please choose/fill Account, Key, or Service first.");
+    return;
+  }
+
+  const images = await getFinalImages();
+  const id = String(Date.now());
+
+  let product = {
+    id: id,
+    productType: type,
+    images: images,
+    imagesCount: images.length,
+    seller: "demi",
+    status: "available",
+    featured: false,
+    createdAt: new Date().toLocaleString(),
+    createdAtServer: serverTimestamp()
+  };
+
+  if (type === "account") {
+    if (!fVal("accountName") || !fVal("accountPrice")) {
+      alert("Account Name and Price are required.");
+      return;
+    }
+
+    product.name = fVal("accountName");
+    product.price = fVal("accountPrice");
+    product.level = fVal("accountLevel");
+    product.uid = fVal("accountUid");
+    product.region = fVal("accountRegion");
+    product.description = fVal("accountDescription");
+  }
+
+  if (type === "key") {
+    if (!fVal("keyName") || !fVal("keyPrice")) {
+      alert("Key Name and Price are required.");
+      return;
+    }
+
+    product.name = fVal("keyName");
+    product.price = fVal("keyPrice");
+    product.duration = fVal("keyDuration");
+    product.game = fVal("keyGame");
+    product.platform = fVal("keyPlatform");
+    product.description = fVal("keyDescription");
+  }
+
+  if (type === "other") {
+    if (!fVal("otherName") || !fVal("otherPrice")) {
+      alert("Service Name and Price are required.");
+      return;
+    }
+
+    product.name = fVal("otherName");
+    product.price = fVal("otherPrice");
+    product.category = fVal("otherCategory");
+    product.description = fVal("otherDescription");
+    product.availability = "Available";
+  }
+
+  try {
+    alert("Uploading product to Firebase...");
+    await set(ref(finalDb, "products/" + id), product);
+    alert("✅ Uploaded successfully. Check customer website now.");
+  } catch (error) {
+    alert("❌ Upload failed: " + error.message);
+  }
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+  if (!document.getElementById("forceUploadBtn")) {
+    const btn = document.createElement("button");
+    btn.id = "forceUploadBtn";
+    btn.className = "force-upload-btn";
+    btn.innerText = "FORCE UPLOAD PRODUCT";
+    btn.onclick = window.forceUploadProduct;
+
+    const live = document.querySelector(".live");
+    if (live) {
+      live.after(btn);
+    } else {
+      document.body.appendChild(btn);
+    }
+  }
+});
+</script>
+
