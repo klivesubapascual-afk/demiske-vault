@@ -724,3 +724,551 @@ window.adminLogin = function () {
 })();
 </script>
 
+
+<style>
+/* PREMIUM LEADERBOARD UI LIKE GAME RANKING */
+.premium-leaderboard-btn {
+  width: 100%;
+  margin: 12px 0 18px;
+  border: 0;
+  border-radius: 22px;
+  padding: 17px;
+  color: white;
+  font-size: 17px;
+  font-weight: 900;
+  background:
+    radial-gradient(circle at top right, rgba(255, 215, 0, .30), transparent 35%),
+    linear-gradient(135deg, #ff003c, #ff6a00);
+  box-shadow: 0 0 28px rgba(255, 0, 60, .30);
+}
+
+.lb-screen {
+  position: relative;
+  z-index: 3;
+  padding-bottom: 80px;
+}
+
+.lb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0 18px;
+}
+
+.lb-back {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.07);
+  font-size: 24px;
+}
+
+.lb-title {
+  font-size: 31px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.lb-menu {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.07);
+  font-size: 22px;
+}
+
+.lb-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 8px;
+  gap: 8px;
+  border-radius: 22px;
+  background: rgba(16, 20, 42, .82);
+  border: 1px solid rgba(255,255,255,.08);
+  margin-bottom: 26px;
+}
+
+.lb-tab {
+  background: transparent;
+  color: #d9defd;
+  border-radius: 16px;
+  font-weight: 900;
+  position: relative;
+}
+
+.lb-tab.active {
+  background: rgba(255,255,255,.08) !important;
+  color: white;
+}
+
+.lb-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  bottom: 5px;
+  height: 3px;
+  border-radius: 999px;
+  background: #7da7ff;
+  box-shadow: 0 0 12px #7da7ff;
+}
+
+.lb-podium {
+  display: grid;
+  grid-template-columns: 1fr 1.12fr 1fr;
+  align-items: end;
+  gap: 0;
+  margin: 14px 0 28px;
+}
+
+.lb-top-card {
+  min-height: 210px;
+  padding: 14px 10px;
+  text-align: center;
+  background: rgba(24, 29, 55, .84);
+  border: 1px solid rgba(255,255,255,.06);
+  box-shadow: 0 0 24px rgba(0,0,0,.28);
+}
+
+.lb-top-card.rank-2 {
+  border-radius: 24px 0 0 24px;
+  transform: translateY(20px);
+}
+
+.lb-top-card.rank-1 {
+  min-height: 250px;
+  border-radius: 28px 28px 0 0;
+  background:
+    radial-gradient(circle at top, rgba(255, 215, 0, .20), transparent 38%),
+    rgba(30, 35, 66, .92);
+}
+
+.lb-top-card.rank-3 {
+  border-radius: 0 24px 24px 0;
+  transform: translateY(20px);
+}
+
+.lb-avatar-wrap {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  margin: 0 auto 12px;
+}
+
+.lb-top-card.rank-1 .lb-avatar-wrap {
+  width: 108px;
+  height: 108px;
+}
+
+.lb-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 28px;
+  background: linear-gradient(135deg, #ff003c, #ff6a00);
+  border: 4px solid rgba(255,255,255,.12);
+  box-shadow: 0 0 22px rgba(255,0,60,.25);
+}
+
+.rank-1 .lb-avatar {
+  border-color: #ffd54a;
+}
+
+.rank-2 .lb-avatar {
+  border-color: #32a8ff;
+}
+
+.rank-3 .lb-avatar {
+  border-color: #00ff88;
+}
+
+.lb-crown {
+  position: absolute;
+  top: -34px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 36px;
+}
+
+.lb-rank-badge {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 34px;
+  height: 28px;
+  border-radius: 14px 14px 16px 16px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 13px;
+  color: white;
+  background: linear-gradient(135deg, #ff003c, #ff6a00);
+}
+
+.rank-2 .lb-rank-badge {
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+}
+
+.rank-3 .lb-rank-badge {
+  background: linear-gradient(135deg, #00c853, #00ff88);
+}
+
+.lb-name {
+  font-size: 17px;
+  font-weight: 900;
+  margin-top: 12px;
+}
+
+.lb-score {
+  font-size: 23px;
+  font-weight: 900;
+  margin: 7px 0;
+  color: #ffd54a;
+}
+
+.rank-2 .lb-score {
+  color: #32a8ff;
+}
+
+.rank-3 .lb-score {
+  color: #00ff88;
+}
+
+.lb-contact {
+  color: #7f86a8;
+  font-size: 12px;
+}
+
+.lb-list {
+  margin-top: 22px;
+  border-radius: 30px;
+  background: rgba(24, 29, 55, .76);
+  border: 1px solid rgba(255,255,255,.06);
+  padding: 14px;
+}
+
+.lb-row {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 2px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.lb-row:last-child {
+  border-bottom: none;
+}
+
+.lb-small-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  background: linear-gradient(135deg, rgba(255,0,60,.85), rgba(255,106,0,.85));
+}
+
+.lb-row-name {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.lb-row-contact {
+  color: #7f86a8;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.lb-row-score {
+  font-size: 17px;
+  font-weight: 900;
+  text-align: right;
+}
+
+.lb-trend {
+  font-size: 12px;
+  color: #00ff88;
+  display: block;
+  margin-top: 4px;
+}
+
+.lb-empty {
+  padding: 24px;
+  text-align: center;
+  color: #ffb8c2;
+}
+
+@media(max-width:720px) {
+  .lb-podium {
+    gap: 0;
+  }
+
+  .lb-top-card {
+    min-height: 185px;
+    padding: 12px 7px;
+  }
+
+  .lb-top-card.rank-1 {
+    min-height: 225px;
+  }
+
+  .lb-avatar-wrap {
+    width: 74px;
+    height: 74px;
+  }
+
+  .lb-top-card.rank-1 .lb-avatar-wrap {
+    width: 90px;
+    height: 90px;
+  }
+
+  .lb-name {
+    font-size: 14px;
+  }
+
+  .lb-score {
+    font-size: 19px;
+  }
+
+  .lb-contact {
+    font-size: 10px;
+  }
+}
+</style>
+
+<script>
+/* PREMIUM GAME-STYLE LEADERBOARD */
+(function () {
+  const DB = "https://demiske-vault-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+  function safe(v) {
+    return String(v ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+  }
+
+  function scoreMoney(v) {
+    return Number(v || 0).toLocaleString("en-PH");
+  }
+
+  function initials(name) {
+    name = String(name || "DG").trim();
+
+    const parts = name.split(/\s+/).filter(Boolean);
+
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+
+    return name.slice(0, 2).toUpperCase();
+  }
+
+  async function getActiveOrders() {
+    const res = await fetch(DB + "/orders.json?ts=" + Date.now());
+    const data = await res.json() || {};
+    return Object.values(data);
+  }
+
+  async function getCompletedOrders() {
+    const res = await fetch(DB + "/completedOrders.json?ts=" + Date.now());
+    const data = await res.json() || {};
+    return Object.values(data);
+  }
+
+  async function buildLeaderboard() {
+    const active = await getActiveOrders();
+    const completed = await getCompletedOrders();
+
+    const map = {};
+
+    completed.forEach(o => {
+      const key = String(o.contact || o.customerName || "unknown").toLowerCase();
+
+      if (!map[key]) {
+        map[key] = {
+          name: o.customerName || "Unknown",
+          contact: o.contact || "@username",
+          score: 0,
+          completed: 0,
+          pending: 0
+        };
+      }
+
+      map[key].score += Number(o.price || 0);
+      map[key].completed++;
+    });
+
+    active.forEach(o => {
+      const key = String(o.contact || o.customerName || "unknown").toLowerCase();
+
+      if (!map[key]) {
+        map[key] = {
+          name: o.customerName || "Unknown",
+          contact: o.contact || "@username",
+          score: 0,
+          completed: 0,
+          pending: 0
+        };
+      }
+
+      map[key].pending++;
+    });
+
+    return Object.values(map)
+      .sort((a, b) => b.score - a.score || b.completed - a.completed || b.pending - a.pending)
+      .slice(0, 20);
+  }
+
+  function topCard(user, rank) {
+    if (!user) {
+      return `
+        <div class="lb-top-card rank-${rank}">
+          <div class="lb-avatar-wrap">
+            ${rank === 1 ? `<div class="lb-crown">👑</div>` : ""}
+            <div class="lb-avatar">?</div>
+            <div class="lb-rank-badge">${rank}</div>
+          </div>
+          <div class="lb-name">Empty</div>
+          <div class="lb-score">0</div>
+          <div class="lb-contact">@username</div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="lb-top-card rank-${rank}">
+        <div class="lb-avatar-wrap">
+          ${rank === 1 ? `<div class="lb-crown">👑</div>` : ""}
+          <div class="lb-avatar">${initials(user.name)}</div>
+          <div class="lb-rank-badge">${rank}</div>
+        </div>
+        <div class="lb-name">${safe(user.name)}</div>
+        <div class="lb-score">${scoreMoney(user.score)}</div>
+        <div class="lb-contact">${safe(user.contact || "@username")}</div>
+      </div>
+    `;
+  }
+
+  function row(user, index) {
+    return `
+      <div class="lb-row">
+        <div class="lb-small-avatar">${initials(user.name)}</div>
+
+        <div>
+          <div class="lb-row-name">${safe(user.name)}</div>
+          <div class="lb-row-contact">${safe(user.contact || "@username")}</div>
+        </div>
+
+        <div class="lb-row-score">
+          ${scoreMoney(user.score)}
+          <span class="lb-trend">▲ #${index + 1}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  window.openPremiumLeaderboard = async function () {
+    document.querySelectorAll(".section").forEach(s => s.classList.add("hidden"));
+
+    let section = document.getElementById("premiumLeaderboard");
+
+    if (!section) {
+      section = document.createElement("section");
+      section.id = "premiumLeaderboard";
+      section.className = "section lb-screen";
+
+      const main = document.querySelector("main") || document.body;
+      main.appendChild(section);
+    }
+
+    section.classList.remove("hidden");
+
+    section.innerHTML = `
+      <div class="lb-header">
+        <button class="lb-back" onclick="goSection('add', document.querySelector('.tab'))">‹</button>
+        <div class="lb-title">Leaderboard</div>
+        <button class="lb-menu">✥</button>
+      </div>
+
+      <div class="lb-tabs">
+        <button class="lb-tab active">Region</button>
+        <button class="lb-tab">National</button>
+        <button class="lb-tab">Global</button>
+      </div>
+
+      <div class="lb-empty">Loading leaderboard...</div>
+    `;
+
+    const leaders = await buildLeaderboard();
+
+    if (!leaders.length) {
+      section.innerHTML += `<div class="lb-empty">No completed customers yet.</div>`;
+      return;
+    }
+
+    const first = leaders[0];
+    const second = leaders[1];
+    const third = leaders[2];
+    const rest = leaders.slice(3);
+
+    section.innerHTML = `
+      <div class="lb-header">
+        <button class="lb-back" onclick="goSection('add', document.querySelector('.tab'))">‹</button>
+        <div class="lb-title">Leaderboard</div>
+        <button class="lb-menu">✥</button>
+      </div>
+
+      <div class="lb-tabs">
+        <button class="lb-tab active">Region</button>
+        <button class="lb-tab">National</button>
+        <button class="lb-tab">Global</button>
+      </div>
+
+      <div class="lb-podium">
+        ${topCard(second, 2)}
+        ${topCard(first, 1)}
+        ${topCard(third, 3)}
+      </div>
+
+      <div class="lb-list">
+        ${
+          rest.length
+          ? rest.map((u, i) => row(u, i + 3)).join("")
+          : `<div class="lb-empty">No more customers yet.</div>`
+        }
+      </div>
+    `;
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  document.addEventListener("DOMContentLoaded", function () {
+    if (!document.getElementById("premiumLeaderboardBtn")) {
+      const btn = document.createElement("button");
+      btn.id = "premiumLeaderboardBtn";
+      btn.className = "premium-leaderboard-btn";
+      btn.innerHTML = "🏆 Open Premium Leaderboard";
+      btn.onclick = window.openPremiumLeaderboard;
+
+      const tabs = document.querySelector(".tabs");
+      if (tabs) tabs.after(btn);
+      else document.querySelector("main")?.prepend(btn);
+    }
+
+    const oldLeaderboardTab = Array.from(document.querySelectorAll("button"))
+      .find(btn => (btn.textContent || "").toLowerCase().trim() === "leaderboard");
+
+    if (oldLeaderboardTab) {
+      oldLeaderboardTab.onclick = window.openPremiumLeaderboard;
+    }
+  });
+})();
+</script>
+
