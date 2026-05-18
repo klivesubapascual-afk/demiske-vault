@@ -2976,3 +2976,89 @@ document.addEventListener("DOMContentLoaded", function () {
 setTimeout(checkAuthGate, 500);
 </script>
 
+
+<style>
+/* FIX: REMOVE BLUR AFTER CUSTOMER LOGIN */
+body:not(.auth-required):not(.customer-auth-locked) main,
+body:not(.auth-required):not(.customer-auth-locked) .wrap,
+body:not(.auth-required):not(.customer-auth-locked) .right-menu-btn,
+body:not(.auth-required):not(.customer-auth-locked) .bottom,
+body:not(.auth-required):not(.customer-auth-locked) .side-drawer,
+body:not(.auth-required):not(.customer-auth-locked) .drawer-backdrop {
+  filter: none !important;
+  pointer-events: auto !important;
+  user-select: auto !important;
+}
+
+body:not(.auth-required):not(.customer-auth-locked) #authGateOverlay {
+  display: none !important;
+}
+
+body:not(.auth-required):not(.customer-auth-locked) #loginModal,
+body:not(.auth-required):not(.customer-auth-locked) #registerModal {
+  display: none !important;
+}
+</style>
+
+<script>
+(function () {
+  function getJSON(key) {
+    try {
+      return JSON.parse(localStorage.getItem(key)) || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function loggedIn() {
+    const account = getJSON("customerAccount");
+    const session = getJSON("customerSession");
+
+    return !!(account && session && session.username === account.username);
+  }
+
+  function unlockWebsite() {
+    if (!loggedIn()) return;
+
+    document.body.classList.remove("auth-required");
+    document.body.classList.remove("customer-auth-locked");
+
+    const authGate = document.getElementById("authGateOverlay");
+    const loginModal = document.getElementById("loginModal");
+    const registerModal = document.getElementById("registerModal");
+
+    if (authGate) {
+      authGate.classList.remove("show");
+      authGate.style.display = "none";
+    }
+
+    if (loginModal) {
+      loginModal.classList.remove("active");
+      loginModal.style.display = "none";
+    }
+
+    if (registerModal) {
+      registerModal.classList.remove("active");
+      registerModal.style.display = "none";
+    }
+
+    document.querySelectorAll("main,.wrap,.right-menu-btn,.bottom,.side-drawer,.drawer-backdrop").forEach(function (el) {
+      el.style.filter = "none";
+      el.style.pointerEvents = "auto";
+      el.style.userSelect = "auto";
+    });
+  }
+
+  window.forceUnlockCustomerWebsite = unlockWebsite;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(unlockWebsite, 300);
+    setTimeout(unlockWebsite, 1000);
+  });
+
+  setInterval(function () {
+    if (loggedIn()) unlockWebsite();
+  }, 1000);
+})();
+</script>
+
