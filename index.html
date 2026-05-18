@@ -2441,3 +2441,164 @@ body {
 })();
 </script>
 
+
+<style>
+/* FORCE LOGIN FIRST BEFORE CUSTOMER CAN VIEW WEBSITE */
+body.customer-auth-locked {
+  overflow: hidden !important;
+}
+
+body.customer-auth-locked main,
+body.customer-auth-locked .bottom,
+body.customer-auth-locked .right-menu-btn,
+body.customer-auth-locked .side-drawer,
+body.customer-auth-locked .drawer-backdrop {
+  filter: blur(10px) brightness(0.45) !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+/* Make login/register full-screen gate */
+body.customer-auth-locked #loginModal,
+body.customer-auth-locked #registerModal {
+  display: flex !important;
+  z-index: 9999 !important;
+}
+
+/* Hide close button when login is required */
+body.customer-auth-locked #loginModal .premium-close,
+body.customer-auth-locked #registerModal .premium-close,
+body.customer-auth-locked #loginModal .close,
+body.customer-auth-locked #registerModal .close {
+  display: none !important;
+}
+
+/* Stronger login background */
+body.customer-auth-locked #loginModal,
+body.customer-auth-locked #registerModal {
+  background:
+    radial-gradient(circle at top left, rgba(255,0,60,0.28), transparent 36%),
+    radial-gradient(circle at bottom right, rgba(100,140,255,0.24), transparent 36%),
+    rgba(0,0,0,0.88) !important;
+}
+</style>
+
+<script>
+(function () {
+  function getSavedAccount() {
+    try {
+      return JSON.parse(localStorage.getItem("customerAccount")) || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function getSavedSession() {
+    try {
+      return JSON.parse(localStorage.getItem("customerSession")) || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function isCustomerLoggedIn() {
+    const account = getSavedAccount();
+    const session = getSavedSession();
+
+    return !!(account && session && session.username === account.username);
+  }
+
+  function lockCustomerWebsite() {
+    document.body.classList.add("customer-auth-locked");
+
+    if (typeof openModal === "function") {
+      openModal("loginModal");
+    } else {
+      const loginModal = document.getElementById("loginModal");
+      if (loginModal) loginModal.classList.add("active");
+    }
+  }
+
+  function unlockCustomerWebsite() {
+    document.body.classList.remove("customer-auth-locked");
+
+    const loginModal = document.getElementById("loginModal");
+    const registerModal = document.getElementById("registerModal");
+
+    if (loginModal) loginModal.classList.remove("active");
+    if (registerModal) registerModal.classList.remove("active");
+  }
+
+  window.checkCustomerAuthGate = function () {
+    if (isCustomerLoggedIn()) {
+      unlockCustomerWebsite();
+    } else {
+      lockCustomerWebsite();
+    }
+  };
+
+  function waitThenCheck() {
+    setTimeout(function () {
+      window.checkCustomerAuthGate();
+    }, 120);
+  }
+
+  /* Prevent closing login/register if not logged in */
+  const oldCloseModal = window.closeModal;
+
+  window.closeModal = function (id) {
+    if (
+      document.body.classList.contains("customer-auth-locked") &&
+      (id === "loginModal" || id === "registerModal") &&
+      !isCustomerLoggedIn()
+    ) {
+      return;
+    }
+
+    if (typeof oldCloseModal === "function") {
+      oldCloseModal(id);
+    } else {
+      const modal = document.getElementById(id);
+      if (modal) modal.classList.remove("active");
+    }
+  };
+
+  /* Re-check after login/register */
+  const oldLoginCustomer = window.loginCustomer;
+  const oldRegisterCustomer = window.registerCustomer;
+  const oldLogoutCustomer = window.logoutCustomer;
+
+  if (typeof oldLoginCustomer === "function") {
+    window.loginCustomer = function () {
+      oldLoginCustomer();
+      waitThenCheck();
+    };
+  }
+
+  if (typeof oldRegisterCustomer === "function") {
+    window.registerCustomer = function () {
+      oldRegisterCustomer();
+      waitThenCheck();
+    };
+  }
+
+  if (typeof oldLogoutCustomer === "function") {
+    window.logoutCustomer = function () {
+      oldLogoutCustomer();
+      setTimeout(lockCustomerWebsite, 120);
+    };
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(function () {
+      window.checkCustomerAuthGate();
+    }, 250);
+  });
+
+  /* Also run immediately because this script is near the bottom */
+  setTimeout(function () {
+    window.checkCustomerAuthGate();
+  }, 250);
+})();
+</script>
+
